@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
+import path from "path";
 
 const app = express();
 
-app.get("*", (req: Request, res: Response) => {
-  res.send({ message: "Hello World" });
-});
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.resolve(__dirname, "../../client/build")));
+}
 
 app.listen(3001, () => {
   console.log("app.listening");
