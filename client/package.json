@@ -5,6 +5,7 @@
   "license": "MIT",
   "proxy": "http://localhost:3001",
   "scripts": {
+    "test": "jest",
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack serve --config webpack-dev.config.js --open"
   },
@@ -42,7 +43,30 @@
     }
   },
   "devDependencies": {
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "^27.4.0",
+    "babel-jest": "^27.4.6",
     "eslint": "^8.1.0",
+    "jest": "^27.4.7",
+    "jsdom": "^19.0.0",
     "webpack-dev-server": "^4.3.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "tsx"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "testEnvironment": "jest-environment-jsdom",
+    "transform": {
+      "\\.[jt]sx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    }
   }
 }
