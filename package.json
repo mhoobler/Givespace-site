@@ -6,9 +6,15 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn build-server && yarn build-client && yarn start-production",
-    "build-server": "cd server && yarn install",
+    "build-server": "cd server && yarn install && yarn build",
     "build-client": "cd client && yarn install && yarn build",
     "start-production": "cd server && cd dist && node index.js",
-    "dev": "concurrently -k \"cd server && nodemon index.ts \" \" cd client && yarn start \" "
+    "dev": "concurrently -k \"cd server && nodemon index.ts \" \" cd client && yarn dev \" "
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.4"
   }
 }
