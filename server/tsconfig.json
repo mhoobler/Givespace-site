@@ -4,7 +4,7 @@
     "baseUrl": "./",
     "target": "es6",
     "types": ["node"],
-    "outDir": "./dist",
+    "outDir": "dist",
     "module": "commonjs",
     "moduleResolution": "node",
     "isolatedModules": false,

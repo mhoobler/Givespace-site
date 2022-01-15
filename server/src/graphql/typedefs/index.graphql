@@ -1,0 +1,11 @@
+type Query {
+  users: [User]!
+}
+
+type Subscription {
+  liveUsers(mustInclude: String): User!
+}
+
+type Mutation {
+  createUser(name: String!, userId: Int!): User!
+}
