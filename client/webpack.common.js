@@ -1,5 +1,6 @@
 const path = require("path");
 const wp = require("html-webpack-plugin");
+const InterpolateHtmlPlugin = require("interpolate-html-plugin");
 
 module.exports = {
   entry: "./src/index.tsx",
@@ -45,6 +46,9 @@ module.exports = {
   plugins: [
     new wp({
       template: "./public/index.html",
+    }),
+    new InterpolateHtmlPlugin({
+      PUBLIC_URL: "static",
     }),
   ],
 };
