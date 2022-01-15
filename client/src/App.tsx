@@ -1,14 +1,14 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { useQuery } from "@apollo/client";
+import { GET_JWT } from "./graphql/schemas";
 
 const App: React.FC = () => {
-  const handleClick = () => {
-    fetch('/api')
-      .then(res => res.json())
-      .then(data => console.log(data))
-      .catch(err => console.log(err));
-  }
+  // create a usequery hook with GET_JWT that fetches on button click
+
+  const jwt = useQuery(GET_JWT);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -16,10 +16,10 @@ const App: React.FC = () => {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <button onClick={handleClick}>Hit API</button>
+        <p>jwt: {jwt.loading ? "loading..." : jwt.data.getJwt}</p>
       </header>
     </div>
   );
-}
+};
 
 export default App;
