@@ -21,7 +21,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(le|c)ss$/i,
+        test: /\.less$/i,
         exclude: /node_modules/,
         include: path.resolve(__dirname, "src"),
         use: [
@@ -33,6 +33,17 @@ module.exports = {
           },
           {
             loader: "less-loader",
+          },
+        ],
+      },
+      {
+        test: /\.css$/i,
+        use: [
+          {
+            loader: "style-loader",
+          },
+          {
+            loader: "css-loader",
           },
         ],
       },
