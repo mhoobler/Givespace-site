@@ -1,6 +1,8 @@
 import { withFilter } from "graphql-subscriptions";
 import { pubsub } from "../index";
 import fetch from "node-fetch";
+import { verifyToken } from "../../utils/functions";
+import { Context } from "../../types";
 
 const userResolvers = {
   Query: {
@@ -11,10 +13,9 @@ const userResolvers = {
     },
   },
   Mutation: {
-    createUser: async (_, args, context) => {
-      if (context.authToken !== "secret") {
-        throw new Error("Not authorized");
-      }
+    createUser: async (_, args, context: Context) => {
+      console.log("context", context);
+      verifyToken(context.authToken);
       const response = await fetch("http://localhost:3000/users", {
         headers: {
           "Content-Type": "application/json",
