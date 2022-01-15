@@ -15,6 +15,8 @@ CREATE TABLE catalogues (
   author TEXT,
   profile_picture_url TEXT,
   event_date DATE,
+  created TIMESTAMP,
+  updated TIMESTAMP,
   PRIMARY KEY (id)
 );
 
@@ -23,6 +25,8 @@ CREATE TABLE listings (
   catalogue_id UUID NOT NULL,
   description TEXT,
   price NUMERIC,
+  created TIMESTAMP,
+  updated TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE
 );
@@ -31,6 +35,8 @@ CREATE TABLE links (
   id UUID DEFAULT uuid_generate_v4(),
   listing_id UUID NOT NULL,
   url TEXT NOT NULL,
+  created TIMESTAMP,
+  updated TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
 );
@@ -40,6 +46,8 @@ CREATE TABLE labels (
   catalogue_id UUID NOT NULL,
   listing_id UUID NOT NULL,
   url TEXT NOT NULL,
+  created TIMESTAMP,
+  updated TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE,
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
