@@ -13,6 +13,9 @@ const Home = () => {
         <p>
           Home
         </p>
+        <p>
+          Testing
+        </p>
         <button className="btn btn-primary" data-testid='hit-api' onClick={handleClick}>Hit API</button>
       </header>
     </div>
