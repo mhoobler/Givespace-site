@@ -14,7 +14,6 @@ const userResolvers = {
   },
   Mutation: {
     createUser: async (_, args, context: Context) => {
-      console.log("context", context);
       verifyToken(context.authToken);
       const response = await fetch("http://localhost:3000/users", {
         headers: {
