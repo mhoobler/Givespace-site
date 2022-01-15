@@ -1,24 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
+import { 
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from 'react-router-dom';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.css'
+import Home from './pages/Home/Home';
+import Catalogue from './pages/Catalogue/Catalogue';
 
-const App: React.FC = () => {
-  const handleClick = () => {
-    fetch('/api')
-      .then(res => res.json())
-      .then(data => console.log(data))
-      .catch(err => console.log(err));
-  }
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <button onClick={handleClick}>Hit API</button>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />}/>
+        <Route path="/lists/:user_id" element={<Home />}/>
+        <Route path="/list/:catalogue_id" element={<Catalogue />}/>
+      </Routes>
+    </Router>
   );
 }
 
