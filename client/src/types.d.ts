@@ -13,7 +13,7 @@ interface Catalogue extends CatalogueListItem {
   edit_id: string;
   author: string;
   profile_picture_url: string;
-  event_data: string;
+  event_date: string;
 }
 
 type CatalogueList = CatalogueListItem[];
