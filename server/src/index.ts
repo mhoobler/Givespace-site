@@ -1,9 +1,10 @@
-import { app, httpServer } from "./app";
 import dotenv from "dotenv";
+dotenv.config();
+import { app, httpServer } from "./app";
 import apolloServer from "./graphql";
 import { Request, Response } from "express";
-dotenv.config();
 import db from "../db";
+console.log("starting server", process.env.DATABASE_URL);
 
 const startServers = async () => {
   app.get("/test", async (req: Request, res: Response) => {

@@ -1,12 +1,16 @@
 type Query {
   getJwt: String!
   users: [User]!
-}
-
-type Subscription {
-  liveUsers(mustInclude: String): User!
+  catalogues(id: ID): [Catalogue!]
+  myCatalogues: [Catalogue!]
 }
 
 type Mutation {
   createUser(name: String!, userId: Int!): User!
+  createCatalogue: Catalogue!
+  updateCatalogue(id: ID!, title: String!): Catalogue!
+}
+
+type Subscription {
+  liveUsers(mustInclude: String): User!
 }

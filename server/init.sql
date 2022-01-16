@@ -57,12 +57,15 @@ INSERT INTO catalogues (
   user_id,
   title
 ) VALUES (
-  'id1',
+  'user1',
   'title1'
 ), (
-  'id2',
+  'user1',
   'title2'
 ), (
-  'id3',
+  'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDIyNjE1MDB9.yOzQeZ-X2cRMZn4B7xRw2AhSDpjGLOXN_vawJayEB-c',
   NULL
+), (
+  'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDIyNjE1MDB9.yOzQeZ-X2cRMZn4B7xRw2AhSDpjGLOXN_vawJayEB-c',
+  'title3'
 );

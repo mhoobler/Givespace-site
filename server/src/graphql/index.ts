@@ -16,16 +16,7 @@ const subscriptionServer = SubscriptionServer.create(
     execute,
     subscribe,
     async onConnect(connectionParams) {
-      if (connectionParams.user) {
-        const currentUser = await fetch(
-          `http://localhost:3000/users?name=${connectionParams.user}`
-        );
-        const parsedUser = await currentUser.json();
-        console.log(parsedUser);
-        if (parsedUser.length) {
-          return { currentUser: parsedUser[0] };
-        }
-      }
+      // do when subscription is triggered
     },
     // onDisconnect: () => {},
   },
