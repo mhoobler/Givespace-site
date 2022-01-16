@@ -1,25 +1,19 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
-  const handleClick = () => {
-    fetch('/api')
-      .then(res => res.json())
-      .then(data => console.log(data))
-      .catch(err => console.log(err));
-  }
+  // need some way to get user id here
+  const user_id = "id";
   return (
     <div className="App">
       <header className="App-header">
-        <p>
-          Home
-        </p>
-        <p>
-          Testing
-        </p>
-        <button className="btn btn-primary" data-testid='hit-api' onClick={handleClick}>Hit API</button>
+        <p>Home</p>
+        <Link className="btn btn-primary" to={`/lists/${user_id}`}>
+          Go to Lists
+        </Link>
       </header>
     </div>
-  )
-}
+  );
+};
 
 export default Home;

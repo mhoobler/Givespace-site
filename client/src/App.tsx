@@ -4,7 +4,7 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { useQuery } from "@apollo/client";
 import { GET_JWT } from "./graphql/schemas";
-import {Home, Catalogue, CatalogueSelect} from "./pages";
+import { Home, Catalogue, CatalogueSelect } from "./pages";
 
 const App = () => {
   //@ts-ignore
@@ -13,9 +13,9 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/lists/:user_id' element={<CatalogueSelect />} />
-        <Route path='/list/:catalogue_id' element={<Catalogue />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/lists/:user_id" element={<CatalogueSelect />} />
+        <Route path="/list/:catalogue_id" element={<Catalogue />} />
       </Routes>
     </Router>
   );
