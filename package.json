@@ -5,7 +5,7 @@
   "author": "mhoobler <hoobler.michael@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "yarn build-server && yarn build-client && yarn start-production",
+    "start": "yarn start-production",
     "build-server": "cd server && yarn install && yarn build",
     "build-client": "cd client && yarn install && yarn build",
     "start-production": "cd server && cd dist && node index.js",
