@@ -9,7 +9,7 @@ CREATE TABLE catalogues (
   user_id TEXT NOT NULL,
   title TEXT,
   description TEXT,
-  views INT,
+  views INT DEFAULT 0 NOT NULL,
   header_image_url TEXT,
   header_color TEXT,
   edit_id TEXT,
@@ -82,3 +82,4 @@ INSERT INTO catalogues (
   'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDIyNjE1MDB9.yOzQeZ-X2cRMZn4B7xRw2AhSDpjGLOXN_vawJayEB-c',
   'title3'
 );
+
