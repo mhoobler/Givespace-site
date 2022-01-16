@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS listing_labels;
 DROP TABLE IF EXISTS labels;
 DROP TABLE IF EXISTS links;
 DROP TABLE IF EXISTS listings;
@@ -23,7 +24,11 @@ CREATE TABLE catalogues (
 CREATE TABLE listings (
   id UUID DEFAULT uuid_generate_v4(),
   catalogue_id UUID NOT NULL,
+  name TEXT,
+  image_url TEXT,
   description TEXT,
+  order INT,
+  show_price BOOLEAN,
   price NUMERIC,
   created TIMESTAMP,
   updated TIMESTAMP,
@@ -44,12 +49,20 @@ CREATE TABLE links (
 CREATE TABLE labels (
   id UUID DEFAULT uuid_generate_v4(),
   catalogue_id UUID NOT NULL,
-  listing_id UUID NOT NULL,
   url TEXT NOT NULL,
+  is_private BOOLEAN,
   created TIMESTAMP,
   updated TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE,
+)
+
+CREATE TABLE listing_labels (
+  id UUID DEFAULT uuid_generate_v4(),
+  label_id UUID NOT NULL,
+  listing_id UUID NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (label_id) REFERENCES labels (id) ON DELETE CASCADE,
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
 );
 
