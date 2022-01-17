@@ -1,5 +1,8 @@
-import React from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { CREATE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
 
 const CatalogueRow: React.FC<CatalogueListItem> = ({
   id,
@@ -21,28 +24,42 @@ const CatalogueRow: React.FC<CatalogueListItem> = ({
   );
 };
 
+const CreateCatalogue = (): React.ReactElement => {
+  const [createCatalogue, { loading, data, error }] =
+    useMutation(CREATE_CATALOGUE);
+
+  const navigate = useNavigate();
+  console.log("data", data);
+  if (!loading && data) {
+    navigate("/" + data.createCatalogue.id);
+  }
+
+  const handleClick = async () => {
+    createCatalogue();
+  };
+
+  return (
+    <div className="row">
+      <div className="col-2">
+        <button onClick={handleClick} className="btn btn-success">
+          Create New
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const CatalogueSelect = () => {
   //@ts-ignore
+
   const { user_id } = useParams();
 
   // Some kind of Query;
-  const results: CatalogueList = [
-    {
-      id: "id1",
-      user_id: "id",
-      title: "title1",
-      created: new Date().toString(),
-      updated: new Date().toString(),
-    },
-    {
-      id: "id2",
-      user_id: "id",
-      title: "title2",
-      created: new Date().toString(),
-      updated: new Date().toString(),
-    },
-  ];
-
+  const results = useQuery(MY_CATALOGUES);
+  console.log("results.data", results.data);
+  if (results.loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <div className="row">
@@ -52,9 +69,10 @@ const CatalogueSelect = () => {
           </Link>
         </div>
       </div>
-      {results.map((e: CatalogueListItem) => (
+      {results.data.myCatalogues.map((e: CatalogueListItem) => (
         <CatalogueRow key={e.id} {...e} />
       ))}
+      <CreateCatalogue />
     </div>
   );
 };
