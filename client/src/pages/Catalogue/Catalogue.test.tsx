@@ -2,18 +2,39 @@ import React from "react";
 import { screen, render } from "@testing-library/react";
 import Catalogue from "./Catalogue";
 import { MockedProvider } from "@apollo/client/testing";
-import { JUNK_QUERY } from "../../graphql/schemas";
+import { GET_CATALOGUE } from "../../graphql/schemas";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { DocumentNode } from "graphql";
 
-const mocks = [
+type Mock = {
+  request: {
+    query: DocumentNode;
+  };
+  result: {
+    data: CatalogueType;
+  };
+};
+
+const mocks: Mock[] = [
   {
     request: {
-      query: JUNK_QUERY,
+      query: GET_CATALOGUE,
     },
     result: {
       data: {
         id: "id1",
         user_id: "id",
+        title: "CATALOGUE_TITLE",
+        description: "CATALOGUE_DESCRIPTION",
+        created: new Date(),
+        updated: new Date(),
+        views: 0,
+        header_image_url: "awsdf",
+        head_color: "#FF0000",
+        edit_id: "asdf",
+        author: "ahshaf",
+        profile_picture_url: "eowert",
+        event_date: null,
       },
     },
   },

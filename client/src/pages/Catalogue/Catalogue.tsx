@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-// import { JUNK_QUERY } from "../../graphql/schemas";
+import { GET_CATALOGUE } from "../../graphql/schemas";
 
 const Catalogue = () => {
   const { catalogue_id } = useParams();
@@ -9,7 +9,9 @@ const Catalogue = () => {
 
   // @ts-ignore
   // Some kind of Query or Subscription
-  // let catalogueData = useQuery(JUNK_QUERY, { variables: { id: catalogue_id } });
+  let catalogueData = useQuery(GET_CATALOGUE, {
+    variables: { id: catalogue_id },
+  });
 
   const goBack = () => navigate(-1);
 

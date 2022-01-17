@@ -1,11 +1,10 @@
+import React from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { CREATE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
-import { CatalogueListItem } from "../../types";
 
-const CatalogueRow: React.FC<CatalogueListItem> = ({
+const CatalogueRow: React.FC<CatalogueStub> = ({
   id,
   //user_id,
   title,
@@ -30,9 +29,13 @@ const CreateCatalogue = (): React.ReactElement => {
     useMutation(CREATE_CATALOGUE);
 
   const navigate = useNavigate();
-  console.log("data", data);
   if (!loading && data) {
+    console.log("data", data);
     navigate("/" + data.createCatalogue.id);
+  }
+
+  if (!loading && error) {
+    console.warn("error", error);
   }
 
   const handleClick = async () => {
@@ -40,12 +43,10 @@ const CreateCatalogue = (): React.ReactElement => {
   };
 
   return (
-    <div className="row">
-      <div className="col-2">
-        <button onClick={handleClick} className="btn btn-success">
-          Create New
-        </button>
-      </div>
+    <div className="col-4">
+      <button onClick={handleClick} className="btn btn-success">
+        Create New
+      </button>
     </div>
   );
 };
@@ -62,18 +63,22 @@ const CatalogueSelect = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div>
+    <div data-testid="test">
+      <div className="row">
+        <h2>Your Catalogues</h2>
+      </div>
       <div className="row">
         <div className="col-2">
           <Link className="btn btn-primary" to={`/`}>
             Go Back
           </Link>
         </div>
+        <CreateCatalogue />
       </div>
-      {results.data.myCatalogues.map((e: CatalogueListItem) => (
-        <CatalogueRow key={e.id} {...e} />
-      ))}
-      <CreateCatalogue />
+      {results.data &&
+        results.data.myCatalogues.map((e: CatalogueStub) => (
+          <CatalogueRow key={e.id} {...e} />
+        ))}
     </div>
   );
 };
