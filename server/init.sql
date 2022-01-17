@@ -9,7 +9,7 @@ CREATE TABLE catalogues (
   user_id TEXT NOT NULL,
   title TEXT,
   description TEXT,
-  views INT,
+  views INT DEFAULT 0 NOT NULL,
   header_image_url TEXT,
   header_color TEXT,
   edit_id TEXT,
@@ -82,3 +82,4 @@ INSERT INTO catalogues (
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title4'
 );
+
