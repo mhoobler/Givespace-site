@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+console.log("index.ts is run");
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.resolve(__dirname, "../../client/build")));
 } else {

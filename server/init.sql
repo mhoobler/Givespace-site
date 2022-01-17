@@ -7,17 +7,17 @@ DROP TABLE IF EXISTS catalogues;
 CREATE TABLE catalogues (
   id UUID DEFAULT uuid_generate_v4(),
   user_id TEXT NOT NULL,
-  title TEXT,
+  title TEXT DEFAULT 'Untitled Catalogue',
   description TEXT,
   views INT DEFAULT 0 NOT NULL,
   header_image_url TEXT,
-  header_color TEXT,
-  edit_id TEXT,
+  header_color TEXT DEFAULT '#000000',
+  edit_id UUID DEFAULT uuid_generate_v4(),
   author TEXT,
   profile_picture_url TEXT,
   event_date DATE,
-  created TIMESTAMP,
-  updated TIMESTAMP,
+  created TIMESTAMP DEFAULT NOW(),
+  updated TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id)
 );
 

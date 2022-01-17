@@ -4,7 +4,6 @@ import { app, httpServer } from "./app";
 import apolloServer from "./graphql";
 import { Request, Response } from "express";
 import db from "../db";
-console.log("starting server", process.env.DATABASE_URL);
 
 const startServers = async () => {
   app.get("/test", async (req: Request, res: Response) => {
