@@ -14,7 +14,7 @@ type EditCataloguesFields = {
   title: string;
 };
 
-const userResolvers = {
+const catalogueResolvers = {
   Query: {
     catalogues: async (_, args: GetCataloguesFields) => {
       // please do the typing for "db" queries
@@ -40,19 +40,6 @@ const userResolvers = {
     },
   },
   Mutation: {
-    createUser: async (_, args, context: Context) => {
-      verifyToken(context.authToken);
-      const response = await fetch("http://localhost:3000/users", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(args),
-      });
-      const user = await response.json();
-      pubsub.publish("USER_CREATED", { liveUsers: user });
-      return user;
-    },
     createCatalogue: async (_, __, context: Context) => {
       // have this function return the catalogue that was just created
       // type the return as well
@@ -93,16 +80,7 @@ const userResolvers = {
       };
     },
   },
-  Subscription: {
-    liveUsers: {
-      subscribe: withFilter(
-        () => pubsub.asyncIterator("USER_CREATED"),
-        (payload, variables) => {
-          return payload.liveUsers.name.includes(variables.mustInclude);
-        }
-      ),
-    },
-  },
+  Subscription: {},
 };
 
-export default userResolvers;
+export default catalogueResolvers;
