@@ -1,4 +1,5 @@
 import userResolvers from "./user";
+import catalogueResolvers from "./catalogue";
 import utilResolvers from "./util";
 
 // combine all the resolvers
@@ -11,9 +12,21 @@ let resolvers = {
 
 resolversAggregate.forEach((resolver) => {
   resolvers = {
-    Query: { ...resolvers.Query, ...resolver.Query },
-    Mutation: { ...resolvers.Mutation, ...resolver.Mutation },
-    Subscription: { ...resolvers.Subscription, ...resolver.Subscription },
+    Query: {
+      ...resolvers.Query,
+      ...resolver.Query,
+      ...catalogueResolvers.Query,
+    },
+    Mutation: {
+      ...resolvers.Mutation,
+      ...resolver.Mutation,
+      ...catalogueResolvers.Mutation,
+    },
+    Subscription: {
+      ...resolvers.Subscription,
+      ...resolver.Subscription,
+      ...catalogueResolvers.Subscription,
+    },
   };
 });
 

@@ -1,5 +1,6 @@
-type User {
+type Catalogue {
   id: ID!
-  name: String!
-  userId: Int!
+  user_id: String!
+  title: String!
+  description: String!
 }

@@ -9,6 +9,7 @@ module.exports = merge(common, {
     static: "./dist",
     port: 3000,
     compress: true,
+    historyApiFallback: true,
     proxy: {
       "/api": {
         target: "http://localhost:3001",
