@@ -76,10 +76,10 @@ INSERT INTO catalogues (
   'user1',
   'title2'
 ), (
-  'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDIyNjE1MDB9.yOzQeZ-X2cRMZn4B7xRw2AhSDpjGLOXN_vawJayEB-c',
-  NULL
-), (
-  'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDIyNjE1MDB9.yOzQeZ-X2cRMZn4B7xRw2AhSDpjGLOXN_vawJayEB-c',
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title3'
+), (
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
+  'title4'
 );
 

@@ -14,7 +14,7 @@ type EditCataloguesFields = {
   title: string;
 };
 
-const userResolvers = {
+const catalogueResolvers = {
   Query: {
     catalogues: async (
       _: null,
@@ -47,20 +47,6 @@ const userResolvers = {
   },
 
   Mutation: {
-    createUser: async (_: any, args: unknown, context: Context) => {
-      verifyToken(context.authToken);
-      const response = await fetch("http://localhost:3000/users", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(args),
-      });
-      const user = await response.json();
-      pubsub.publish("USER_CREATED", { liveUsers: user });
-      return user;
-    },
-
     createCatalogue: async (
       _: null,
       __: null,
@@ -94,17 +80,7 @@ const userResolvers = {
       return updatedCatalogue.rows[0];
     },
   },
-
-  Subscription: {
-    liveUsers: {
-      subscribe: withFilter(
-        () => pubsub.asyncIterator("USER_CREATED"),
-        (payload, variables) => {
-          return payload.liveUsers.name.includes(variables.mustInclude);
-        },
-      ),
-    },
-  },
+  Subscription: {},
 };
 
-export default userResolvers;
+export default catalogueResolvers;

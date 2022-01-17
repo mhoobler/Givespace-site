@@ -1,12 +1,6 @@
-type User {
-  id: ID!
-  name: String!
-  userId: Int!
-}
-
 type Catalogue {
   id: ID!
   user_id: String!
-  title: String
-  description: String
+  title: String!
+  description: String!
 }
