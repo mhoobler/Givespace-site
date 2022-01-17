@@ -3,8 +3,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { Home, Catalogue, CatalogueSelect } from "./pages";
+import { useQuery } from "@apollo/client";
+import { MY_CATALOGUES } from "./graphql/schemas";
 
 const App = () => {
+  // const myCatalogues = useQuery(MY_CATALOGUES);
+  // console.log("myCatalogues.data", myCatalogues.data);
+
   return (
     <Router>
       <Routes>

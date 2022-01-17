@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { CREATE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
+import { CatalogueListItem } from "../../types";
 
 const CatalogueRow: React.FC<CatalogueListItem> = ({
   id,
