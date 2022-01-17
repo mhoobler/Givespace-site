@@ -1,8 +1,8 @@
-import { useMutation, useQuery } from "@apollo/client";
-import React, { useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import React from "react";
 import { Link, useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { CREATE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
+import CreateCatalogueButton from "../../components/CreateCatalogueButton";
+import { MY_CATALOGUES } from "../../graphql/schemas";
 import { CatalogueListItem } from "../../types";
 
 const CatalogueRow: React.FC<CatalogueListItem> = ({
@@ -20,31 +20,6 @@ const CatalogueRow: React.FC<CatalogueListItem> = ({
           Go
         </Link>
         <button className="btn btn-danger">Del</button>
-      </div>
-    </div>
-  );
-};
-
-const CreateCatalogue = (): React.ReactElement => {
-  const [createCatalogue, { loading, data, error }] =
-    useMutation(CREATE_CATALOGUE);
-
-  const navigate = useNavigate();
-  console.log("data", data);
-  if (!loading && data) {
-    navigate("/" + data.createCatalogue.id);
-  }
-
-  const handleClick = async () => {
-    createCatalogue();
-  };
-
-  return (
-    <div className="row">
-      <div className="col-2">
-        <button onClick={handleClick} className="btn btn-success">
-          Create New
-        </button>
       </div>
     </div>
   );
@@ -73,7 +48,7 @@ const CatalogueSelect = () => {
       {results.data.myCatalogues.map((e: CatalogueListItem) => (
         <CatalogueRow key={e.id} {...e} />
       ))}
-      <CreateCatalogue />
+      <CreateCatalogueButton />
     </div>
   );
 };

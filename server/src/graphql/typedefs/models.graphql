@@ -7,7 +7,7 @@ type Catalogue {
   updated: Date!
   views: Int!
   header_image_url: String
-  head_color: String!
+  header_color: String!
   edit_id: String!
   author: String
   profile_picture_url: String

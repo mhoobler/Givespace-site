@@ -7,14 +7,14 @@ import { useQuery } from "@apollo/client";
 import { MY_CATALOGUES } from "./graphql/schemas";
 
 const App = () => {
-  // const myCatalogues = useQuery(MY_CATALOGUES);
-  // console.log("myCatalogues.data", myCatalogues.data);
+  const myCatalogues = useQuery(MY_CATALOGUES);
+  console.log("myCatalogues.data", myCatalogues.data);
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/lists/:user_id" element={<CatalogueSelect />} />
+        <Route path="/lists" element={<CatalogueSelect />} />
         <Route path="/list/:catalogue_id" element={<Catalogue />} />
       </Routes>
     </Router>

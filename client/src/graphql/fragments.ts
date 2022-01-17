@@ -21,7 +21,7 @@ export const ALL_CATALOGUE_FIELDS = gql`
     updated
     views
     header_image_url
-    head_color
+    header_color
     edit_id
     author
     profile_picture_url
