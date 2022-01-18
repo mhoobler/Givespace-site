@@ -8,7 +8,7 @@ CREATE TABLE catalogues (
   id UUID DEFAULT uuid_generate_v4(),
   user_id TEXT NOT NULL,
   title TEXT DEFAULT 'Untitled Catalogue',
-  description TEXT,
+  description TEXT DEFAULT '',
   views INT DEFAULT 0 NOT NULL,
   header_image_url TEXT,
   header_color TEXT DEFAULT '#000000',
@@ -67,19 +67,14 @@ CREATE TABLE listing_labels (
 );
 
 INSERT INTO catalogues (
-  user_id,
-  title
+  user_id
 ) VALUES (
-  'user1',
-  'title1'
+  'id'
 ), (
-  'user1',
-  'title2'
+  'id'
 ), (
-  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
-  'title3'
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2'
 ), (
-  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
-  'title4'
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2'
 );
 

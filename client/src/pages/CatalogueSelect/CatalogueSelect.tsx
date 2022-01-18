@@ -1,17 +1,27 @@
-import { useQuery } from "@apollo/client";
-import React from "react";
+import React, { useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
 import CreateCatalogueButton from "../../components/CreateCatalogueButton";
-import { MY_CATALOGUES } from "../../graphql/schemas";
-import { CatalogueListItem } from "../../types";
+import { DELTETE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
 
-const CatalogueRow: React.FC<CatalogueListItem> = ({
+const CatalogueRow: React.FC<CatalogueStub> = ({
   id,
   //user_id,
   title,
   //created,
   //updated,
 }) => {
+  //@ts-ignore
+  //TODO: Do something with this data
+  const [deleteCatalogue, { data, loading, error }] = useMutation(
+    DELTETE_CATALOGUE,
+    { variables: { id } }
+  );
+
+  const handleDelete = () => {
+    deleteCatalogue();
+  };
+
   return (
     <div className="row">
       <div className="col-8">{title}</div>
@@ -19,7 +29,9 @@ const CatalogueRow: React.FC<CatalogueListItem> = ({
         <Link className="btn btn-primary" to={`/list/${id}`}>
           Go
         </Link>
-        <button className="btn btn-danger">Del</button>
+        <button className="btn btn-danger" onClick={handleDelete}>
+          Del
+        </button>
       </div>
     </div>
   );
@@ -27,28 +39,31 @@ const CatalogueRow: React.FC<CatalogueListItem> = ({
 
 const CatalogueSelect = () => {
   //@ts-ignore
-
   const { user_id } = useParams();
 
-  // Some kind of Query;
   const results = useQuery(MY_CATALOGUES);
   console.log("results.data", results.data);
+
   if (results.loading) {
     return <div>Loading...</div>;
   }
   return (
-    <div>
+    <div data-testid="test">
+      <div className="row">
+        <h2>Your Catalogues</h2>
+      </div>
       <div className="row">
         <div className="col-2">
           <Link className="btn btn-primary" to={`/`}>
             Go Back
           </Link>
         </div>
+        <CreateCatalogueButton />
       </div>
-      {results.data.myCatalogues.map((e: CatalogueListItem) => (
-        <CatalogueRow key={e.id} {...e} />
-      ))}
-      <CreateCatalogueButton />
+      {results.data &&
+        results.data.myCatalogues.map((e: CatalogueStub) => (
+          <CatalogueRow key={e.id} {...e} />
+        ))}
     </div>
   );
 };

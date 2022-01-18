@@ -1,8 +1,9 @@
-export type Context = {
+type Context = {
   authorization?: string | null;
   authToken?: string | null;
 };
-export interface CatalogueListItem {
+
+interface CatalogueStub {
   id: string;
   user_id: string;
   title: string;
@@ -11,7 +12,7 @@ export interface CatalogueListItem {
   updated: Date;
 }
 
-export interface Catalogue extends CatalogueListItem {
+interface CatalogueType extends CatalogueStub {
   views: number;
   header_image_url: string | null;
   header_color: string;
