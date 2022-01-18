@@ -7,6 +7,7 @@ import { httpServer } from "../app";
 import schema from "./schema";
 import { PubSub } from "graphql-subscriptions";
 import fetch from "node-fetch";
+import { Context } from "src/types";
 
 export const pubsub = new PubSub();
 
@@ -28,8 +29,8 @@ const subscriptionServer = SubscriptionServer.create(
 
 const apolloServer = new ApolloServer({
   schema,
-  context: ({ req }) => ({
-    authToken: req.headers.authorization,
+  context: ({ req }): Context => ({
+    authorization: req.headers.authorization,
   }),
   plugins: [
     ApolloServerPluginLandingPageGraphQLPlayground(),

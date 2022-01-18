@@ -3,4 +3,13 @@ type Catalogue {
   user_id: String!
   title: String!
   description: String!
+  created: Date!
+  updated: Date!
+  views: Int
+  header_image_url: String
+  header_color: String!
+  edit_id: String!
+  author: String
+  profile_picture_url: String
+  event_date: Date
 }

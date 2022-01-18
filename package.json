@@ -9,6 +9,6 @@
     "build-server": "cd server && yarn install && yarn build",
     "build-client": "cd client && yarn install && yarn build",
     "start-production": "cd server && cd dist && node index.js",
-    "dev": "concurrently -k \" cd client && yarn dev \" \"cd server && nodemon index.ts \" "
+    "dev": "concurrently -k \" cd client && yarn dev \" \"cd server && nodemon --config nodemon.json src/index.ts \" "
   }
 }

@@ -1,19 +1,23 @@
-interface CatalogueListItem {
+type Context = {
+  authorization?: string | null;
+  authToken?: string | null;
+};
+
+interface CatalogueStub {
   id: string;
   user_id: string;
   title: string;
-  created: string | null;
-  updated: string | null;
+  description: string | null;
+  created: Date;
+  updated: Date;
 }
 
-interface Catalogue extends CatalogueListItem {
-  views: number | null;
+interface CatalogueType extends CatalogueStub {
+  views: number;
   header_image_url: string | null;
-  head_color: string | null;
-  edit_id: string | null;
+  header_color: string;
+  edit_id: string;
   author: string | null;
   profile_picture_url: string | null;
-  event_date: string | null;
+  event_date: Date | null;
 }
-
-type CatalogueList = CatalogueListItem[];

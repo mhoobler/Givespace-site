@@ -1,16 +1,46 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import CreateCatalogueButton from "../../components/CreateCatalogueButton";
+import { client } from "../../graphql/clientConfig";
+import { MY_CATALOGUES } from "../../graphql/schemas";
 
 const Home = () => {
   // need some way to get user id here
-  const user_id = "id";
+  const cachedData = client.readQuery({
+    query: MY_CATALOGUES,
+  });
+  console.log("cachedData", cachedData);
+
+  const ButtonToShow = () => {
+    switch (true) {
+      case cachedData === null:
+        return (
+          <div className="btn btn-primary" style={{ opacity: 0 }}>
+            Invisible
+          </div>
+        );
+      case cachedData.myCatalogues.length > 0:
+        return (
+          <Link className="btn btn-primary" to={`/lists`}>
+            Go to Lists
+          </Link>
+        );
+      case cachedData.myCatalogues.length === 0:
+        return <CreateCatalogueButton />;
+      default:
+        return (
+          <div className="btn btn-primary" style={{ opacity: 0 }}>
+            Invisible
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <p>Home</p>
-        <Link className="btn btn-primary" to={`/lists/${user_id}`}>
-          Go to Lists
-        </Link>
+        <ButtonToShow />
       </header>
     </div>
   );
