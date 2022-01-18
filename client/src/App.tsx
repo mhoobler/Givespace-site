@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
@@ -8,7 +8,6 @@ import { MY_CATALOGUES } from "./graphql/schemas";
 
 const App = () => {
   const myCatalogues = useQuery(MY_CATALOGUES);
-  console.log("myCatalogues.data", myCatalogues.data);
 
   return (
     <Router>
