@@ -11,9 +11,8 @@ module.exports = merge(common, {
     compress: true,
     historyApiFallback: true,
     proxy: {
-      "/api": {
-        target: "http://localhost:3001",
-        pathRewrite: { "^/api": "" },
+      "/graphql": {
+        target: "http://localhost:4000/graphql",
       },
     },
   },

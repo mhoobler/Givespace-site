@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   // need some way to get user id here
-  const user_id = "id";
+  const user_id = localStorage.getItem("authorization");
   return (
     <div className="App">
       <header className="App-header">

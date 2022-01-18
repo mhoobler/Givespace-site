@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { CREATE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
+import {
+  CREATE_CATALOGUE,
+  DELTETE_CATALOGUE,
+  MY_CATALOGUES,
+} from "../../graphql/schemas";
 
 const CatalogueRow: React.FC<CatalogueStub> = ({
   id,
@@ -11,6 +15,17 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
   //created,
   //updated,
 }) => {
+  //@ts-ignore
+  //TODO: Do something with this data
+  const [deleteCatalogue, { data, loading, error }] = useMutation(
+    DELTETE_CATALOGUE,
+    { variables: { id } },
+  );
+
+  const handleDelete = () => {
+    deleteCatalogue();
+  };
+
   return (
     <div className="row">
       <div className="col-8">{title}</div>
@@ -18,7 +33,9 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
         <Link className="btn btn-primary" to={`/list/${id}`}>
           Go
         </Link>
-        <button className="btn btn-danger">Del</button>
+        <button className="btn btn-danger" onClick={handleDelete}>
+          Del
+        </button>
       </div>
     </div>
   );
@@ -29,14 +46,17 @@ const CreateCatalogue = (): React.ReactElement => {
     useMutation(CREATE_CATALOGUE);
 
   const navigate = useNavigate();
-  if (!loading && data) {
-    console.log("data", data);
-    navigate("/" + data.createCatalogue.id);
-  }
 
-  if (!loading && error) {
-    console.warn("error", error);
-  }
+  useEffect(() => {
+    if (!loading && data) {
+      console.log("data", data);
+      navigate("/list/" + data.createCatalogue.id);
+    }
+
+    if (!loading && error) {
+      console.warn("error", error);
+    }
+  }, [loading, data, error]);
 
   const handleClick = async () => {
     createCatalogue();
@@ -53,12 +73,11 @@ const CreateCatalogue = (): React.ReactElement => {
 
 const CatalogueSelect = () => {
   //@ts-ignore
-
   const { user_id } = useParams();
 
-  // Some kind of Query;
   const results = useQuery(MY_CATALOGUES);
   console.log("results.data", results.data);
+
   if (results.loading) {
     return <div>Loading...</div>;
   }
