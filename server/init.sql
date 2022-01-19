@@ -74,7 +74,13 @@ INSERT INTO catalogues (
   'id'
 ), (
   '6a3a2967-0258-4caf-8fef-f844c060b2f2'
-), (
-  '6a3a2967-0258-4caf-8fef-f844c060b2f2'
+);
+
+INSERT INTO catalogues (
+  user_id,
+  title
+) VALUES (
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
+  'title1'
 );
 
