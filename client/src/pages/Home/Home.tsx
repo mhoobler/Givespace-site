@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import CreateCatalogueButton from "../../components/CreateCatalogueButton";
+import { CreateCatalogueButton } from "../../components";
 import { client } from "../../graphql/clientConfig";
 import { MY_CATALOGUES } from "../../graphql/schemas";
 

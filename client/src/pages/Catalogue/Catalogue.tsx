@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useSubscription } from "@apollo/client";
 import { GET_CATALOGUE, LIVE_CATALOGUE } from "../../graphql/schemas";
+import { ToggleEdit } from "../../components";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
@@ -28,16 +29,10 @@ const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
   );
 };
 
-const ToggleInput: React.FC<any> = ({ boolean, children }) => {
-  if (boolean) {
-    return <>{children[0]}</>;
-  }
-  return <>{children[1]}</>;
-};
-
 const Catalogue = () => {
   const { catalogue_id } = useParams();
   const [isEditing, setIsEditing] = useState(false);
+
   const catalogueSubscription = useSubscription(LIVE_CATALOGUE, {
     variables: { id: catalogue_id },
   });
@@ -53,18 +48,37 @@ const Catalogue = () => {
   }
 
   // This needs to update cache
-
   const catalogue = catalogueSubscription.data
     ? catalogueSubscription.data.liveCatalogue
     : catalogueQuery.data.catalogues[0];
+
+  const handleTextInput = () => {};
+
+  const handleFileInput = () => {};
+
   return (
     <div>
       <CatalogueToolbar setIsEditing={setIsEditing} />
       <div className="row">
-        <ToggleInput boolean={isEditing}>
-          <input value={catalogue.title} disabled />
-          <div>{catalogue.title}</div>
-        </ToggleInput>
+        <ToggleEdit isEditing={isEditing}>
+          <div className="toggle-input">
+            <input type="file" onChange={handleFileInput} disabled />
+            <div>display faded image behind file input</div>
+          </div>
+          <div className="toggle-display">display regular image</div>
+        </ToggleEdit>
+      </div>
+      <div className="row">
+        <ToggleEdit isEditing={isEditing}>
+          <input
+            className="toggle-input"
+            type="text"
+            onChange={handleTextInput}
+            value={catalogue.title}
+            disabled
+          />
+          <div className="toggle-display">{catalogue.title}</div>
+        </ToggleEdit>
         <div>views: {catalogue.views}</div>
       </div>
     </div>

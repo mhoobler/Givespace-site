@@ -1,8 +1,8 @@
 import { useMutation } from "@apollo/client";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { cache } from "../graphql/clientConfig";
-import { CREATE_CATALOGUE, MY_CATALOGUES } from "../graphql/schemas";
+import { cache } from "../../graphql/clientConfig";
+import { CREATE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
 
 const CreateCatalogueButton = (): React.ReactElement => {
   const [createCatalogue, { loading, data }] = useMutation(CREATE_CATALOGUE);

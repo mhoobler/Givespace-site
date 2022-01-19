@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
-import CreateCatalogueButton from "../../components/CreateCatalogueButton";
+import { CreateCatalogueButton } from "../../components";
 import { DELTETE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
 
 const CatalogueRow: React.FC<CatalogueStub> = ({
@@ -15,7 +15,7 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
   //TODO: Do something with this data
   const [deleteCatalogue, { data, loading, error }] = useMutation(
     DELTETE_CATALOGUE,
-    { variables: { id } }
+    { variables: { id } },
   );
 
   const handleDelete = () => {
