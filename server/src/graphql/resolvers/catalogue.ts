@@ -42,7 +42,7 @@ const catalogueResolvers = {
       { authorization }: Context
     ): Promise<CatalogueListItem[]> => {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
-        "SELECT id, edit_id, user_id, title, description, created, updated FROM catalogues WHERE user_id = $1",
+        "SELECT id, edit_id, user_id, status, title, description, created, updated FROM catalogues WHERE user_id = $1",
         [authorization]
       );
       console.log("myCatalogues", catalogues.rows);
@@ -68,13 +68,13 @@ const catalogueResolvers = {
       _,
       { id }: { id: string },
       context: Context
-    ): Promise<Catalogue> => {
+    ): Promise<CatalogueListItem> => {
       // wheree id = $1 AND user_id = $2
-      const deletedCatalogues: QueryResult<Catalogue> = await db.query(
-        "DELETE FROM catalogues WHERE id = $1 AND user_id = $2 RETURNING *",
+      const deletedCatalogues: QueryResult<CatalogueListItem> = await db.query(
+        "DELETE FROM catalogues WHERE id = $1 AND user_id = $2 RETURNING id, edit_id, user_id, status, title, description, created, updated",
         [id, context.authorization]
       );
-      const deletedCatalogue: Catalogue = deletedCatalogues.rows[0];
+      const deletedCatalogue: CatalogueListItem = deletedCatalogues.rows[0];
       if (!deletedCatalogue) {
         throw new Error("Catalogue does not exist");
       }

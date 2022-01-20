@@ -5,6 +5,7 @@ export const CATALOGUE_LIST_ITEM_FIELDS = gql`
     id
     edit_id
     user_id
+    status
     title
     description
     created
@@ -27,5 +28,6 @@ export const ALL_CATALOGUE_FIELDS = gql`
     author
     profile_picture_url
     event_date
+    location
   }
 `;
