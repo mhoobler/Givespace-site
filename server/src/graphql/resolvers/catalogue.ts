@@ -105,6 +105,26 @@ const catalogueResolvers = {
 
       return catalogue;
     },
+    editCatalogue: async (
+      _,
+      { key, value, id }: { key: string; value: string; id: string }
+    ): Promise<Catalogue> => {
+      const result: QueryResult<Catalogue> = await db.query(
+        "UPDATE catalogues SET $1 = $2 WHERE $3 RETURNING *",
+        [key, value, id]
+      );
+
+      const catalogue: Catalogue = result.rows[0];
+      if (!catalogue) {
+        throw new Error("Catalogue does not exist");
+      }
+
+      pubsub.publish("CATALOGUE_EDITED", {
+        liveCatalogue: catalogue,
+      });
+
+      return catalogue;
+    },
 
     // updateCatalogue: async (
     //   _: null,
