@@ -45,8 +45,8 @@ export const DELTETE_CATALOGUE = gql`
 
 export const INCREMENT_CATALOGUE_VIEWS = gql`
   ${ALL_CATALOGUE_FIELDS}
-  mutation IncrementCatalogueViews($id: ID!) {
-    incrementCatalogueViews(id: $id) {
+  mutation IncrementCatalogueViews($id: ID, $edit_id: String) {
+    incrementCatalogueViews(id: $id, edit_id: $edit_id) {
       ...AllCatalogueFields
     }
   }

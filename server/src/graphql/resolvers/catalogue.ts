@@ -83,11 +83,16 @@ const catalogueResolvers = {
     },
     incrementCatalogueViews: async (
       _,
-      { id }: { id: string }
+      { id, edit_id }: { id: string; edit_id: string }
     ): Promise<Catalogue> => {
+      if (!id && !edit_id) {
+        throw new Error("No id or edit_id provided");
+      }
       const result: QueryResult<Catalogue> = await db.query(
-        "UPDATE catalogues SET views = views + 1 WHERE id = $1 RETURNING *",
-        [id]
+        `UPDATE catalogues SET views = views + 1 WHERE ${
+          id ? "id" : "edit_id"
+        } = $1 RETURNING *`,
+        [id || edit_id]
       );
       const catalogue: Catalogue = result.rows[0];
       if (!catalogue) {
@@ -125,6 +130,9 @@ const catalogueResolvers = {
       subscribe: withFilter(
         () => pubsub.asyncIterator("CATALOGUE_EDITED"),
         (payload, variables) => {
+          if (!variables.id && !variables.edit_id) {
+            throw new Error("No id or edit_id provided");
+          }
           if (variables.id) {
             return payload.liveCatalogue.id === variables.id;
           } else {

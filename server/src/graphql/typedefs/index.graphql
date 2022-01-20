@@ -7,7 +7,7 @@ type Query {
 type Mutation {
   createCatalogue: Catalogue!
   deleteCatalogue(id: ID!): Catalogue!
-  incrementCatalogueViews(id: ID!): Catalogue!
+  incrementCatalogueViews(id: ID, edit_id: String): Catalogue!
   # updateCatalogue(id: ID!, title: String!): Catalogue!
 }
 

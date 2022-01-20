@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useSubscription } from "@apollo/client";
-import { GET_CATALOGUE, LIVE_CATALOGUE } from "../../graphql/schemas";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
+import {
+  GET_CATALOGUE,
+  LIVE_CATALOGUE,
+  INCREMENT_CATALOGUE_VIEWS,
+} from "../../graphql/schemas";
 import { ToggleEdit } from "../../components";
 import { apolloHookErrorHandler } from "../../utils/functions";
 
@@ -33,11 +37,22 @@ const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
+
   const [isEditing, setIsEditing] = useState(false);
 
   const CatalogueIdVariables = is_edit_id
     ? { edit_id: corresponding_id }
     : { id: corresponding_id };
+
+  const [incrementCatalogueViews, { error }] = useMutation(
+    INCREMENT_CATALOGUE_VIEWS,
+    { variables: CatalogueIdVariables }
+  );
+  apolloHookErrorHandler("Catalogue.tsx", error);
+  useEffect(() => {
+    incrementCatalogueViews();
+  }, []);
+
   const catalogueSubscription = useSubscription(LIVE_CATALOGUE, {
     variables: CatalogueIdVariables,
   });
