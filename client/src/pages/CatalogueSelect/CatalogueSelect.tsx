@@ -1,9 +1,10 @@
 import React from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
 import { CreateCatalogueButton } from "../../components";
-import { DELTETE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
+import { MY_CATALOGUES } from "../../graphql/schemas";
 import { apolloHookErrorHandler } from "../../utils/functions";
+import DeleteCatalogueButton from "../../components/DeleteCatalogueButton/DeleteCatalogueButton";
 
 const CatalogueRow: React.FC<CatalogueStub> = ({
   id,
@@ -14,15 +15,6 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
 }) => {
   //@ts-ignore
   //TODO: Do something with this data
-  const [deleteCatalogue, { data, loading, error }] = useMutation(
-    DELTETE_CATALOGUE,
-    { variables: { id } }
-  );
-  apolloHookErrorHandler("CatalogueSelect.tsx", error);
-
-  const handleDelete = () => {
-    deleteCatalogue();
-  };
 
   return (
     <div className="row">
@@ -31,9 +23,7 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
         <Link className="btn btn-primary" to={`/list/${id}`}>
           Go
         </Link>
-        <button className="btn btn-danger" onClick={handleDelete}>
-          Del
-        </button>
+        <DeleteCatalogueButton id={id} />
       </div>
     </div>
   );
@@ -45,7 +35,6 @@ const CatalogueSelect = () => {
 
   const results = useQuery(MY_CATALOGUES);
   apolloHookErrorHandler("CatalogueSelect.tsx", results.error);
-  console.log("results.data", results.data);
 
   if (results.loading) {
     return <div>Loading...</div>;
