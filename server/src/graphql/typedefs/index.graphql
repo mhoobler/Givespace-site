@@ -1,6 +1,6 @@
 type Query {
   getJwt: String!
-  catalogues(id: ID): [Catalogue!]
+  catalogues(id: ID, edit_id: String): [Catalogue!]
   myCatalogues: [Catalogue!]
 }
 
@@ -12,5 +12,5 @@ type Mutation {
 }
 
 type Subscription {
-  liveCatalogue(id: ID!): Catalogue!
+  liveCatalogue(id: ID, edit_id: String): Catalogue!
 }

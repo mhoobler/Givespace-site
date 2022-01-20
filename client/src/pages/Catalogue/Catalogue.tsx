@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useSubscription } from "@apollo/client";
 import { GET_CATALOGUE, LIVE_CATALOGUE } from "../../graphql/schemas";
 import { ToggleEdit } from "../../components";
+import { apolloHookErrorHandler } from "../../utils/functions";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
@@ -29,19 +30,23 @@ const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
   );
 };
 
-const Catalogue = () => {
-  const { catalogue_id } = useParams();
+const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
+  const current_user_id = localStorage.getItem("authorization");
+  const { corresponding_id } = useParams();
   const [isEditing, setIsEditing] = useState(false);
 
+  const CatalogueIdVariables = is_edit_id
+    ? { edit_id: corresponding_id }
+    : { id: corresponding_id };
   const catalogueSubscription = useSubscription(LIVE_CATALOGUE, {
-    variables: { id: catalogue_id },
+    variables: CatalogueIdVariables,
   });
+  apolloHookErrorHandler("Catalogue.tsx", catalogueSubscription.error);
   const catalogueQuery = useQuery(GET_CATALOGUE, {
-    variables: { id: catalogue_id },
+    variables: CatalogueIdVariables,
   });
+  apolloHookErrorHandler("Catalogue.tsx", catalogueQuery.error);
   console.log("catalogueQuery.data", catalogueQuery.data);
-  console.log("catalogue_id", catalogue_id);
-  console.log("catalogueSubscription.data", catalogueSubscription.data);
 
   if (!catalogueQuery.data && !catalogueSubscription.data) {
     return <div>Loading...</div>;
@@ -51,6 +56,15 @@ const Catalogue = () => {
   const catalogue = catalogueSubscription.data
     ? catalogueSubscription.data.liveCatalogue
     : catalogueQuery.data.catalogues[0];
+  console.log("catalogue", catalogue);
+
+  if (!catalogue) {
+    return <h1>Catalogue not found</h1>;
+  }
+
+  let editable = is_edit_id || current_user_id === catalogue.user_id;
+  console.log("editable", editable);
+  return <h1>Is editable: {`${Boolean(editable)}`}</h1>;
 
   const handleTextInput = () => {};
 

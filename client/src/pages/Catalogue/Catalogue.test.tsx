@@ -30,7 +30,7 @@ const mocks: Mock[] = [
         updated: new Date(),
         views: 0,
         header_image_url: "awsdf",
-        head_color: "#FF0000",
+        header_color: "#FF0000",
         edit_id: "asdf",
         author: "ahshaf",
         profile_picture_url: "eowert",
@@ -48,7 +48,7 @@ test("Catalogue mounts with Params", () => {
           <Route path="/list/:id" element={<Catalogue />} />
         </Routes>
       </MemoryRouter>
-    </MockedProvider>,
+    </MockedProvider>
   );
 
   setTimeout(() => {
@@ -65,7 +65,7 @@ test("useQuery fires on mount and renders result", () => {
           <Route path="/list/:id" element={<Catalogue />} />
         </Routes>
       </MemoryRouter>
-    </MockedProvider>,
+    </MockedProvider>
   );
 
   setTimeout(() => {
@@ -82,7 +82,7 @@ test("Go Back is clickable", () => {
           <Route path="/list/:id" element={<Catalogue />} />
         </Routes>
       </MemoryRouter>
-    </MockedProvider>,
+    </MockedProvider>
   );
 
   const button = screen.getByText("Go Back");

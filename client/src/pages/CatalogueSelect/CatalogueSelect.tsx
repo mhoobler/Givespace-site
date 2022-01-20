@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
 import { CreateCatalogueButton } from "../../components";
 import { DELTETE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
+import { apolloHookErrorHandler } from "../../utils/functions";
 
 const CatalogueRow: React.FC<CatalogueStub> = ({
   id,
@@ -15,8 +16,9 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
   //TODO: Do something with this data
   const [deleteCatalogue, { data, loading, error }] = useMutation(
     DELTETE_CATALOGUE,
-    { variables: { id } },
+    { variables: { id } }
   );
+  apolloHookErrorHandler("CatalogueSelect.tsx", error);
 
   const handleDelete = () => {
     deleteCatalogue();
@@ -42,6 +44,7 @@ const CatalogueSelect = () => {
   const { user_id } = useParams();
 
   const results = useQuery(MY_CATALOGUES);
+  apolloHookErrorHandler("CatalogueSelect.tsx", results.error);
   console.log("results.data", results.data);
 
   if (results.loading) {

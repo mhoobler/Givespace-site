@@ -3,9 +3,12 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cache } from "../../graphql/clientConfig";
 import { CREATE_CATALOGUE, MY_CATALOGUES } from "../../graphql/schemas";
+import { apolloHookErrorHandler } from "../../utils/functions";
 
 const CreateCatalogueButton = (): React.ReactElement => {
-  const [createCatalogue, { loading, data }] = useMutation(CREATE_CATALOGUE);
+  const [createCatalogue, { loading, data, error }] =
+    useMutation(CREATE_CATALOGUE);
+  apolloHookErrorHandler("CreateCatalogueButton.tsx", error);
 
   const navigate = useNavigate();
   useEffect(() => {

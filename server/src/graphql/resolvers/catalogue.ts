@@ -12,15 +12,23 @@ import { QueryResult } from "pg";
 
 const catalogueResolvers = {
   Query: {
-    catalogues: async (_: null, args: { id: string }): Promise<Catalogue[]> => {
+    catalogues: async (
+      _: null,
+      args: { id: string; edit_id: string }
+    ): Promise<Catalogue[]> => {
       let catalogues: QueryResult<Catalogue>;
 
-      if (!args.id) {
-        catalogues = await db.query("SELECT * FROM catalogues");
-      } else {
+      if (args.id) {
         catalogues = await db.query("SELECT * FROM catalogues WHERE id = $1", [
           args.id,
         ]);
+      } else if (args.edit_id) {
+        catalogues = await db.query(
+          "SELECT * FROM catalogues WHERE edit_id = $1",
+          [args.edit_id]
+        );
+      } else {
+        catalogues = await db.query("SELECT * FROM catalogues");
       }
 
       console.log("catalogues", catalogues.rows);
@@ -34,7 +42,7 @@ const catalogueResolvers = {
       { authorization }: Context
     ): Promise<CatalogueListItem[]> => {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
-        "SELECT id, user_id, title, description, created, updated FROM catalogues WHERE user_id = $1",
+        "SELECT id, edit_id, user_id, title, description, created, updated FROM catalogues WHERE user_id = $1",
         [authorization]
       );
       console.log("myCatalogues", catalogues.rows);
@@ -117,7 +125,11 @@ const catalogueResolvers = {
       subscribe: withFilter(
         () => pubsub.asyncIterator("CATALOGUE_EDITED"),
         (payload, variables) => {
-          return payload.liveCatalogue.id === variables.id;
+          if (variables.id) {
+            return payload.liveCatalogue.id === variables.id;
+          } else {
+            return payload.liveCatalogue.edit_id === variables.edit_id;
+          }
         }
       ),
     },

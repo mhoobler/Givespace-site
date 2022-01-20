@@ -5,6 +5,7 @@ type Context = {
 
 interface CatalogueStub {
   id: string;
+  edit_id: string;
   user_id: string;
   title: string;
   description: string | null;

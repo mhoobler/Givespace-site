@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const CATALOGUE_LIST_ITEM_FIELDS = gql`
   fragment CatalogueListItemFields on Catalogue {
     id
+    edit_id
     user_id
     title
     description

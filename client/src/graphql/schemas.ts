@@ -9,8 +9,8 @@ export const GET_JWT = gql`
 
 export const GET_CATALOGUE = gql`
   ${ALL_CATALOGUE_FIELDS}
-  query Catalogues($id: ID) {
-    catalogues(id: $id) {
+  query Catalogues($id: ID, $edit_id: String) {
+    catalogues(id: $id, edit_id: $edit_id) {
       ...AllCatalogueFields
     }
   }
@@ -54,8 +54,8 @@ export const INCREMENT_CATALOGUE_VIEWS = gql`
 
 export const LIVE_CATALOGUE = gql`
   ${ALL_CATALOGUE_FIELDS}
-  subscription LiveCatalogue($id: ID!) {
-    liveCatalogue(id: $id) {
+  subscription LiveCatalogue($id: ID, $edit_id: String) {
+    liveCatalogue(id: $id, edit_id: $edit_id) {
       ...AllCatalogueFields
     }
   }
