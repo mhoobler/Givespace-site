@@ -8,6 +8,7 @@ type Mutation {
   createCatalogue: Catalogue!
   deleteCatalogue(id: ID!): Catalogue!
   incrementCatalogueViews(id: ID!): Catalogue!
+  editCatalogue(id: ID!, key: String!, value: String!): Catalogue! 
   # updateCatalogue(id: ID!, title: String!): Catalogue!
 }
 

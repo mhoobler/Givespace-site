@@ -14,7 +14,7 @@ const catalogueResolvers = {
   Query: {
     catalogues: async (
       _: null,
-      args: { id: string; edit_id: string }
+      args: { id: string; edit_id: string },
     ): Promise<Catalogue[]> => {
       let catalogues: QueryResult<Catalogue>;
 
@@ -25,7 +25,7 @@ const catalogueResolvers = {
       } else if (args.edit_id) {
         catalogues = await db.query(
           "SELECT * FROM catalogues WHERE edit_id = $1",
-          [args.edit_id]
+          [args.edit_id],
         );
       } else {
         catalogues = await db.query("SELECT * FROM catalogues");
@@ -39,11 +39,11 @@ const catalogueResolvers = {
     myCatalogues: async (
       _: null,
       __: null,
-      { authorization }: Context
+      { authorization }: Context,
     ): Promise<CatalogueListItem[]> => {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
         "SELECT id, edit_id, user_id, title, description, created, updated FROM catalogues WHERE user_id = $1",
-        [authorization]
+        [authorization],
       );
       console.log("myCatalogues", catalogues.rows);
       return catalogues.rows;
@@ -54,11 +54,11 @@ const catalogueResolvers = {
     createCatalogue: async (
       _: null,
       __: null,
-      context: Context
+      context: Context,
     ): Promise<Catalogue> => {
       const newCatalogues: QueryResult<Catalogue> = await db.query(
         "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING *",
-        [context.authorization]
+        [context.authorization],
       );
       const newCatalogue: Catalogue = newCatalogues.rows[0];
 
@@ -67,12 +67,12 @@ const catalogueResolvers = {
     deleteCatalogue: async (
       _,
       { id }: { id: string },
-      context: Context
+      context: Context,
     ): Promise<Catalogue> => {
       // wheree id = $1 AND user_id = $2
       const deletedCatalogues: QueryResult<Catalogue> = await db.query(
         "DELETE FROM catalogues WHERE id = $1 AND user_id = $2 RETURNING *",
-        [id, context.authorization]
+        [id, context.authorization],
       );
       const deletedCatalogue: Catalogue = deletedCatalogues.rows[0];
       if (!deletedCatalogue) {
@@ -83,12 +83,33 @@ const catalogueResolvers = {
     },
     incrementCatalogueViews: async (
       _,
-      { id }: { id: string }
+      { id }: { id: string },
     ): Promise<Catalogue> => {
       const result: QueryResult<Catalogue> = await db.query(
         "UPDATE catalogues SET views = views + 1 WHERE id = $1 RETURNING *",
-        [id]
+        [id],
       );
+      const catalogue: Catalogue = result.rows[0];
+      if (!catalogue) {
+        throw new Error("Catalogue does not exist");
+      }
+
+      pubsub.publish("CATALOGUE_EDITED", {
+        liveCatalogue: catalogue,
+      });
+
+      return catalogue;
+    },
+
+    editCatalogue: async (
+      _,
+      { key, value, id }: { key: string; value: string; id: string },
+    ): Promise<Catalogue> => {
+      const result: QueryResult<Catalogue> = await db.query(
+        "UPDATE catalogues SET $1 = $2 WHERE $3 RETURNING *",
+        [key, value, id],
+      );
+
       const catalogue: Catalogue = result.rows[0];
       if (!catalogue) {
         throw new Error("Catalogue does not exist");
@@ -130,7 +151,7 @@ const catalogueResolvers = {
           } else {
             return payload.liveCatalogue.edit_id === variables.edit_id;
           }
-        }
+        },
       ),
     },
   },
