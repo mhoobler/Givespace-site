@@ -7,7 +7,10 @@ import {
   INCREMENT_CATALOGUE_VIEWS,
 } from "../../graphql/schemas";
 import { ToggleEdit } from "../../components";
-import { apolloHookErrorHandler } from "../../utils/functions";
+import {
+  apolloHookErrorHandler,
+  updateCatalogueCache,
+} from "../../utils/functions";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
@@ -79,16 +82,18 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   let editable = is_edit_id || current_user_id === catalogue.user_id;
   console.log("editable", editable);
-  return <h1>Is editable: {`${Boolean(editable)}`}</h1>;
 
-  const handleTextInput = () => {};
+  const handleTextInput = (text: string) => {
+    console.log("handleTextInput", text);
+    updateCatalogueCache(`Catalogue:${catalogue.id}`, "title", text);
+  };
 
   const handleFileInput = () => {};
 
   return (
     <div>
-      <CatalogueToolbar setIsEditing={setIsEditing} />
-      <div className="row">
+      {editable && <CatalogueToolbar setIsEditing={setIsEditing} />}
+      {/* <div className="row">
         <ToggleEdit isEditing={isEditing}>
           <div className="toggle-input">
             <input type="file" onChange={handleFileInput} disabled />
@@ -96,15 +101,14 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
           </div>
           <div className="toggle-display">display regular image</div>
         </ToggleEdit>
-      </div>
+      </div> */}
       <div className="row">
         <ToggleEdit isEditing={isEditing}>
           <input
             className="toggle-input"
             type="text"
-            onChange={handleTextInput}
+            onChange={(e) => handleTextInput(e.target.value)}
             value={catalogue.title}
-            disabled
           />
           <div className="toggle-display">{catalogue.title}</div>
         </ToggleEdit>
