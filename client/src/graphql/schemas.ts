@@ -52,6 +52,15 @@ export const INCREMENT_CATALOGUE_VIEWS = gql`
   }
 `;
 
+export const UPDATE_CATALOGUE = gql`
+  ${ALL_CATALOGUE_FIELDS}
+  mutation EditCatalogue($key: String!, $value: String!, $id: ID!) {
+    editCatalogue(key: $key, value: $value, id: $id) {
+      ...AllCatalogueFields
+    }
+  }
+`;
+
 export const LIVE_CATALOGUE = gql`
   ${ALL_CATALOGUE_FIELDS}
   subscription LiveCatalogue($id: ID, $edit_id: String) {

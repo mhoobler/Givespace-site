@@ -109,6 +109,7 @@ const catalogueResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Catalogue> => {
+      console.log(`Catalogue key: "${key}" changed to "${value}"`);
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
         [value, id]

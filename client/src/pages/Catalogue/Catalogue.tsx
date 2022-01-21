@@ -5,12 +5,14 @@ import {
   GET_CATALOGUE,
   LIVE_CATALOGUE,
   INCREMENT_CATALOGUE_VIEWS,
+  UPDATE_CATALOGUE,
 } from "../../graphql/schemas";
 import { ToggleEdit } from "../../components";
 import {
   apolloHookErrorHandler,
   updateCatalogueCache,
 } from "../../utils/functions";
+import TextInput from "../../components/fields/TextInput/TextInput";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
@@ -52,6 +54,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     { variables: CatalogueIdVariables }
   );
   apolloHookErrorHandler("Catalogue.tsx", error);
+  const [
+    updateCatalogue,
+    { loading: updateCatalogueLoading, error: updateCatalogueError },
+  ] = useMutation(UPDATE_CATALOGUE);
+  apolloHookErrorHandler("Catalogue.tsx", updateCatalogueError);
   useEffect(() => {
     incrementCatalogueViews();
   }, []);
@@ -86,6 +93,13 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   const handleTextInput = (text: string) => {
     console.log("handleTextInput", text);
     updateCatalogueCache(`Catalogue:${catalogue.id}`, "title", text);
+    updateCatalogue({
+      variables: {
+        id: catalogue.id,
+        key: "title",
+        value: text,
+      },
+    });
   };
 
   const handleFileInput = () => {};
@@ -103,15 +117,17 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         </ToggleEdit>
       </div> */}
       <div className="row">
-        <ToggleEdit isEditing={isEditing}>
-          <input
-            className="toggle-input"
-            type="text"
-            onChange={(e) => handleTextInput(e.target.value)}
-            value={catalogue.title}
-          />
-          <div className="toggle-display">{catalogue.title}</div>
-        </ToggleEdit>
+        <TextInput
+          isEditing={isEditing}
+          handleSubmit={handleTextInput}
+          value={catalogue.title}
+        />
+        <TextInput
+          isEditing={isEditing}
+          handleSubmit={handleTextInput}
+          value={catalogue.title}
+          className="fs-2"
+        />
         <div>views: {catalogue.views}</div>
       </div>
     </div>
