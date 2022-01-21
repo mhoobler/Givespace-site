@@ -110,8 +110,8 @@ const catalogueResolvers = {
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Catalogue> => {
       const result: QueryResult<Catalogue> = await db.query(
-        "UPDATE catalogues SET $1 = $2 WHERE $3 RETURNING *",
-        [key, value, id]
+        `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
+        [value, id]
       );
 
       const catalogue: Catalogue = result.rows[0];
