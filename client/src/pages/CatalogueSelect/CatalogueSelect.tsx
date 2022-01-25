@@ -1,10 +1,9 @@
 import React from "react";
 import { useQuery } from "@apollo/client";
 import { Link, useParams } from "react-router-dom";
-import { CreateCatalogueButton } from "../../components";
+import { CreateCatalogueButton, DeleteCatalogueButton } from "../../components";
 import { MY_CATALOGUES } from "../../graphql/schemas";
 import { apolloHookErrorHandler } from "../../utils/functions";
-import DeleteCatalogueButton from "../../components/DeleteCatalogueButton/DeleteCatalogueButton";
 
 const CatalogueRow: React.FC<CatalogueStub> = ({
   id,

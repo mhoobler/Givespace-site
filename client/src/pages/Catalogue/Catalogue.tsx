@@ -7,12 +7,12 @@ import {
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
 } from "../../graphql/schemas";
-import { ToggleEdit } from "../../components";
+import { TextInput } from "../../components";
 import {
   apolloHookErrorHandler,
   updateCatalogueCache,
 } from "../../utils/functions";
-import TextInput from "../../components/fields/TextInput/TextInput";
+import FileInput from "../../components/fields/FileInput/FileInput";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
@@ -51,7 +51,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const [incrementCatalogueViews, { error }] = useMutation(
     INCREMENT_CATALOGUE_VIEWS,
-    { variables: CatalogueIdVariables }
+    { variables: CatalogueIdVariables },
   );
   apolloHookErrorHandler("Catalogue.tsx", error);
   const [
@@ -127,6 +127,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
           handleSubmit={handleTextInput}
           value={catalogue.title}
           className="fs-2"
+        />
+        <FileInput
+          isEditing={isEditing}
+          handleSubmit={handleFileInput}
+          value={"test"}
         />
         <div>views: {catalogue.views}</div>
       </div>
