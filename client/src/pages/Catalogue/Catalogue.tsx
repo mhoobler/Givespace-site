@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import {
-  GET_CATALOGUE,
-  LIVE_CATALOGUE,
-  INCREMENT_CATALOGUE_VIEWS,
-  UPDATE_CATALOGUE,
-} from "../../graphql/schemas";
-import { TextInput } from "../../components";
-import {
-  apolloHookErrorHandler,
-  updateCatalogueCache,
-} from "../../utils/functions";
-import FileInput from "../../components/fields/FileInput/FileInput";
+import { TextInput, FileInput } from "../../components";
+import { updateCatalogueCache } from "../../utils/functions";
+import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
@@ -40,38 +30,31 @@ const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
 };
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
+  // Get Id from params and localStorage, especially for CatalogueApolloHooks
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
-
-  const [isEditing, setIsEditing] = useState(false);
-
   const CatalogueIdVariables = is_edit_id
     ? { edit_id: corresponding_id }
     : { id: corresponding_id };
 
-  const [incrementCatalogueViews, { error }] = useMutation(
-    INCREMENT_CATALOGUE_VIEWS,
-    { variables: CatalogueIdVariables },
-  );
-  apolloHookErrorHandler("Catalogue.tsx", error);
-  const [
+  // Inputs need to toggle from Editing to Display state
+  const [isEditing, setIsEditing] = useState(false);
+
+  // All ApolloHooks are moved to custom hook for organization
+  const {
+    incrementCatalogueViews,
     updateCatalogue,
-    { loading: updateCatalogueLoading, error: updateCatalogueError },
-  ] = useMutation(UPDATE_CATALOGUE);
-  apolloHookErrorHandler("Catalogue.tsx", updateCatalogueError);
+    catalogueQuery,
+    catalogueSubscription,
+  } = useCatalogueApolloHooks({
+    CatalogueIdVariables,
+  });
+
+  // TODO: Need to make sure this only happens once per visit
+  // (will currently trigger on each rerender)
   useEffect(() => {
     incrementCatalogueViews();
   }, []);
-
-  const catalogueSubscription = useSubscription(LIVE_CATALOGUE, {
-    variables: CatalogueIdVariables,
-  });
-  apolloHookErrorHandler("Catalogue.tsx", catalogueSubscription.error);
-  const catalogueQuery = useQuery(GET_CATALOGUE, {
-    variables: CatalogueIdVariables,
-  });
-  apolloHookErrorHandler("Catalogue.tsx", catalogueQuery.error);
-  console.log("catalogueQuery.data", catalogueQuery.data);
 
   if (!catalogueQuery.data && !catalogueSubscription.data) {
     return <div>Loading...</div>;
@@ -81,17 +64,14 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   const catalogue = catalogueSubscription.data
     ? catalogueSubscription.data.liveCatalogue
     : catalogueQuery.data.catalogues[0];
-  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
   }
 
   let editable = is_edit_id || current_user_id === catalogue.user_id;
-  console.log("editable", editable);
 
   const handleTextInput = (text: string) => {
-    console.log("handleTextInput", text);
     updateCatalogueCache(`Catalogue:${catalogue.id}`, "title", text);
     updateCatalogue({
       variables: {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { InputFiles } from "typescript";
 import ToggleEdit from "../../ToggleEdit/ToggleEdit";
 
 type Props = {
@@ -14,16 +15,24 @@ const FileInput: React.FC<Props> = ({
   value,
   className,
 }) => {
-  const [file, setFile] = useState(undefined);
+  const [file, setFile] = useState<File | undefined>(undefined);
+
+  const handleFileInput = (evt: React.SyntheticEvent<HTMLInputElement>) => {
+    const { files } = evt.currentTarget;
+    if (files && files[0]) {
+      setFile(files[0]);
+    } else {
+      console.error("No file selected");
+    }
+  };
 
   return (
     <ToggleEdit isEditing={isEditing}>
       <input
         className={`toggle-input standard-text-input ${className}`}
         type="file"
-        onChange={(e) => console.log(e)}
+        onChange={handleFileInput}
         accept="*.png,*.jpeg,*.jpg"
-        value={file}
       />
       <div className={`toggle-display`}>{value}</div>
     </ToggleEdit>
