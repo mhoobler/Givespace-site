@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { InputFiles } from "typescript";
 import ToggleEdit from "../../ToggleEdit/ToggleEdit";
 
 type Props = {
