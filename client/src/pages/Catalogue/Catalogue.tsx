@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TextInput, FileInput } from "../../components";
+import DropdownInput from "../../components/fields/DropdownInput/DropdownInput";
 import { updateCatalogueCache } from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
 };
+
+const CatalogueStatusValues = [""];
 
 const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
   const navigate = useNavigate();
@@ -112,6 +115,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
           isEditing={isEditing}
           handleSubmit={handleFileInput}
           value={"test"}
+        />
+        <DropdownInput
+          isEditing={isEditing}
+          handleSubmit={() => {}}
+          value="public"
         />
         <div>views: {catalogue.views}</div>
       </div>
