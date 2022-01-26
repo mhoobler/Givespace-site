@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { TextInput, FileInput } from "../../components";
-import DropdownInput from "../../components/fields/DropdownInput/DropdownInput";
+import { TextInput, FileInput, Dropdown } from "../../components";
 import { updateCatalogueCache } from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
 };
-
-const CatalogueStatusValues = [""];
 
 const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
   const navigate = useNavigate();
@@ -116,11 +113,16 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
           handleSubmit={handleFileInput}
           value={"test"}
         />
-        <DropdownInput
-          isEditing={isEditing}
-          handleSubmit={() => {}}
-          value="public"
-        />
+        <Dropdown value="test">
+          <Dropdown.Toggle disable={false} />
+          <Dropdown.Menu>
+            <Dropdown.Item value={"test1"}>Test 1</Dropdown.Item>
+            <Dropdown.Item value={"test2"}>Test 2</Dropdown.Item>
+            <Dropdown.Item value={"test3"}>Test 3</Dropdown.Item>
+            <Dropdown.Item value={"test4"}>Test 4</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
         <div>views: {catalogue.views}</div>
       </div>
     </div>
