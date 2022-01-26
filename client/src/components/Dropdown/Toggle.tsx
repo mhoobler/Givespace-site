@@ -14,11 +14,18 @@ const Toggle: React.FC<ToggleProps> = ({ className, disable, children }) => {
   };
 
   if (disable) {
-    return <div>{activeValue}</div>;
+    return (
+      <div className={`${!className && ""} ${disable && "disable"}`}>
+        {activeValue}
+      </div>
+    );
   }
 
   return (
-    <div className={`dropdown-toggle ${className}`} onClick={handleToggle}>
+    <div
+      className={`dropdown-toggle ${!className && ""}`}
+      onClick={handleToggle}
+    >
       {activeValue}
     </div>
   );

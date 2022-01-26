@@ -114,7 +114,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
           value={"test"}
         />
         <Dropdown value="test">
-          <Dropdown.Toggle disable={false} />
+          <Dropdown.Toggle disable={!isEditing} />
           <Dropdown.Menu>
             <Dropdown.Item value={"test1"}>Test 1</Dropdown.Item>
             <Dropdown.Item value={"test2"}>Test 2</Dropdown.Item>

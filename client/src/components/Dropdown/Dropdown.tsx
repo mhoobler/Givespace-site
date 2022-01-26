@@ -31,7 +31,10 @@ const Dropdown: React.FC<DropdownProps> = ({ className, value, children }) => {
 
   return (
     <DropDownProvider value={{ activeValue, setActiveValue, show, setShow }}>
-      <div className={`drop ${show && "show"}`}>{children}</div>;
+      <div className={`drop ${show && "show"} ${!className && ""}`}>
+        {children}
+      </div>
+      ;
     </DropDownProvider>
   );
 };
