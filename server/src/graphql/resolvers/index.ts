@@ -1,5 +1,6 @@
 import catalogueResolvers from "./catalogue";
 import utilResolvers from "./util";
+import { GraphQLUpload } from "graphql-upload";
 
 const resolversAggregate = [catalogueResolvers, utilResolvers];
 let resolvers = {
@@ -10,6 +11,8 @@ let resolvers = {
 
 resolversAggregate.forEach((resolver) => {
   resolvers = {
+    // @ts-ignore
+    Upload: GraphQLUpload,
     Query: {
       ...resolvers.Query,
       ...resolver.Query,

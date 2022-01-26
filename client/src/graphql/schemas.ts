@@ -69,3 +69,12 @@ export const LIVE_CATALOGUE = gql`
     }
   }
 `;
+
+export const UPDATE_CATALOGUE_FILES = gql`
+  ${ALL_CATALOGUE_FIELDS}
+  mutation EditCatalogueFile($key: String!, $file: Upload!, $id: ID!) {
+    editCatalogueFile(key: $key, id: $id, file: $file) {
+      ...AllCatalogueFields
+    }
+  }
+`;

@@ -9,6 +9,8 @@ type Mutation {
   deleteCatalogue(id: ID!): Catalogue!
   incrementCatalogueViews(id: ID, edit_id: String): Catalogue!
   editCatalogue(id: ID!, key: String!, value: String!): Catalogue!
+  editCatalogueFile(id: ID!, key: String!, file: Upload!): Catalogue!
+  singleUpload(file: Upload!): File!
   # updateCatalogue(id: ID!, title: String!): Catalogue!
 }
 

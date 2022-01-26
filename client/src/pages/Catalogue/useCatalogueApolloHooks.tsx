@@ -4,6 +4,7 @@ import {
   LIVE_CATALOGUE,
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
+  UPDATE_CATALOGUE_FILES,
 } from "../../graphql/schemas";
 import { apolloHookErrorHandler } from "../../utils/functions";
 
@@ -20,7 +21,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
 
   const [incrementCatalogueViews, { error }] = useMutation(
     INCREMENT_CATALOGUE_VIEWS,
-    { variables: CatalogueIdVariables },
+    { variables: CatalogueIdVariables }
   );
   apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
 
@@ -29,7 +30,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   });
   apolloHookErrorHandler(
     "useCatalogueApolloHooks.tsx",
-    catalogueSubscription.error,
+    catalogueSubscription.error
   );
 
   const catalogueQuery = useQuery(GET_CATALOGUE, {
@@ -37,13 +38,18 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   });
   apolloHookErrorHandler("useCatalogueApolloHooks.tsx", catalogueQuery.error);
 
-  console.log("catalogueQuery.data", catalogueQuery.data);
+  const [
+    updateCatalogueFiles,
+    { loading: _singleUploadLoading, error: singleUplaodError },
+  ] = useMutation(UPDATE_CATALOGUE_FILES);
+  apolloHookErrorHandler("updateCatalogueFiles", singleUplaodError);
 
   return {
     incrementCatalogueViews,
     updateCatalogue,
     catalogueQuery,
     catalogueSubscription,
+    updateCatalogueFiles,
   };
 };
 

@@ -1,9 +1,10 @@
 import { withFilter } from "graphql-subscriptions";
 import { pubsub } from "../index";
-import { verifyToken } from "../../utils/functions";
+import { handleFile, verifyToken } from "../../utils/functions";
 import { CatalogueListItem, Catalogue, Context } from "../../types";
 import db from "../../../db";
 import { QueryResult } from "pg";
+import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
 
 // type EditCataloguesFields = {
 //   id: string;
@@ -31,8 +32,6 @@ const catalogueResolvers = {
         catalogues = await db.query("SELECT * FROM catalogues");
       }
 
-      console.log("catalogues", catalogues.rows);
-
       return catalogues.rows;
     },
 
@@ -45,7 +44,6 @@ const catalogueResolvers = {
         "SELECT id, edit_id, user_id, status, title, description, created, updated FROM catalogues WHERE user_id = $1",
         [authorization]
       );
-      console.log("myCatalogues", catalogues.rows);
       return catalogues.rows;
     },
   },
@@ -113,6 +111,45 @@ const catalogueResolvers = {
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
         [value, id]
+      );
+
+      const catalogue: Catalogue = result.rows[0];
+      if (!catalogue) {
+        throw new Error("Catalogue does not exist");
+      }
+
+      pubsub.publish("CATALOGUE_EDITED", {
+        liveCatalogue: catalogue,
+      });
+
+      return catalogue;
+    },
+    editCatalogueFile: async (
+      _,
+      { id, key, file }: { id: string; key: string; file: any }
+    ) => {
+      let preResult: QueryResult<Catalogue> = await db.query(
+        "SELECT * FROM catalogues WHERE id = $1",
+        [id]
+      );
+      console.log("preResult.rows[0]", preResult.rows[0]);
+      // need to not run this if we are going to add placeholders
+      if (preResult && preResult.rows && preResult.rows[0][key]) {
+        const splitUrl = preResult.rows[0][key].split("/");
+        const fileName = splitUrl[splitUrl.length - 1];
+        try {
+          await deleteFromGC(fileName);
+          console.log("deleted from gc");
+        } catch (e) {
+          console.log("File to delete does not exist: ", e);
+        }
+      }
+
+      const url = await handleFile(file, uploadToGC);
+
+      const result: QueryResult<Catalogue> = await db.query(
+        `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
+        [url, id]
       );
 
       const catalogue: Catalogue = result.rows[0];

@@ -46,6 +46,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     updateCatalogue,
     catalogueQuery,
     catalogueSubscription,
+    updateCatalogueFiles,
   } = useCatalogueApolloHooks({
     CatalogueIdVariables,
   });
@@ -82,7 +83,18 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
-  const handleFileInput = () => {};
+  const handleFileInput = (file: File | undefined) => {
+    if (file) {
+      console.log("fileOnSubmit", file);
+      updateCatalogueFiles({
+        variables: {
+          id: catalogue.id,
+          key: "header_image_url",
+          file,
+        },
+      });
+    }
+  };
 
   return (
     <div>
@@ -111,7 +123,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         <FileInput
           isEditing={isEditing}
           handleSubmit={handleFileInput}
-          value={"test"}
+          value={catalogue.header_image_url}
         />
         <div>views: {catalogue.views}</div>
       </div>

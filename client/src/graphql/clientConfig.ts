@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache, HttpLink, split } from "@apollo/client";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { v4 as uuidv4 } from "uuid";
+import { createUploadLink } from "apollo-upload-client";
 
 const authorization = localStorage.getItem("authorization");
 if (!authorization) {
@@ -10,7 +11,7 @@ if (!authorization) {
   localStorage.setItem("authorization", newUuid);
 }
 
-export const httpLink = new HttpLink({
+export const httpLink = createUploadLink({
   uri: "http://localhost:4000/graphql",
   headers: {
     authorization: localStorage.getItem("authorization")
@@ -30,7 +31,6 @@ const wsLink = new WebSocketLink({
     },
   },
 });
-
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
@@ -40,6 +40,7 @@ const splitLink = split(
     );
   },
   wsLink,
+  // @ts-ignore
   httpLink
 );
 

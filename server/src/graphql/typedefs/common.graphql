@@ -1,5 +1,13 @@
 scalar Date
+scalar Upload
+
 interface Timestamps {
   createdAt: Date!
   updatedAt: Date!
+}
+
+type File {
+  filename: String!
+  mimetype: String!
+  encoding: String!
 }
