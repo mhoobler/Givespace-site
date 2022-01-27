@@ -4,12 +4,12 @@ import { app, httpServer } from "./app";
 import apolloServer from "./graphql";
 import { Request, Response } from "express";
 import db from "../db";
+import { graphqlUploadExpress } from "graphql-upload";
 
 const startServers = async () => {
   app.get("/test", async (req: Request, res: Response) => {
     try {
       const { rows } = await db.query("SELECT * FROM catalogues");
-      console.log(rows);
       res.send({ message: rows });
     } catch (err) {
       console.log(err);
@@ -17,6 +17,7 @@ const startServers = async () => {
   });
 
   await apolloServer.start();
+  app.use(graphqlUploadExpress());
   apolloServer.applyMiddleware({ app });
 
   httpServer.listen(process.env.PORT, () =>

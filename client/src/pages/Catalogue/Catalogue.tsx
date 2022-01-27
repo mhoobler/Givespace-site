@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useSubscription } from "@apollo/client";
-import { GET_CATALOGUE, LIVE_CATALOGUE } from "../../graphql/schemas";
-import { ToggleEdit } from "../../components";
+import { TextInput, FileInput, Dropdown } from "../../components";
+import { updateCatalogueCache } from "../../utils/functions";
+import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 type ToolbarProps = {
   setIsEditing: (f: React.SetStateAction<boolean>) => void;
@@ -29,19 +29,33 @@ const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
   );
 };
 
-const Catalogue = () => {
-  const { catalogue_id } = useParams();
+const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
+  // Get Id from params and localStorage, especially for CatalogueApolloHooks
+  const current_user_id = localStorage.getItem("authorization");
+  const { corresponding_id } = useParams();
+  const CatalogueIdVariables = is_edit_id
+    ? { edit_id: corresponding_id }
+    : { id: corresponding_id };
+
+  // Inputs need to toggle from Editing to Display state
   const [isEditing, setIsEditing] = useState(false);
 
-  const catalogueSubscription = useSubscription(LIVE_CATALOGUE, {
-    variables: { id: catalogue_id },
+  // All ApolloHooks are moved to custom hook for organization
+  const {
+    incrementCatalogueViews,
+    updateCatalogue,
+    catalogueQuery,
+    catalogueSubscription,
+    updateCatalogueFiles,
+  } = useCatalogueApolloHooks({
+    CatalogueIdVariables,
   });
-  const catalogueQuery = useQuery(GET_CATALOGUE, {
-    variables: { id: catalogue_id },
-  });
-  console.log("catalogueQuery.data", catalogueQuery.data);
-  console.log("catalogue_id", catalogue_id);
-  console.log("catalogueSubscription.data", catalogueSubscription.data);
+
+  // TODO: Need to make sure this only happens once per visit
+  // (will currently trigger on each rerender)
+  useEffect(() => {
+    incrementCatalogueViews();
+  }, []);
 
   if (!catalogueQuery.data && !catalogueSubscription.data) {
     return <div>Loading...</div>;
@@ -52,14 +66,40 @@ const Catalogue = () => {
     ? catalogueSubscription.data.liveCatalogue
     : catalogueQuery.data.catalogues[0];
 
-  const handleTextInput = () => {};
+  if (!catalogue) {
+    return <h1>Catalogue not found</h1>;
+  }
 
-  const handleFileInput = () => {};
+  let editable = is_edit_id || current_user_id === catalogue.user_id;
+
+  const handleTextInput = (text: string) => {
+    updateCatalogueCache(`Catalogue:${catalogue.id}`, "title", text);
+    updateCatalogue({
+      variables: {
+        id: catalogue.id,
+        key: "title",
+        value: text,
+      },
+    });
+  };
+
+  const handleFileInput = (file: File | undefined) => {
+    if (file) {
+      console.log("fileOnSubmit", file);
+      updateCatalogueFiles({
+        variables: {
+          id: catalogue.id,
+          key: "header_image_url",
+          file,
+        },
+      });
+    }
+  };
 
   return (
     <div>
-      <CatalogueToolbar setIsEditing={setIsEditing} />
-      <div className="row">
+      {editable && <CatalogueToolbar setIsEditing={setIsEditing} />}
+      {/* <div className="row">
         <ToggleEdit isEditing={isEditing}>
           <div className="toggle-input">
             <input type="file" onChange={handleFileInput} disabled />
@@ -67,18 +107,34 @@ const Catalogue = () => {
           </div>
           <div className="toggle-display">display regular image</div>
         </ToggleEdit>
-      </div>
+      </div> */}
       <div className="row">
-        <ToggleEdit isEditing={isEditing}>
-          <input
-            className="toggle-input"
-            type="text"
-            onChange={handleTextInput}
-            value={catalogue.title}
-            disabled
-          />
-          <div className="toggle-display">{catalogue.title}</div>
-        </ToggleEdit>
+        <TextInput
+          isEditing={isEditing}
+          handleSubmit={handleTextInput}
+          value={catalogue.title}
+        />
+        <TextInput
+          isEditing={isEditing}
+          handleSubmit={handleTextInput}
+          value={catalogue.title}
+          className="fs-2"
+        />
+        <FileInput
+          isEditing={isEditing}
+          handleSubmit={handleFileInput}
+          value={catalogue.header_image_url}
+        />
+        <Dropdown value="test">
+          <Dropdown.Toggle disable={!isEditing} />
+          <Dropdown.Menu>
+            <Dropdown.Item value={"test1"}>Test 1</Dropdown.Item>
+            <Dropdown.Item value={"test2"}>Test 2</Dropdown.Item>
+            <Dropdown.Item value={"test3"}>Test 3</Dropdown.Item>
+            <Dropdown.Item value={"test4"}>Test 4</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
         <div>views: {catalogue.views}</div>
       </div>
     </div>

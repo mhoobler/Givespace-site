@@ -6,16 +6,18 @@ DROP TABLE IF EXISTS catalogues;
 
 CREATE TABLE catalogues (
   id UUID DEFAULT uuid_generate_v4(),
+  edit_id UUID DEFAULT uuid_generate_v4(),
   user_id TEXT NOT NULL,
+  status TEXT DEFAULT 'public',
   title TEXT DEFAULT 'Untitled Catalogue',
   description TEXT DEFAULT '',
   views INT DEFAULT 0 NOT NULL,
   header_image_url TEXT,
   header_color TEXT DEFAULT '#000000',
-  edit_id UUID DEFAULT uuid_generate_v4(),
   author TEXT,
   profile_picture_url TEXT,
   event_date DATE,
+  location TEXT,
   created TIMESTAMP DEFAULT NOW(),
   updated TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id)
@@ -77,9 +79,13 @@ INSERT INTO catalogues (
 );
 
 INSERT INTO catalogues (
+  id,
+  edit_id,
   user_id,
   title
 ) VALUES (
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title1'
 );

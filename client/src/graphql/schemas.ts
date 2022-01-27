@@ -9,8 +9,8 @@ export const GET_JWT = gql`
 
 export const GET_CATALOGUE = gql`
   ${ALL_CATALOGUE_FIELDS}
-  query Catalogues($id: ID) {
-    catalogues(id: $id) {
+  query Catalogues($id: ID, $edit_id: String) {
+    catalogues(id: $id, edit_id: $edit_id) {
       ...AllCatalogueFields
     }
   }
@@ -45,8 +45,17 @@ export const DELTETE_CATALOGUE = gql`
 
 export const INCREMENT_CATALOGUE_VIEWS = gql`
   ${ALL_CATALOGUE_FIELDS}
-  mutation IncrementCatalogueViews($id: ID!) {
-    incrementCatalogueViews(id: $id) {
+  mutation IncrementCatalogueViews($id: ID, $edit_id: String) {
+    incrementCatalogueViews(id: $id, edit_id: $edit_id) {
+      ...AllCatalogueFields
+    }
+  }
+`;
+
+export const UPDATE_CATALOGUE = gql`
+  ${ALL_CATALOGUE_FIELDS}
+  mutation EditCatalogue($key: String!, $value: String!, $id: ID!) {
+    editCatalogue(key: $key, value: $value, id: $id) {
       ...AllCatalogueFields
     }
   }
@@ -54,8 +63,17 @@ export const INCREMENT_CATALOGUE_VIEWS = gql`
 
 export const LIVE_CATALOGUE = gql`
   ${ALL_CATALOGUE_FIELDS}
-  subscription LiveCatalogue($id: ID!) {
-    liveCatalogue(id: $id) {
+  subscription LiveCatalogue($id: ID, $edit_id: String) {
+    liveCatalogue(id: $id, edit_id: $edit_id) {
+      ...AllCatalogueFields
+    }
+  }
+`;
+
+export const UPDATE_CATALOGUE_FILES = gql`
+  ${ALL_CATALOGUE_FIELDS}
+  mutation EditCatalogueFile($key: String!, $file: Upload!, $id: ID!) {
+    editCatalogueFile(key: $key, id: $id, file: $file) {
       ...AllCatalogueFields
     }
   }
