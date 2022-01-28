@@ -1,0 +1,43 @@
+@size: 8rem;
+
+.avatar-image-container {
+  width: @size;
+  height: @size;
+
+  .toggle-wrapper{
+    width: @size;
+    height: @size;
+    position: relative;
+
+    >*{
+      position: absolute;
+      width: @size;
+      height: @size;
+    }
+
+    .image-wrapper {
+      width: 80%;
+      height: 80%;
+      z-index: 1;
+
+      &.toggle-input {
+        filter: brightness(0.65);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: @size;
+        transform: translate(10%, 10%);
+        /*TODO: This will almost certainly need to NOT be "fill" */
+        object-fit: fill;
+      }
+    }
+  }
+
+  .icons-container {
+    z-index: 2;
+    color: red;
+    display: flex;
+  }
+}

@@ -1,0 +1,39 @@
+@height: 12rem;
+
+.header-image-container {
+  width: 100%;
+  height: @height;
+
+  .toggle-wrapper {
+    width: 100%;
+    height: @height;
+    position: relative;
+    z-index: 1;
+
+    >*{
+      position: absolute;
+    }
+
+    .image-wrapper {
+      width: 100%;
+      z-index: 1;
+
+      &.toggle-input {
+        filter: brightness(0.65);
+      }
+
+      img {
+        width: 100%;
+        height: @height;
+        /*TODO: This will almost certainly need to NOT be "fill" */
+        object-fit: fill;
+      }
+    }
+  }
+
+  .icons-container {
+    z-index: 2;
+    color: red;
+    display: flex;
+  }
+}

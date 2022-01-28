@@ -1,5 +1,11 @@
 import React from "react";
-import { TextInput, FileInput, Dropdown } from "../../components";
+import {
+  TextInput,
+  FileInput,
+  Dropdown,
+  HeaderImage,
+  AvatarImage,
+} from "../../components";
 import { statusOptions } from "../../utils/references";
 
 type Props = {
@@ -22,12 +28,23 @@ const CatalogueHeader: React.FC<Props> = ({
   return (
     <div className="row catalogue-header-container">
       {/* header image hero*/}
-      <div className="col-12" style={{ height: "50px" }}>
-        <div> IMAGE </div>
+      <div className="col-12">
+        <HeaderImage
+          isEditing={isEditing}
+          handleSubmit={handleFileInput}
+          keyProp={"header_image_url"}
+          value={catalogue.header_image_url || ""}
+        />
       </div>
       {/* avatar, name, title, views, description, date, location */}
       <div className="col-12 d-flex flex-md-row flex-sm-column-reverse">
         <div className="flex-grow-1">
+          <AvatarImage
+            isEditing={isEditing}
+            handleSubmit={handleFileInput}
+            keyProp={"profile_picture_url"}
+            value={catalogue.header_image_url || ""}
+          />
           <TextInput
             isEditing={isEditing}
             handleSubmit={handleTextInput}
