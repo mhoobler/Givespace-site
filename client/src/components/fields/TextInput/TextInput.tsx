@@ -4,26 +4,43 @@ import "./TextInput.less";
 
 type Props = {
   isEditing: boolean;
-  handleSubmit: (value: string) => any;
+  handleSubmit: (value: string) => void;
   value: string;
+  keyProp: string;
   className?: string;
 };
 
-const TextInput = ({ isEditing, handleSubmit, value, className }: Props) => {
+const TextInput = ({
+  isEditing,
+  handleSubmit,
+  value,
+  keyProp,
+  className,
+}: Props) => {
   const [text, setText] = useState(value);
+
   useEffect(() => {
     setText(value);
   }, [value]);
+
+  const handleBlur = (evt: React.SyntheticEvent<HTMLInputElement>) => {
+    const { name, value } = evt.currentTarget;
+    console.log(name, value);
+  };
+
   return (
     <ToggleEdit isEditing={isEditing}>
       <input
-        className={`toggle-input standard-text-input ${className}`}
+        className={`toggle-input standard-text-input ${className || ""}`}
         type="text"
         onChange={(e) => setText(e.target.value)}
+        name={keyProp}
         value={text}
-        onBlur={(e) => handleSubmit(e.target.value)}
+        onBlur={handleBlur}
       />
-      <div className={`toggle-display standard-text-display ${className}`}>
+      <div
+        className={`toggle-display standard-text-display ${className || ""}`}
+      >
         {value}
       </div>
     </ToggleEdit>

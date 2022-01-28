@@ -1,33 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { TextInput, FileInput, Dropdown } from "../../components";
 import { updateCatalogueCache } from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
-type ToolbarProps = {
-  setIsEditing: (f: React.SetStateAction<boolean>) => void;
-};
-
-const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
-  const navigate = useNavigate();
-  const goBack = () => navigate(-1);
-
-  const toggleEditing = () => {
-    setIsEditing((prev) => !prev);
-  };
-  return (
-    <div className="row">
-      <div className="col-2">
-        <a className="btn btn-primary" onClick={goBack}>
-          Go Back
-        </a>
-        <button className="btn btn-warning" onClick={toggleEditing}>
-          Edit
-        </button>
-      </div>
-    </div>
-  );
-};
+import { CatalogueHeader, CatalogueToolbar } from "../../containers";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
@@ -97,46 +73,15 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   return (
-    <div>
-      {editable && <CatalogueToolbar setIsEditing={setIsEditing} />}
-      {/* <div className="row">
-        <ToggleEdit isEditing={isEditing}>
-          <div className="toggle-input">
-            <input type="file" onChange={handleFileInput} disabled />
-            <div>display faded image behind file input</div>
-          </div>
-          <div className="toggle-display">display regular image</div>
-        </ToggleEdit>
-      </div> */}
-      <div className="row">
-        <TextInput
-          isEditing={isEditing}
-          handleSubmit={handleTextInput}
-          value={catalogue.title}
-        />
-        <TextInput
-          isEditing={isEditing}
-          handleSubmit={handleTextInput}
-          value={catalogue.title}
-          className="fs-2"
-        />
-        <FileInput
-          isEditing={isEditing}
-          handleSubmit={handleFileInput}
-          value={catalogue.header_image_url}
-        />
-        <Dropdown value="test">
-          <Dropdown.Toggle disable={!isEditing} />
-          <Dropdown.Menu>
-            <Dropdown.Item value={"test1"}>Test 1</Dropdown.Item>
-            <Dropdown.Item value={"test2"}>Test 2</Dropdown.Item>
-            <Dropdown.Item value={"test3"}>Test 3</Dropdown.Item>
-            <Dropdown.Item value={"test4"}>Test 4</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
-        <div>views: {catalogue.views}</div>
-      </div>
+    <div className="page-padding">
+      <CatalogueToolbar editable={editable} />
+      <CatalogueHeader
+        isEditing={isEditing}
+        catalogue={catalogue}
+        handleTextInput={handleTextInput}
+        handleFileInput={handleFileInput}
+        toggleEdit={() => setIsEditing((prev) => !prev)}
+      />
     </div>
   );
 

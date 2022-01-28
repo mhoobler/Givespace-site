@@ -34,7 +34,6 @@ const Dropdown: React.FC<DropdownProps> = ({ className, value, children }) => {
       <div className={`drop ${show && "show"} ${!className && ""}`}>
         {children}
       </div>
-      ;
     </DropDownProvider>
   );
 };

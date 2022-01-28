@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 import { MY_CATALOGUES } from "./graphql/schemas";
 import { apolloHookErrorHandler } from "./utils/functions";
 
-import "./App.css";
+import "./App.less";
 
 const App = () => {
   const myCatalogues = useQuery(MY_CATALOGUES);

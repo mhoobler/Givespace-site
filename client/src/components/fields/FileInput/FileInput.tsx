@@ -30,7 +30,7 @@ const FileInput: React.FC<Props> = ({
   return (
     <ToggleEdit isEditing={isEditing}>
       <input
-        className={`toggle-input standard-text-input ${className}`}
+        className={`toggle-input standard-text-input ${className || ""}`}
         type="file"
         onChange={handleFileInput}
         accept="*.png,*.jpeg,*.jpg, *.txt"
