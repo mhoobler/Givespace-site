@@ -5,10 +5,7 @@ import {
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
 } from "../../graphql/schemas";
-import {
-  apolloHookErrorHandler,
-  updateCatalogueCache,
-} from "../../utils/functions";
+import { apolloHookErrorHandler } from "../../utils/functions";
 
 type Props = {
   CatalogueIdVariables: any;
@@ -17,7 +14,7 @@ type Props = {
 const useCatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   const [
     updateCatalogue,
-    { loading: updateCatalogueLoading, error: updateCatalogueError },
+    { loading: _updateCatalogueLoading, error: updateCatalogueError },
   ] = useMutation(UPDATE_CATALOGUE);
   apolloHookErrorHandler("Catalogue.tsx", updateCatalogueError);
 
@@ -47,4 +44,4 @@ const useCatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   };
 };
 
-export default CatalogueApolloHooks;
+export default useCatalogueApolloHooks;

@@ -3,7 +3,7 @@ import React from "react";
 import { DropDownContext } from "./Dropdown";
 
 type ToggleProps = {
-  disable: boolean;
+  disable?: boolean;
   className?: string;
 };
 

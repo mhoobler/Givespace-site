@@ -1,34 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { TextInput, FileInput, Dropdown } from "../../components";
+import { useParams } from "react-router-dom";
 import { updateCatalogueCache } from "../../utils/functions";
-import { statusOptions } from "../../utils/references";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
-type ToolbarProps = {
-  setIsEditing: (f: React.SetStateAction<boolean>) => void;
-};
-
-const CatalogueToolbar: React.FC<ToolbarProps> = ({ setIsEditing }) => {
-  const navigate = useNavigate();
-  const goBack = () => navigate(-1);
-
-  const toggleEditing = () => {
-    setIsEditing((prev) => !prev);
-  };
-  return (
-    <div className="row">
-      <div className="col-2">
-        <a className="btn btn-primary" onClick={goBack}>
-          Go Back
-        </a>
-        <button className="btn btn-warning" onClick={toggleEditing}>
-          Edit
-        </button>
-      </div>
-    </div>
-  );
-};
+import { CatalogueHeader, CatalogueToolbar } from "../../containers";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
@@ -73,83 +48,52 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   let editable = is_edit_id || current_user_id === catalogue.user_id;
 
-  const handleTextInput = (text: string) => {
-    updateCatalogueCache(`Catalogue:${catalogue.id}`, "title", text);
+  const handleTextInput = (text: string, objectKey: string) => {
+    updateCatalogueCache(`Catalogue:${catalogue.id}`, objectKey, text);
     updateCatalogue({
       variables: {
         id: catalogue.id,
-        key: "title",
+        key: objectKey,
         value: text,
       },
     });
   };
 
-  const handleFileInput = (file: File | undefined) => {
+  const handleFileInput = (file: File | undefined, objectKey: string) => {
     if (file) {
       console.log("fileOnSubmit", file);
       updateCatalogueFiles({
         variables: {
           id: catalogue.id,
-          key: "header_image_url",
+          key: objectKey,
           file,
         },
       });
     }
   };
 
-  const handleDDSubmit = (value: string) => {
-    updateCatalogueCache(`Catalogue:${catalogue.id}`, "status", value);
+  const handleDDSubmit = (value: string, objectKey: string) => {
+    updateCatalogueCache(`Catalogue:${catalogue.id}`, objectKey, value);
     updateCatalogue({
       variables: {
         id: catalogue.id,
-        key: "status",
+        key: objectKey,
         value,
       },
     });
   };
 
   return (
-    <div>
-      {editable && <CatalogueToolbar setIsEditing={setIsEditing} />}
-      {/* <div className="row">
-        <ToggleEdit isEditing={isEditing}>
-          <div className="toggle-input">
-            <input type="file" onChange={handleFileInput} disabled />
-            <div>display faded image behind file input</div>
-          </div>
-          <div className="toggle-display">display regular image</div>
-        </ToggleEdit>
-      </div> */}
-      <div className="row">
-        <TextInput
-          isEditing={isEditing}
-          handleSubmit={handleTextInput}
-          value={catalogue.title}
-        />
-        <TextInput
-          isEditing={isEditing}
-          handleSubmit={handleTextInput}
-          value={catalogue.title}
-          className="fs-2"
-        />
-        <FileInput
-          isEditing={isEditing}
-          handleSubmit={handleFileInput}
-          value={catalogue.header_image_url}
-        />
-        <Dropdown value={catalogue.status} handleSubmit={handleDDSubmit}>
-          <Dropdown.Toggle disable={!isEditing} />
-          <Dropdown.Menu>
-            {statusOptions.map((option) => (
-              <Dropdown.Item key={option} value={option}>
-                {option}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-
-        <div>views: {catalogue.views}</div>
-      </div>
+    <div className="page-padding">
+      <CatalogueToolbar editable={editable} />
+      <CatalogueHeader
+        isEditing={isEditing}
+        catalogue={catalogue}
+        handleTextInput={handleTextInput}
+        handleFileInput={handleFileInput}
+        handleDDSubmit={handleDDSubmit}
+        toggleEdit={() => setIsEditing((prev) => !prev)}
+      />
     </div>
   );
 

@@ -6,7 +6,8 @@ import Item from "./Item";
 
 type DropdownProps = {
   className?: string;
-  handleSubmit: (value: string) => any;
+  handleSubmit: (value: string, objectKey: string) => any;
+  keyProp: string;
   value: string;
 };
 
@@ -29,6 +30,7 @@ const DropDownProvider = DropDownContext.Provider;
 const Dropdown: React.FC<DropdownProps> = ({
   className,
   handleSubmit,
+  keyProp,
   value,
   children,
 }) => {
@@ -36,7 +38,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [activeValue, setActiveValue] = useState(value);
 
   useEffect(() => {
-    handleSubmit(activeValue);
+    handleSubmit(activeValue, keyProp);
   }, [activeValue]);
 
   return (
@@ -44,7 +46,6 @@ const Dropdown: React.FC<DropdownProps> = ({
       <div className={`drop ${show && "show"} ${!className && ""}`}>
         {children}
       </div>
-      ;
     </DropDownProvider>
   );
 };
