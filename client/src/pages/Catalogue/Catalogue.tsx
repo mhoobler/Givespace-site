@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TextInput, FileInput, Dropdown } from "../../components";
 import { updateCatalogueCache } from "../../utils/functions";
+import { statusOptions } from "../../utils/references";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 type ToolbarProps = {
@@ -96,6 +97,17 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     }
   };
 
+  const handleDDSubmit = (value: string) => {
+    updateCatalogueCache(`Catalogue:${catalogue.id}`, "status", value);
+    updateCatalogue({
+      variables: {
+        id: catalogue.id,
+        key: "status",
+        value,
+      },
+    });
+  };
+
   return (
     <div>
       {editable && <CatalogueToolbar setIsEditing={setIsEditing} />}
@@ -125,13 +137,14 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
           handleSubmit={handleFileInput}
           value={catalogue.header_image_url}
         />
-        <Dropdown value="test">
+        <Dropdown value={catalogue.status} handleSubmit={handleDDSubmit}>
           <Dropdown.Toggle disable={!isEditing} />
           <Dropdown.Menu>
-            <Dropdown.Item value={"test1"}>Test 1</Dropdown.Item>
-            <Dropdown.Item value={"test2"}>Test 2</Dropdown.Item>
-            <Dropdown.Item value={"test3"}>Test 3</Dropdown.Item>
-            <Dropdown.Item value={"test4"}>Test 4</Dropdown.Item>
+            {statusOptions.map((option) => (
+              <Dropdown.Item key={option} value={option}>
+                {option}
+              </Dropdown.Item>
+            ))}
           </Dropdown.Menu>
         </Dropdown>
 

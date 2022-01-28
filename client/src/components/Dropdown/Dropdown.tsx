@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Toggle from "./Toggle";
 import Menu from "./Menu";
@@ -6,6 +6,7 @@ import Item from "./Item";
 
 type DropdownProps = {
   className?: string;
+  handleSubmit: (value: string) => any;
   value: string;
 };
 
@@ -25,9 +26,18 @@ const DropDownContext = React.createContext<IContext>({
 
 const DropDownProvider = DropDownContext.Provider;
 
-const Dropdown: React.FC<DropdownProps> = ({ className, value, children }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  className,
+  handleSubmit,
+  value,
+  children,
+}) => {
   const [show, setShow] = useState(false);
   const [activeValue, setActiveValue] = useState(value);
+
+  useEffect(() => {
+    handleSubmit(activeValue);
+  }, [activeValue]);
 
   return (
     <DropDownProvider value={{ activeValue, setActiveValue, show, setShow }}>
