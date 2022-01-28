@@ -55,7 +55,7 @@ const HeaderImage: React.FC<Props> = ({
             onClick={handleModal}
             className={`toggle-input icons-container f-center`}
           >
-            <div>H</div>
+            <div className="icon-btn">Click This</div>
           </div>
           <div className={`toggle-input image-wrapper`}>
             <img src={value} alt="" />
