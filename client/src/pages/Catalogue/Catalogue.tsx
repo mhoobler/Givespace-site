@@ -59,7 +59,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
-  const handleFileInput = (file: File, objectKey: string) => {
+  const handleFileInput = (file: File | undefined, objectKey: string) => {
     if (file) {
       console.log("fileOnSubmit", file);
       updateCatalogueFiles({
@@ -84,7 +84,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   return (
-    <div className='page-padding'>
+    <div className="page-padding">
       <CatalogueToolbar editable={editable} />
       <CatalogueHeader
         isEditing={isEditing}

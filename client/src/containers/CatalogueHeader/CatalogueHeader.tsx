@@ -58,13 +58,6 @@ const CatalogueHeader: React.FC<Props> = ({
             keyProp="description"
             value={catalogue.description || ""}
           />
-          <FileInput
-            isEditing={isEditing}
-            handleSubmit={handleFileInput}
-            keyProp="header_image_url"
-            value={catalogue.header_image_url || ""}
-          />
-
           <div className="row">
             <div>views: {catalogue.views}</div>
           </div>
