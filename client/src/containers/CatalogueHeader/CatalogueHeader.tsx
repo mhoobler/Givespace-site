@@ -1,10 +1,10 @@
 import React from "react";
 import {
   TextInput,
-  FileInput,
   Dropdown,
   HeaderImage,
   AvatarImage,
+  CalendarInput,
 } from "../../components";
 import { statusOptions } from "../../utils/references";
 
@@ -14,6 +14,7 @@ type Props = {
   handleTextInput: (t: string, objectKey: string) => void;
   handleFileInput: (f: File | undefined, objectKey: string) => void;
   handleDDSubmit: (t: string, objectKey: string) => void;
+  handleDateInput: (ISOString: string, objectKey: string) => void;
   toggleEdit: () => void;
 };
 
@@ -23,6 +24,7 @@ const CatalogueHeader: React.FC<Props> = ({
   handleTextInput,
   handleFileInput,
   handleDDSubmit,
+  handleDateInput,
   toggleEdit,
 }) => {
   return (
@@ -59,7 +61,14 @@ const CatalogueHeader: React.FC<Props> = ({
             value={catalogue.description || ""}
           />
           <div className="row">
-            <div>views: {catalogue.views}</div>
+            <div className="col-4">views: {catalogue.views}</div>
+            <div className="col-4">
+              <CalendarInput
+                value={catalogue.event_date}
+                keyProp="event_date"
+                handleDateInput={handleDateInput}
+              />
+            </div>
           </div>
         </div>
 

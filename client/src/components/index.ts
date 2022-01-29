@@ -12,3 +12,4 @@ export { default as TextInput } from "./fields/TextInput/TextInput";
 export { default as FileInput } from "./fields/FileInput/FileInput";
 export { default as AvatarImage } from "./fields/AvatarImage/AvatarImage";
 export { default as HeaderImage } from "./fields/HeaderImage/HeaderImage";
+export { default as CalendarInput } from "./fields/CalendarInput/CalendarInput";
