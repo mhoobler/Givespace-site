@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
+import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
 import {
   GET_CATALOGUE,
   LIVE_CATALOGUE,
@@ -6,6 +7,7 @@ import {
   UPDATE_CATALOGUE,
   UPDATE_CATALOGUE_FILES,
 } from "../../graphql/schemas";
+import { useFieldEditing } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
 
 type Props = {
@@ -13,6 +15,8 @@ type Props = {
 };
 
 const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
+  const { fieldEditing } = useFieldEditing();
+
   const [
     updateCatalogue,
     { loading: _updateCatalogueLoading, error: updateCatalogueError },
@@ -29,24 +33,23 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
 
   const catalogueSubscription = useSubscription(LIVE_CATALOGUE, {
     variables: CatalogueIdVariables,
-    // onSubscriptionData: ({ client, subscriptionData }) => {
-    //   const { data } = subscriptionData;
-    //   console.log("catalogueSubscription", data);
-    //   if (data && data.liveCatalogue) {
-    //     const catalogue = data.liveCatalogue;
-    //     if (fieldEditing) delete catalogue[fieldEditing];
-    //     console.log("catalogueSubscription", catalogue);
-    //     client.writeFragment({
-    //       id: `Catalogue:${catalogue.id}`,
-    //       fragment: CATALOGUE_FRAGMENT,
-    //       variables: CatalogueIdVariables,
-    //       data: {
-    //         catalogue,
-    //       },
-    //     });
-    //     console.log("POST");
-    //   }
-    // },
+    fetchPolicy: "no-cache",
+    // Below creates a custom caching behaviour that
+    // prevents the field currently being edited from
+    // being written over
+    onSubscriptionData: ({ client, subscriptionData }) => {
+      const { data } = subscriptionData;
+      if (data && data.liveCatalogue) {
+        const catalogue = data.liveCatalogue;
+        if (fieldEditing) delete catalogue[fieldEditing];
+        client.writeFragment({
+          id: `Catalogue:${catalogue.id}`,
+          fragment: CATALOGUE_FRAGMENT,
+          variables: CatalogueIdVariables,
+          data: catalogue,
+        });
+      }
+    },
   });
   apolloHookErrorHandler(
     "useCatalogueApolloHooks.tsx",

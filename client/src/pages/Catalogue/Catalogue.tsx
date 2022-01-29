@@ -4,7 +4,8 @@ import { updateCatalogueCache } from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 import { CatalogueHeader, CatalogueToolbar } from "../../containers";
-import { useFieldEditing } from "../../state/store";
+import { cache } from "../../graphql/clientConfig";
+import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
@@ -16,13 +17,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   // Inputs need to toggle from Editing to Display state
   const [isEditing, setIsEditing] = useState(false);
-  const { fieldEditing } = useFieldEditing();
 
   // All ApolloHooks are moved to custom hook for organization
   const {
     incrementCatalogueViews,
     updateCatalogue,
-    catalogueQuery,
     catalogueSubscription,
     updateCatalogueFiles,
   } = useCatalogueApolloHooks({
@@ -32,18 +31,24 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // TODO: Need to make sure this only happens once per visit
   // (will currently trigger on each rerender)
   useEffect(() => {
-    incrementCatalogueViews();
+    // delay gives time for the subscription to get set up
+    setTimeout(() => {
+      incrementCatalogueViews();
+      console.log("incremented views");
+    }, 1);
   }, []);
 
-  if (!catalogueQuery.data && !catalogueSubscription.data) {
+  if (!catalogueSubscription.data) {
     return <div>Loading...</div>;
   }
 
-  // catalogue should be based off of the cached catalogue. Unfortunately,
-  // the cataogue provoke rerenders in cache, will need to revisit this later
-  let catalogue = catalogueSubscription.data
-    ? catalogueSubscription.data.liveCatalogue
-    : catalogueQuery.data.catalogues[0];
+  // The catalogue being used in the catalogue state
+  // will always be the cached catalogue as fetched
+  // by CATALOGUE_FRAGMENT
+  const catalogue: CatalogueType | null = cache.readFragment({
+    id: `Catalogue:${catalogueSubscription.data.liveCatalogue.id}`,
+    fragment: CATALOGUE_FRAGMENT,
+  });
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -89,7 +94,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   return (
     <div className="page-padding">
       <CatalogueToolbar editable={editable} />
-      <h1>editing: {fieldEditing}</h1>
       <CatalogueHeader
         isEditing={isEditing}
         catalogue={catalogue}

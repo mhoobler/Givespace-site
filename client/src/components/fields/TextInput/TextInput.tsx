@@ -19,12 +19,10 @@ const TextInput = ({
   className,
 }: Props) => {
   const [text, setText] = useState(value);
-  const { fieldEditing, setFieldEditing } = useFieldEditing();
+  const { setFieldEditing } = useFieldEditing();
 
   useEffect(() => {
-    if (fieldEditing !== keyProp) {
-      setText(value);
-    }
+    setText(value);
   }, [value]);
 
   const handleBlur = (evt: React.SyntheticEvent<HTMLInputElement>) => {
