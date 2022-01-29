@@ -30,7 +30,7 @@ CREATE TABLE listings (
   link_url TEXT,
   image_url TEXT,
   description TEXT,
-  order INT,
+  ordering INT,
   show_price BOOLEAN,
   price NUMERIC,
   created TIMESTAMP,
@@ -54,12 +54,13 @@ CREATE TABLE labels (
   catalogue_id UUID NOT NULL,
   name TEXT NOT NULL,
   link_url TEXT,
+  ordering INT,
   is_private BOOLEAN,
   created TIMESTAMP,
   updated TIMESTAMP,
   PRIMARY KEY (id),
-  FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE,
-)
+  FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE
+);
 
 CREATE TABLE listing_labels (
   id UUID DEFAULT uuid_generate_v4(),
@@ -91,4 +92,6 @@ INSERT INTO catalogues (
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title1'
 );
+
+
 
