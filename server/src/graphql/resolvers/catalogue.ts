@@ -20,16 +20,28 @@ const catalogueResolvers = {
       let catalogues: QueryResult<Catalogue>;
 
       if (args.id) {
-        catalogues = await db.query("SELECT * FROM catalogues WHERE id = $1", [
-          args.id,
-        ]);
+        catalogues = await db.query(
+          `SELECT 
+            c.*,
+            json_agg(l) as labels
+          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
+          [args.id]
+        );
       } else if (args.edit_id) {
         catalogues = await db.query(
-          "SELECT * FROM catalogues WHERE edit_id = $1",
+          `SELECT 
+            c.*,
+            json_agg(l) as labels
+          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.edit_id = $1 GROUP BY c.id;`,
           [args.edit_id]
         );
       } else {
-        catalogues = await db.query("SELECT * FROM catalogues");
+        catalogues = await db.query(
+          `SELECT 
+            c.*,
+            json_agg(l) as labels
+          from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id GROUP BY c.id;`
+        );
       }
 
       return catalogues.rows;
