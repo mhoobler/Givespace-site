@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useFieldEditing } from "../../../state/store";
 import ToggleEdit from "../../ToggleEdit/ToggleEdit";
 import "./TextInput.less";
 
@@ -18,14 +19,22 @@ const TextInput = ({
   className,
 }: Props) => {
   const [text, setText] = useState(value);
+  const { fieldEditing, setFieldEditing } = useFieldEditing();
 
   useEffect(() => {
-    setText(value);
+    if (fieldEditing !== keyProp) {
+      setText(value);
+    }
   }, [value]);
 
   const handleBlur = (evt: React.SyntheticEvent<HTMLInputElement>) => {
     const { value } = evt.currentTarget;
+    setFieldEditing(null);
     handleSubmit(value, keyProp);
+  };
+
+  const handleFocus = (evt: React.SyntheticEvent<HTMLInputElement>) => {
+    setFieldEditing(keyProp);
   };
 
   return (
@@ -34,6 +43,7 @@ const TextInput = ({
         className={`toggle-input standard-text-input ${className || ""}`}
         type="text"
         onChange={(e) => setText(e.target.value)}
+        onFocus={handleFocus}
         name={keyProp}
         value={text}
         onBlur={handleBlur}

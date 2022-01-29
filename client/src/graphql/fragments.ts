@@ -32,3 +32,23 @@ export const ALL_CATALOGUE_FIELDS = gql`
     location
   }
 `;
+
+export const CATALOGUE_FRAGMENT = gql`
+  fragment Catalogue on Catalogue {
+    id
+    edit_id
+    user_id
+    status
+    title
+    description
+    created
+    updated
+    views
+    header_image_url
+    header_color
+    author
+    profile_picture_url
+    event_date
+    location
+  }
+`;

@@ -6,7 +6,8 @@ import { createUploadLink } from "apollo-upload-client";
 
 const authorization = localStorage.getItem("authorization");
 if (!authorization) {
-  const newUuid = uuidv4();
+  // const newUuid = uuidv4();
+  const newUuid = "6a3a2967-0258-4caf-8fef-f844c060b2f2";
   console.log("newUuid", newUuid);
   localStorage.setItem("authorization", newUuid);
 }

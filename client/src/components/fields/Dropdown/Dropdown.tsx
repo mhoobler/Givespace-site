@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Toggle from "./Toggle";
 import Menu from "./Menu";
 import Item from "./Item";
+import { useFieldEditing } from "../../../state/store";
 
 type DropdownProps = {
   className?: string;
@@ -36,10 +37,25 @@ const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const [show, setShow] = useState(false);
   const [activeValue, setActiveValue] = useState(value);
+  const { fieldEditing, setFieldEditing } = useFieldEditing();
+
+  useEffect(() => {
+    if (fieldEditing !== keyProp) {
+      setActiveValue(value);
+    }
+  }, [value]);
 
   useEffect(() => {
     handleSubmit(activeValue, keyProp);
   }, [activeValue]);
+
+  useEffect(() => {
+    if (show) {
+      setFieldEditing(keyProp);
+    } else {
+      setFieldEditing(null);
+    }
+  }, [show]);
 
   return (
     <DropDownProvider value={{ activeValue, setActiveValue, show, setShow }}>

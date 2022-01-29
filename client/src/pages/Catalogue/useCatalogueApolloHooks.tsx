@@ -21,12 +21,32 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
 
   const [incrementCatalogueViews, { error }] = useMutation(
     INCREMENT_CATALOGUE_VIEWS,
-    { variables: CatalogueIdVariables }
+    {
+      variables: CatalogueIdVariables,
+    }
   );
   apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
 
   const catalogueSubscription = useSubscription(LIVE_CATALOGUE, {
     variables: CatalogueIdVariables,
+    // onSubscriptionData: ({ client, subscriptionData }) => {
+    //   const { data } = subscriptionData;
+    //   console.log("catalogueSubscription", data);
+    //   if (data && data.liveCatalogue) {
+    //     const catalogue = data.liveCatalogue;
+    //     if (fieldEditing) delete catalogue[fieldEditing];
+    //     console.log("catalogueSubscription", catalogue);
+    //     client.writeFragment({
+    //       id: `Catalogue:${catalogue.id}`,
+    //       fragment: CATALOGUE_FRAGMENT,
+    //       variables: CatalogueIdVariables,
+    //       data: {
+    //         catalogue,
+    //       },
+    //     });
+    //     console.log("POST");
+    //   }
+    // },
   });
   apolloHookErrorHandler(
     "useCatalogueApolloHooks.tsx",

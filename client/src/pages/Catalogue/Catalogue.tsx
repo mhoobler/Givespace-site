@@ -4,6 +4,7 @@ import { updateCatalogueCache } from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 import { CatalogueHeader, CatalogueToolbar } from "../../containers";
+import { useFieldEditing } from "../../state/store";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
@@ -15,6 +16,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   // Inputs need to toggle from Editing to Display state
   const [isEditing, setIsEditing] = useState(false);
+  const { fieldEditing } = useFieldEditing();
 
   // All ApolloHooks are moved to custom hook for organization
   const {
@@ -37,8 +39,9 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     return <div>Loading...</div>;
   }
 
-  // This needs to update cache
-  const catalogue = catalogueSubscription.data
+  // catalogue should be based off of the cached catalogue. Unfortunately,
+  // the cataogue provoke rerenders in cache, will need to revisit this later
+  let catalogue = catalogueSubscription.data
     ? catalogueSubscription.data.liveCatalogue
     : catalogueQuery.data.catalogues[0];
 
@@ -86,6 +89,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   return (
     <div className="page-padding">
       <CatalogueToolbar editable={editable} />
+      <h1>editing: {fieldEditing}</h1>
       <CatalogueHeader
         isEditing={isEditing}
         catalogue={catalogue}
