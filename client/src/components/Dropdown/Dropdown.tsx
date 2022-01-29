@@ -41,9 +41,17 @@ const Dropdown: React.FC<DropdownProps> = ({
     handleSubmit(activeValue, keyProp);
   }, [activeValue]);
 
+  const handleBlur = () => {
+    setShow(false);
+  };
+
   return (
     <DropDownProvider value={{ activeValue, setActiveValue, show, setShow }}>
-      <div className={`drop ${show && "show"} ${!className && ""}`}>
+      <div
+        tabIndex={0}
+        onBlur={handleBlur}
+        className={`drop ${show && "show"} ${!className && ""}`}
+      >
         {children}
       </div>
     </DropDownProvider>
