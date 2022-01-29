@@ -26,7 +26,8 @@ CREATE TABLE catalogues (
 CREATE TABLE listings (
   id UUID DEFAULT uuid_generate_v4(),
   catalogue_id UUID NOT NULL,
-  name TEXT,
+  name TEXT NOT NULL,
+  link_url TEXT,
   image_url TEXT,
   description TEXT,
   order INT,
@@ -41,7 +42,7 @@ CREATE TABLE listings (
 CREATE TABLE links (
   id UUID DEFAULT uuid_generate_v4(),
   listing_id UUID NOT NULL,
-  url TEXT NOT NULL,
+  link_url TEXT NOT NULL,
   created TIMESTAMP,
   updated TIMESTAMP,
   PRIMARY KEY (id),
@@ -51,7 +52,8 @@ CREATE TABLE links (
 CREATE TABLE labels (
   id UUID DEFAULT uuid_generate_v4(),
   catalogue_id UUID NOT NULL,
-  url TEXT NOT NULL,
+  name TEXT NOT NULL,
+  link_url TEXT,
   is_private BOOLEAN,
   created TIMESTAMP,
   updated TIMESTAMP,

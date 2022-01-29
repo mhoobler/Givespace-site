@@ -83,6 +83,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
+  const handleDateInput = (ISOString: string, objectKey: string) => {
+    handleTextInput(ISOString, objectKey);
+  };
+
   return (
     <div className="page-padding">
       <CatalogueToolbar editable={editable} />
@@ -92,6 +96,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleTextInput={handleTextInput}
         handleFileInput={handleFileInput}
         handleDDSubmit={handleDDSubmit}
+        handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
     </div>
