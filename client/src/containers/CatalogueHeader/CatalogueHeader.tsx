@@ -1,5 +1,11 @@
 import React from "react";
-import { TextInput, FileInput, Dropdown } from "../../components";
+import {
+  TextInput,
+  Dropdown,
+  HeaderImage,
+  AvatarImage,
+  CalendarInput,
+} from "../../components";
 import { statusOptions } from "../../utils/references";
 
 type Props = {
@@ -8,6 +14,7 @@ type Props = {
   handleTextInput: (t: string, objectKey: string) => void;
   handleFileInput: (f: File | undefined, objectKey: string) => void;
   handleDDSubmit: (t: string, objectKey: string) => void;
+  handleDateInput: (ISOString: string, objectKey: string) => void;
   toggleEdit: () => void;
 };
 
@@ -17,17 +24,29 @@ const CatalogueHeader: React.FC<Props> = ({
   handleTextInput,
   handleFileInput,
   handleDDSubmit,
+  handleDateInput,
   toggleEdit,
 }) => {
   return (
     <div className="row catalogue-header-container">
       {/* header image hero*/}
-      <div className="col-12" style={{ height: "50px" }}>
-        <div> IMAGE </div>
+      <div className="col-12">
+        <HeaderImage
+          isEditing={isEditing}
+          handleSubmit={handleFileInput}
+          keyProp={"header_image_url"}
+          value={catalogue.header_image_url || ""}
+        />
       </div>
       {/* avatar, name, title, views, description, date, location */}
       <div className="col-12 d-flex flex-md-row flex-sm-column-reverse">
         <div className="flex-grow-1">
+          <AvatarImage
+            isEditing={isEditing}
+            handleSubmit={handleFileInput}
+            keyProp={"profile_picture_url"}
+            value={catalogue.header_image_url || ""}
+          />
           <TextInput
             isEditing={isEditing}
             handleSubmit={handleTextInput}
@@ -41,15 +60,15 @@ const CatalogueHeader: React.FC<Props> = ({
             keyProp="description"
             value={catalogue.description || ""}
           />
-          <FileInput
-            isEditing={isEditing}
-            handleSubmit={handleFileInput}
-            keyProp="header_image_url"
-            value={catalogue.header_image_url || ""}
-          />
-
           <div className="row">
-            <div>views: {catalogue.views}</div>
+            <div className="col-4">views: {catalogue.views}</div>
+            <div className="col-4">
+              <CalendarInput
+                value={catalogue.event_date}
+                keyProp="event_date"
+                handleDateInput={handleDateInput}
+              />
+            </div>
           </div>
         </div>
 
