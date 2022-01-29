@@ -2,6 +2,9 @@ import jwt from "jsonwebtoken";
 import * as path from "path";
 import { finished } from "stream/promises";
 import * as fs from "fs";
+import { QueryResult } from "pg";
+import { Catalogue } from "../types";
+import db from "../../db";
 
 export const verifyToken = (token: string): Boolean => {
   try {
@@ -32,4 +35,18 @@ export const handleFile = async (
   await fs.promises.unlink(pathToFile);
 
   return callbackReturn;
+};
+
+export const getFullCatalogue = async (id: string): Promise<Catalogue> => {
+  const fullCatalogues: QueryResult<Catalogue> = await db.query(
+    `SELECT 
+      c.*,
+      json_agg(l) as labels
+    from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
+    [id]
+  );
+  if (!fullCatalogues.rows[0]) {
+    throw new Error("Catalogue not found");
+  }
+  return fullCatalogues.rows[0];
 };
