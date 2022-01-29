@@ -27,6 +27,7 @@ export interface Catalogue extends CatalogueListItem {
   views: number;
   header_image_url: string | null;
   head_color: string;
+  labels: Label[];
   author: string | null;
   profile_picture_url: string | null;
   event_date: Date | null;
