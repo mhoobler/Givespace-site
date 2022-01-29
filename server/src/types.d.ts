@@ -33,6 +33,16 @@ export interface Catalogue extends CatalogueListItem {
   location: string | null;
 }
 
+export type Label = {
+  id: string;
+  catalogue_id: string;
+  name: string;
+  link_url: string;
+  is_private: boolean;
+  created: Date;
+  updated: Date;
+};
+
 export enum SubscriptionLabels {
   CATALOGUE_EDITED = "CATALOGUE_EDITED",
 }
