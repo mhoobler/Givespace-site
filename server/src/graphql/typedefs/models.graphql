@@ -5,7 +5,7 @@ type Catalogue {
   user_id: String!
   title: String!
   description: String!
-  labels: [Label]
+  labels: [Label]!
   created: Date!
   updated: Date!
   views: Int

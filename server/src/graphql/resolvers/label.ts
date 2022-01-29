@@ -16,6 +16,17 @@ const labelResolvers = {
       const newLabel: Label = newLabelRes.rows[0];
       return newLabel;
     },
+    deleteLabel: async (_: null, { id }: { id: string }): Promise<Label> => {
+      const deletedLabelRes: QueryResult<Label> = await db.query(
+        "DELETE FROM labels WHERE id = $1 RETURNING *",
+        [id]
+      );
+      const deletedLabel: Label = deletedLabelRes.rows[0];
+      if (!deletedLabel) {
+        throw new Error("Label not found");
+      }
+      return deletedLabel;
+    },
   },
   Subscription: {},
 };

@@ -13,6 +13,7 @@ type Mutation {
   singleUpload(file: Upload!): File!
 
   createLabel(catalogue_id: String!, name: String!): Label!
+  deleteLabel(id: ID!): Label!
   # updateCatalogue(id: ID!, title: String!): Catalogue!
 }
 
