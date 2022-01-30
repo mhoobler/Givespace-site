@@ -16,8 +16,8 @@ interface CatalogueStub {
   status: Status;
   title: string;
   description: string | null;
-  created: Date;
-  updated: Date;
+  created: string;
+  updated: string;
 }
 
 interface CatalogueType extends CatalogueStub {
@@ -26,6 +26,18 @@ interface CatalogueType extends CatalogueStub {
   header_color: string;
   author: string | null;
   profile_picture_url: string | null;
-  event_date: Date | null;
+  event_date: string | null;
   location: string | null;
+  labels: Label[] | null;
+}
+
+interface Label {
+  id: string;
+  catalogue_id: string;
+  name: string;
+  ordering: number;
+  is_private: boolean;
+  link_url: string | null;
+  created: string;
+  updated: string;
 }

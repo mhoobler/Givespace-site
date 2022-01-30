@@ -1,9 +1,46 @@
 import React from "react";
+import { LabelContainer, Label } from "../../components";
 
-type Props = {};
+import "./CatalogueItems.less";
 
-const CatalogueItems: React.FC<Props> = ({}) => {
-  return <div className="row catalogue-items-container">ITEMS</div>;
+type Props = {
+  addLabel: (name: string) => void;
+  deleteLabel: (id: string) => void;
+  isEditing: boolean;
+  labels: Label[];
+  items: null; // TODO: CHANGE THIS
+};
+
+const CatalogueItems: React.FC<Props> = ({
+  labels,
+  addLabel,
+  deleteLabel,
+  isEditing,
+}) => {
+  console.log(labels);
+  return (
+    <div className="row catalogue-items-container">
+      {/* add item, sort */}
+      <div className="row">
+        <div className="col-md-6 col-sm-12">Add Item</div>
+        <div className="col-md-6 col-sm-12">Sort</div>
+      </div>
+      {/* labels */}
+      <div className="col-12">
+        <LabelContainer addLabel={addLabel}>
+          {labels.map((e: Label) => (
+            <Label
+              key={e.id}
+              className={`label ${isEditing ? "can-delete" : ""}`}
+              label={e}
+              isEditing={isEditing}
+              deleteLabel={deleteLabel}
+            />
+          ))}
+        </LabelContainer>
+      </div>
+    </div>
+  );
 };
 
 export default CatalogueItems;

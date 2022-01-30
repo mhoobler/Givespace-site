@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 import { updateCatalogueCache } from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
-import { CatalogueHeader, CatalogueToolbar } from "../../containers";
+import {
+  CatalogueHeader,
+  CatalogueItems,
+  CatalogueToolbar,
+} from "../../containers";
 import { cache } from "../../graphql/clientConfig";
 import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
 
@@ -24,6 +28,8 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     updateCatalogue,
     catalogueSubscription,
     updateCatalogueFiles,
+    addLabelMutation,
+    deleteLabelMutation,
   } = useCatalogueApolloHooks({
     CatalogueIdVariables,
   });
@@ -95,6 +101,26 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     handleTextInput(ISOString, objectKey);
   };
 
+  console.log(catalogue);
+  console.log(catalogueSubscription);
+  // TODO: These still need to update Cache
+  const addLabel = (name: string) => {
+    console.log(name, catalogue.id);
+    addLabelMutation({
+      variables: {
+        name,
+        catalogue_id: catalogue.id,
+      },
+    });
+  };
+
+  const deleteLabel = (id: string) => {
+    console.log(id);
+    deleteLabelMutation({
+      variables: { id },
+    });
+  };
+
   return (
     <div className="page-padding">
       <CatalogueToolbar editable={editable} />
@@ -106,6 +132,13 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDDSubmit={handleDDSubmit}
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
+      />
+      <CatalogueItems
+        isEditing={isEditing}
+        addLabel={addLabel}
+        deleteLabel={deleteLabel}
+        labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
+        items={null}
       />
     </div>
   );

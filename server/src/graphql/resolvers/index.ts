@@ -1,8 +1,9 @@
 import catalogueResolvers from "./catalogue";
+import labelResolvers from "./label";
 import utilResolvers from "./util";
 import { GraphQLUpload } from "graphql-upload";
 
-const resolversAggregate = [catalogueResolvers, utilResolvers];
+const resolversAggregate = [catalogueResolvers, labelResolvers, utilResolvers];
 let resolvers = {
   Query: {},
   Mutation: {},

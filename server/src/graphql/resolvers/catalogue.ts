@@ -1,6 +1,10 @@
 import { withFilter } from "graphql-subscriptions";
 import { pubsub } from "../index";
-import { handleFile, verifyToken } from "../../utils/functions";
+import {
+  getFullCatalogue,
+  handleFile,
+  verifyToken,
+} from "../../utils/functions";
 import { CatalogueListItem, Catalogue, Context } from "../../types";
 import db from "../../../db";
 import { QueryResult } from "pg";
@@ -20,16 +24,28 @@ const catalogueResolvers = {
       let catalogues: QueryResult<Catalogue>;
 
       if (args.id) {
-        catalogues = await db.query("SELECT * FROM catalogues WHERE id = $1", [
-          args.id,
-        ]);
+        catalogues = await db.query(
+          `SELECT 
+            c.*,
+            json_agg(l) as labels
+          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
+          [args.id]
+        );
       } else if (args.edit_id) {
         catalogues = await db.query(
-          "SELECT * FROM catalogues WHERE edit_id = $1",
+          `SELECT 
+            c.*,
+            json_agg(l) as labels
+          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.edit_id = $1 GROUP BY c.id;`,
           [args.edit_id]
         );
       } else {
-        catalogues = await db.query("SELECT * FROM catalogues");
+        catalogues = await db.query(
+          `SELECT 
+            c.*,
+            json_agg(l) as labels
+          from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id GROUP BY c.id;`
+        );
       }
 
       return catalogues.rows;
@@ -41,7 +57,10 @@ const catalogueResolvers = {
       { authorization }: Context
     ): Promise<CatalogueListItem[]> => {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
-        "SELECT id, edit_id, user_id, status, title, description, created, updated FROM catalogues WHERE user_id = $1",
+        `SELECT 
+          c.*,
+          json_agg(l) as labels
+        from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.user_id = $1 GROUP BY c.id;`,
         [authorization]
       );
       return catalogues.rows;
@@ -54,11 +73,21 @@ const catalogueResolvers = {
       __: null,
       context: Context
     ): Promise<Catalogue> => {
+      // lazy solution to get the joined catalogue
       const newCatalogues: QueryResult<Catalogue> = await db.query(
         "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING *",
         [context.authorization]
       );
-      const newCatalogue: Catalogue = newCatalogues.rows[0];
+      const fullCatalogues: QueryResult<Catalogue> = await db.query(
+        `SELECT 
+          c.*,
+          json_agg(l) as labels
+        from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
+        [newCatalogues.rows[0].id]
+      );
+      const newCatalogue: Catalogue = await getFullCatalogue(
+        fullCatalogues.rows[0].id
+      );
 
       return newCatalogue;
     },
@@ -86,16 +115,21 @@ const catalogueResolvers = {
       if (!id && !edit_id) {
         throw new Error("No id or edit_id provided");
       }
+
+      // lazy solution to get the joined catalogue
+      // first query to make the change and get id
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET views = views + 1 WHERE ${
           id ? "id" : "edit_id"
         } = $1 RETURNING *`,
         [id || edit_id]
       );
-      const catalogue: Catalogue = result.rows[0];
-      if (!catalogue) {
+
+      if (!result.rows[0]) {
         throw new Error("Catalogue does not exist");
       }
+      // second query to get the full catalogue
+      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: catalogue,
@@ -107,16 +141,16 @@ const catalogueResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Catalogue> => {
-      console.log(`Catalogue key: "${key}" changed to "${value}"`);
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
         [value, id]
       );
 
-      const catalogue: Catalogue = result.rows[0];
-      if (!catalogue) {
+      if (!result.rows[0]) {
         throw new Error("Catalogue does not exist");
       }
+
+      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: catalogue,
@@ -152,7 +186,7 @@ const catalogueResolvers = {
         [url, id]
       );
 
-      const catalogue: Catalogue = result.rows[0];
+      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
       if (!catalogue) {
         throw new Error("Catalogue does not exist");
       }

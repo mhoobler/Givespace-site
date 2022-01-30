@@ -54,10 +54,10 @@ CREATE TABLE labels (
   catalogue_id UUID NOT NULL,
   name TEXT NOT NULL,
   link_url TEXT,
-  ordering INT,
+  ordering FLOAT NOT NULL,
   is_private BOOLEAN,
-  created TIMESTAMP,
-  updated TIMESTAMP,
+  created TIMESTAMP DEFAULT NOW(),
+  updated TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id),
   FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE
 );
@@ -91,7 +91,31 @@ INSERT INTO catalogues (
   'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title1'
+); 
+
+INSERT INTO labels (
+  id,
+  catalogue_id,
+  name,
+  ordering
+) VALUES (
+  'd5a998be-205c-4a5e-8f41-05f808cdc9e1',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label1',
+  0
+), (
+  'fbe5c847-5419-487a-a803-e7b2ca9bfa7e',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label2',
+  1
+), (
+  '51692a78-c744-4f8e-a2c5-d4a422fc657d',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label3',
+  2
+), (
+  '35b2a996-ab59-4dcd-9885-9a2a54d1608c',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label3',
+  3
 );
-
-
-
