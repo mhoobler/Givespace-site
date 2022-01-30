@@ -27,11 +27,22 @@ export interface Catalogue extends CatalogueListItem {
   views: number;
   header_image_url: string | null;
   head_color: string;
+  labels: Label[];
   author: string | null;
   profile_picture_url: string | null;
   event_date: Date | null;
   location: string | null;
 }
+
+export type Label = {
+  id: string;
+  catalogue_id: string;
+  name: string;
+  link_url: string;
+  is_private: boolean;
+  created: Date;
+  updated: Date;
+};
 
 export enum SubscriptionLabels {
   CATALOGUE_EDITED = "CATALOGUE_EDITED",

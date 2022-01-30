@@ -11,6 +11,9 @@ type Mutation {
   editCatalogue(id: ID!, key: String!, value: String!): Catalogue!
   editCatalogueFile(id: ID!, key: String!, file: Upload!): Catalogue!
   singleUpload(file: Upload!): File!
+
+  createLabel(catalogue_id: String!, name: String!): Label!
+  deleteLabel(id: ID!): Label!
   # updateCatalogue(id: ID!, title: String!): Catalogue!
 }
 
