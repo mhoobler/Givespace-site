@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
-import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
+import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import {
   GET_CATALOGUE,
   LIVE_CATALOGUE,
@@ -29,7 +29,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
     INCREMENT_CATALOGUE_VIEWS,
     {
       variables: CatalogueIdVariables,
-    },
+    }
   );
   apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
 
@@ -44,10 +44,10 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
       if (data && data.liveCatalogue) {
         const catalogue = data.liveCatalogue;
         if (fieldEditing) delete catalogue[fieldEditing];
-        console.log("SUB", catalogue);
         client.writeFragment({
           id: `Catalogue:${catalogue.id}`,
-          fragment: CATALOGUE_FRAGMENT,
+          fragment: ALL_CATALOGUE_FIELDS,
+          fragmentName: "AllCatalogueFields",
           variables: CatalogueIdVariables,
           data: catalogue,
         });
@@ -56,7 +56,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   });
   apolloHookErrorHandler(
     "useCatalogueApolloHooks.tsx",
-    catalogueSubscription.error,
+    catalogueSubscription.error
   );
 
   const catalogueQuery = useQuery(GET_CATALOGUE, {

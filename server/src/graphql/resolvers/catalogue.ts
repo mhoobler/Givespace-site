@@ -166,14 +166,12 @@ const catalogueResolvers = {
         "SELECT * FROM catalogues WHERE id = $1",
         [id]
       );
-      console.log("preResult.rows[0]", preResult.rows[0]);
       // need to not run this if we are going to add placeholders
       if (preResult && preResult.rows && preResult.rows[0][key]) {
         const splitUrl = preResult.rows[0][key].split("/");
         const fileName = splitUrl[splitUrl.length - 1];
         try {
           await deleteFromGC(fileName);
-          console.log("deleted from gc");
         } catch (e) {
           console.log("File to delete does not exist: ", e);
         }
