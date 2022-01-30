@@ -28,6 +28,7 @@ interface CatalogueType extends CatalogueStub {
   profile_picture_url: string | null;
   event_date: string | null;
   location: string | null;
+  labels: Label[] | null;
 }
 
 interface Label {

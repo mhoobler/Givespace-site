@@ -30,6 +30,10 @@ export const ALL_CATALOGUE_FIELDS = gql`
     profile_picture_url
     event_date
     location
+    labels {
+      id
+      name
+    }
   }
 `;
 
@@ -50,5 +54,21 @@ export const CATALOGUE_FRAGMENT = gql`
     profile_picture_url
     event_date
     location
+    labels {
+      id
+      name
+    }
+  }
+`;
+
+export const LABEL_FIELDS = gql`
+  fragment AllLabelFields on Label {
+    id
+    catalogue_id
+    name
+    link_url
+    is_private
+    created
+    updated
   }
 `;

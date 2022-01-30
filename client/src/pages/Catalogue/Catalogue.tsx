@@ -24,6 +24,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   // All ApolloHooks are moved to custom hook for organization
   const {
+    addLabelMutation,
     incrementCatalogueViews,
     updateCatalogue,
     catalogueSubscription,
@@ -99,8 +100,17 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     handleTextInput(ISOString, objectKey);
   };
 
+  console.log(catalogue);
+  console.log(catalogueSubscription);
+  // TODO: These still need to update Cache
   const addLabel = (name: string) => {
     console.log(name, catalogue.id);
+    addLabelMutation({
+      variables: {
+        name,
+        catalogue_id: catalogue.id,
+      },
+    });
   };
 
   const deleteLabel = (id: string) => {
@@ -123,7 +133,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         isEditing={isEditing}
         addLabel={addLabel}
         deleteLabel={deleteLabel}
-        labels={[]}
+        labels={catalogue.labels ? catalogue.labels : []}
         items={null}
       />
     </div>

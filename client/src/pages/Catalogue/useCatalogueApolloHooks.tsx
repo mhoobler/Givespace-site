@@ -6,6 +6,7 @@ import {
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
   UPDATE_CATALOGUE_FILES,
+  CREATE_LABEL,
 } from "../../graphql/schemas";
 import { useFieldEditing } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
@@ -27,7 +28,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
     INCREMENT_CATALOGUE_VIEWS,
     {
       variables: CatalogueIdVariables,
-    }
+    },
   );
   apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
 
@@ -42,6 +43,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
       if (data && data.liveCatalogue) {
         const catalogue = data.liveCatalogue;
         if (fieldEditing) delete catalogue[fieldEditing];
+        console.log("SUB", catalogue);
         client.writeFragment({
           id: `Catalogue:${catalogue.id}`,
           fragment: CATALOGUE_FRAGMENT,
@@ -53,7 +55,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   });
   apolloHookErrorHandler(
     "useCatalogueApolloHooks.tsx",
-    catalogueSubscription.error
+    catalogueSubscription.error,
   );
 
   const catalogueQuery = useQuery(GET_CATALOGUE, {
@@ -67,12 +69,17 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   ] = useMutation(UPDATE_CATALOGUE_FILES);
   apolloHookErrorHandler("updateCatalogueFiles", singleUplaodError);
 
+  const [addLabelMutation, { error: createLabelError }] =
+    useMutation(CREATE_LABEL);
+  apolloHookErrorHandler("createLabelError", createLabelError);
+
   return {
     incrementCatalogueViews,
     updateCatalogue,
     catalogueQuery,
     catalogueSubscription,
     updateCatalogueFiles,
+    addLabelMutation,
   };
 };
 

@@ -1,5 +1,9 @@
 import { gql } from "@apollo/client";
-import { ALL_CATALOGUE_FIELDS, CATALOGUE_LIST_ITEM_FIELDS } from "./fragments";
+import {
+  LABEL_FIELDS,
+  ALL_CATALOGUE_FIELDS,
+  CATALOGUE_LIST_ITEM_FIELDS,
+} from "./fragments";
 
 export const GET_JWT = gql`
   query GetJwt {
@@ -79,6 +83,13 @@ export const UPDATE_CATALOGUE_FILES = gql`
   }
 `;
 
+export const CREATE_LABEL = gql`
+  ${LABEL_FIELDS}
+  mutation CreateLabel($catalogue_id: String!, $name: String!) {
+    createLabel(catalogue_id: $catalogue_id, name: $name) {
+      ...AllLabelFields
+    }
+  }
+`;
 //export const UPDATE_LABEL_ORDER = gql``;
-//export const CREATE_LABEL = gql``;
 //export const DETEL_LABEL = gql``;
