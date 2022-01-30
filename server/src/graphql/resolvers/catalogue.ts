@@ -47,7 +47,7 @@ const catalogueResolvers = {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
         `SELECT 
           c.*,
-          json_agg(l) as labels
+          json_agg(l ORDER BY ordering) as labels
         from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.user_id = $1 GROUP BY c.id;`,
         [authorization]
       );
