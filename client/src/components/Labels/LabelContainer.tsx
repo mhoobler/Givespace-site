@@ -17,7 +17,6 @@ const LabelContainer: React.FC<Props> = ({ addLabel, children }) => {
     console.log(inputRef.current.value);
     if (isAdding) {
       if (inputRef.current.value !== "") {
-        console.log("isEmpty");
         addLabel(inputRef.current.value);
       }
 
