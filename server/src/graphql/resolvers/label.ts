@@ -22,9 +22,12 @@ const labelResolvers = {
         [catalogue_id, name, fullCatalogue.labels.length]
       );
       const newLabel: Label = newLabelRes.rows[0];
-      const newFullCatalogue: Catalogue = await getFullCatalogues(
-        catalogue_id
+      const newFullCatalogue: Catalogue = (
+        await getFullCatalogues(catalogue_id)
       )[0];
+
+      console.log("newFullCatalogue", newFullCatalogue);
+
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: newFullCatalogue,
       });
@@ -41,8 +44,8 @@ const labelResolvers = {
         throw new Error("Label not found");
       }
 
-      const fullCatalogue: Catalogue = await getFullCatalogues(
-        deletedLabel.catalogue_id
+      const fullCatalogue: Catalogue = (
+        await getFullCatalogues(deletedLabel.catalogue_id)
       )[0];
 
       pubsub.publish("CATALOGUE_EDITED", {
@@ -99,8 +102,8 @@ const labelResolvers = {
       console.log("newOrdering", newOrdering);
       const updatedLabel: Label = updatedLabelRes.rows[0];
 
-      const fullCatalogue: Catalogue = await getFullCatalogues(
-        labelRes.rows[0].catalogue_id
+      const fullCatalogue: Catalogue = (
+        await getFullCatalogues(labelRes.rows[0].catalogue_id)
       )[0];
 
       pubsub.publish("CATALOGUE_EDITED", {

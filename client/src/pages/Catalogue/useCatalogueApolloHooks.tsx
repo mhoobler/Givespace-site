@@ -54,10 +54,10 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
       }
     },
   });
-  apolloHookErrorHandler(
-    "useCatalogueApolloHooks.tsx",
-    catalogueSubscription.error
-  );
+  // apolloHookErrorHandler(
+  //   "useCatalogueApolloHooks.tsx",
+  //   catalogueSubscription.error
+  // );
 
   const catalogueQuery = useQuery(GET_CATALOGUE, {
     variables: CatalogueIdVariables,

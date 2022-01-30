@@ -55,6 +55,5 @@ export const getFullCatalogues = async (
     throw new Error("No catalogues returned");
   }
 
-  console.log("fullCatalogues", fullCatalogues.rows);
   return fullCatalogues.rows;
 };

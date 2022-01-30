@@ -19,13 +19,31 @@ export const LABEL_FIELDS = gql`
     catalogue_id
     name
     link_url
+    ordering
     is_private
     created
     updated
   }
 `;
 
+export const LISTING_FIELDS = gql`
+  fragment AllListingFields on Listing {
+    id
+    catalogue_id
+    name
+    link_url
+    image_url
+    description
+    ordering
+    show_price
+    price
+    created
+    updated
+  }
+`;
+
 export const ALL_CATALOGUE_FIELDS = gql`
+  ${LISTING_FIELDS}
   ${LABEL_FIELDS}
   fragment AllCatalogueFields on Catalogue {
     id
@@ -45,6 +63,9 @@ export const ALL_CATALOGUE_FIELDS = gql`
     location
     labels {
       ...AllLabelFields
+    }
+    listings {
+      ...AllListingFields
     }
   }
 `;

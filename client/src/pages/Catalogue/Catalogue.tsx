@@ -56,6 +56,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     fragment: ALL_CATALOGUE_FIELDS,
     fragmentName: "AllCatalogueFields",
   });
+  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -128,9 +129,9 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   const deleteLabel = (id: string) => {
     cache.evict({ id: `Label:${id}` });
     cache.gc();
-
     deleteLabelMutation({
       variables: { id },
+      fetchPolicy: "no-cache",
     });
   };
 
