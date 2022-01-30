@@ -1,0 +1,33 @@
+// Label stuff TO BE MOVED
+
+.add-label-group {
+  width: 2rem;
+  box-sizing: content-box;
+  transition: width 0.4s;
+  background-color: #343434;
+  padding: 2px;
+
+  &.adding {
+    width: 10rem;
+
+    .add-label-input {
+      width: 8rem;
+    }
+  }
+
+  .add-label-input {
+    width: 0rem;
+    padding: 0;
+    border: none;
+    box-shadow: 0px 0px 4px black;
+    transition: width 0.4s;
+  }
+
+}
+
+.add-label-button {
+  background-color: transparent;
+  color: white;
+  width: 2rem;
+  border: none;
+}

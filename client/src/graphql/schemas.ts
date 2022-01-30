@@ -78,3 +78,7 @@ export const UPDATE_CATALOGUE_FILES = gql`
     }
   }
 `;
+
+//export const UPDATE_LABEL_ORDER = gql``;
+//export const CREATE_LABEL = gql``;
+//export const DETEL_LABEL = gql``;

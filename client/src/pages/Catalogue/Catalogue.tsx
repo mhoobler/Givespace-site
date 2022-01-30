@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 import { updateCatalogueCache } from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
-import { CatalogueHeader, CatalogueToolbar } from "../../containers";
+import {
+  CatalogueHeader,
+  CatalogueItems,
+  CatalogueToolbar,
+} from "../../containers";
 import { cache } from "../../graphql/clientConfig";
 import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
 
@@ -95,6 +99,14 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     handleTextInput(ISOString, objectKey);
   };
 
+  const addLabel = (name: string) => {
+    console.log(name, catalogue.id);
+  };
+
+  const deleteLabel = (id: string) => {
+    console.log(id);
+  };
+
   return (
     <div className="page-padding">
       <CatalogueToolbar editable={editable} />
@@ -106,6 +118,13 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDDSubmit={handleDDSubmit}
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
+      />
+      <CatalogueItems
+        isEditing={isEditing}
+        addLabel={addLabel}
+        deleteLabel={deleteLabel}
+        labels={[]}
+        items={null}
       />
     </div>
   );
