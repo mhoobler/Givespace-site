@@ -137,7 +137,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         isEditing={isEditing}
         addLabel={addLabel}
         deleteLabel={deleteLabel}
-        labels={catalogue.labels ? catalogue.labels : []}
+        labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
         items={null}
       />
     </div>

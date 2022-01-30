@@ -14,8 +14,10 @@ const LabelContainer: React.FC<Props> = ({ addLabel, children }) => {
     if (!inputRef.current) {
       throw new Error("Could not get input");
     }
+    console.log(inputRef.current.value);
     if (isAdding) {
-      if (inputRef.current.value === "") {
+      if (inputRef.current.value !== "") {
+        console.log("isEmpty");
         addLabel(inputRef.current.value);
       }
 

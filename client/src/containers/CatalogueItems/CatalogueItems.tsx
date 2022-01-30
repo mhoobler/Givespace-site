@@ -17,6 +17,7 @@ const CatalogueItems: React.FC<Props> = ({
   deleteLabel,
   isEditing,
 }) => {
+  console.log(labels);
   return (
     <div className="row catalogue-items-container">
       {/* add item, sort */}

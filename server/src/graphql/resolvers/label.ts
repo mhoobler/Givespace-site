@@ -17,8 +17,7 @@ const labelResolvers = {
       }
       const newLabelRes: QueryResult<Label> = await db.query(
         "INSERT INTO labels (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, fullCatalogue.labels.length]
-
+        [catalogue_id, name, fullCatalogue.labels.length],
       );
       const newLabel: Label = newLabelRes.rows[0];
       const newFullCatalogue = await getFullCatalogue(catalogue_id);
@@ -37,29 +36,36 @@ const labelResolvers = {
       if (!deletedLabel) {
         throw new Error("Label not found");
       }
+
+      const fullCatalogue = await getFullCatalogue(deletedLabel.catalogue_id);
+
+      pubsub.publish("CATALOGUE_EDITED", {
+        liveCatalogue: fullCatalogue,
+      });
+
       return deletedLabel;
     },
     reorderLabel: async (
       _: null,
-      { id, ordering }: { id: string; ordering: number }
+      { id, ordering }: { id: string; ordering: number },
     ): Promise<Label> => {
       // select all from labels where catalogue_id = id and order by ordering
       const labelRes: QueryResult<Label> = await db.query(
         "SELECT * FROM labels WHERE id = $1",
-        [id]
+        [id],
       );
       if (!labelRes.rows[0]) {
         throw new Error("Label not found");
       }
       const labelsRes: QueryResult<Label> = await db.query(
         "SELECT * FROM labels WHERE catalogue_id = $1 ",
-        [labelRes.rows[0].catalogue_id]
+        [labelRes.rows[0].catalogue_id],
       );
 
       const labels: Label[] = labelsRes.rows;
       // order catalogue by id
       const orderedLabels: Label[] = labels.sort(
-        (a, b) => a.ordering - b.ordering
+        (a, b) => a.ordering - b.ordering,
       );
       let newOrdering;
       if (ordering === 0) {
@@ -82,13 +88,13 @@ const labelResolvers = {
 
       const updatedLabelRes: QueryResult<Label> = await db.query(
         "UPDATE labels SET ordering = $1 WHERE id = $2 RETURNING *",
-        [newOrdering, id]
+        [newOrdering, id],
       );
       console.log("newOrdering", newOrdering);
       const updatedLabel: Label = updatedLabelRes.rows[0];
 
       const fullCatalogue = await getFullCatalogue(
-        labelRes.rows[0].catalogue_id
+        labelRes.rows[0].catalogue_id,
       );
 
       pubsub.publish("CATALOGUE_EDITED", {
