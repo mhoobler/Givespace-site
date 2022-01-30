@@ -102,11 +102,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     handleTextInput(ISOString, objectKey);
   };
 
-  console.log(catalogue);
-  console.log(catalogueSubscription);
+  //console.log(catalogue);
+  //console.log(catalogueSubscription);
   // TODO: These still need to update Cache
   const addLabel = (name: string) => {
-    console.log(name, catalogue.id);
+    //console.log(name, catalogue.id);
     addLabelMutation({
       variables: {
         name,
@@ -123,15 +123,16 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   const reorderLabel = (id: string, ordering: number) => {
+    console.log(ordering);
     if (!catalogue.labels || catalogue.labels[0] === null) {
       throw new Error("Tried ordering with no labels");
     }
 
-    const labels = catalogue.labels
-      .map((e) => e)
-      .sort((a, b) => a.ordering - b.ordering);
+    const labels = catalogueSubscription.data.liveCatalogue.labels
+      .map((e: any) => e)
+      .sort((a: any, b: any) => a.ordering - b.ordering);
     const len = labels.length;
-    const targetIndex = labels.findIndex((e) => e.id === id);
+    const targetIndex = labels.findIndex((e: any) => e.id === id);
     const targetLabel = labels[targetIndex];
     console.log(labels);
     console.log(targetIndex);
@@ -140,12 +141,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       throw new Error("Could not find label with id: " + id);
     }
 
-    const orderingLabel = catalogue.labels[ordering];
-    const nextOrdering = labels[ordering].ordering;
-    const prevOrdering = labels[ordering - 1].ordering;
-    if (!orderingLabel) {
-      throw new Error("Could not find label with index: " + ordering);
-    }
+    const orderingLabel = catalogue.labels[ordering]; // possible undefined
 
     let newOrdering;
 
@@ -155,10 +151,14 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     } else if (ordering === len) {
       newOrdering = labels[len - 1].ordering + 1;
     } else if (ordering === 0) {
-      newOrdering = labels[0].ordering + 1;
+      newOrdering = labels[0].ordering - 1;
     } else {
+      const nextOrdering = labels[ordering].ordering;
+      const prevOrdering = labels[ordering - 1].ordering;
+      console.log(nextOrdering, prevOrdering);
       newOrdering = (nextOrdering + prevOrdering) / 2;
     }
+    console.log(id, newOrdering);
     reorderLabelMutation({
       variables: { id, ordering: newOrdering },
     });

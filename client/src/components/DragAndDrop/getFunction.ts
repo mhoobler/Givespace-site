@@ -15,6 +15,7 @@ export const getMouseDown =
     const refsArr: ref[] = Object.values(refs).sort(
       (a, b) => a.data.ordering - b.data.ordering,
     );
+    console.log(refsArr.map((e) => e.data.ordering));
 
     const currentTarget = refs[id].elm;
     const targetBoundingBox = currentTarget.getBoundingClientRect();
@@ -31,10 +32,8 @@ export const getMouseDown =
     separator.style.backgroundColor = "red";
     let isValidDrop = false;
     let dropIndex = refsArr.findIndex((ref) => ref.elm === currentTarget);
-    console.log(dropIndex);
 
     const MouseUp = (upEvt: MouseEvent) => {
-      console.log("my");
       clearTimeout(holdMouseTimeout);
       window.removeEventListener("mouseup", MouseUp);
       window.removeEventListener("mousemove", MouseMove);
@@ -73,7 +72,6 @@ export const getMouseDown =
             isValidDrop = true;
             dropIndex = i;
             elm.parentNode!.insertBefore(separator, elm);
-            console.log("is left of:", elm);
             break;
           }
 
@@ -82,7 +80,6 @@ export const getMouseDown =
             isValidDrop = true;
             dropIndex = i + 1;
             elm.parentNode!.insertBefore(separator, elm.nextSibling);
-            console.log("is right of:", elm);
             break;
           }
         }
@@ -90,7 +87,6 @@ export const getMouseDown =
     };
 
     const holdMouseTimeout = setTimeout(() => {
-      console.log("to");
       window.addEventListener("mousemove", MouseMove);
     }, 750);
   };
