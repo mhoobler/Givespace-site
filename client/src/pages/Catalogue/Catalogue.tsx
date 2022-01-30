@@ -9,7 +9,7 @@ import {
   CatalogueToolbar,
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
-import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
+import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
@@ -53,8 +53,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // by CATALOGUE_FRAGMENT
   const catalogue: CatalogueType | null = cache.readFragment({
     id: `Catalogue:${catalogueSubscription.data.liveCatalogue.id}`,
-    fragment: CATALOGUE_FRAGMENT,
+    fragment: ALL_CATALOGUE_FIELDS,
+    fragmentName: "AllCatalogueFields",
   });
+  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -101,8 +103,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     handleTextInput(ISOString, objectKey);
   };
 
-  console.log(catalogue);
-  console.log(catalogueSubscription);
   // TODO: These still need to update Cache
   const addLabel = (name: string) => {
     console.log(name, catalogue.id);

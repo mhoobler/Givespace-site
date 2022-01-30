@@ -45,7 +45,7 @@ const CatalogueHeader: React.FC<Props> = ({
             isEditing={isEditing}
             handleSubmit={handleFileInput}
             keyProp={"profile_picture_url"}
-            value={catalogue.header_image_url || ""}
+            value={catalogue.profile_picture_url || ""}
           />
           <TextInput
             isEditing={isEditing}

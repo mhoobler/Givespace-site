@@ -24,7 +24,6 @@ export const handleFile = async (
   callback: (fileName: string, path: string) => Promise<any>
 ): Promise<any> => {
   // creates the file locally, runs the callback, then deletes the file
-  console.log("file", file);
   const { createReadStream, filename, mimetype, encoding } = await file;
   const stream = createReadStream();
   const pathToFile = path.join(__dirname, "../images/", filename);
