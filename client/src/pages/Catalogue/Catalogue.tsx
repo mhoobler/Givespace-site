@@ -41,7 +41,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     // delay gives time for the subscription to get set up
     setTimeout(() => {
       incrementCatalogueViews();
-      console.log("incremented views");
     }, 1);
   }, []);
 
@@ -57,7 +56,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     fragment: ALL_CATALOGUE_FIELDS,
     fragmentName: "AllCatalogueFields",
   });
-  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -78,7 +76,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleFileInput = (file: File | undefined, objectKey: string) => {
     if (file) {
-      console.log("fileOnSubmit", file);
       updateCatalogueFiles({
         variables: {
           id: catalogue.id,
@@ -132,7 +129,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     cache.evict({ id: `Label:${id}` });
     cache.gc();
 
-    console.log("deleting label", id);
     deleteLabelMutation({
       variables: { id },
     });

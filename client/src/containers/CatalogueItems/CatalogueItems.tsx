@@ -26,7 +26,7 @@ const CatalogueItems: React.FC<Props> = ({
       </div>
       {/* labels */}
       <div className="col-12">
-        <LabelContainer addLabel={addLabel}>
+        <LabelContainer addLabel={addLabel} isEditing={isEditing}>
           {labels.map((e: Label) => (
             <Label
               key={e.id}
