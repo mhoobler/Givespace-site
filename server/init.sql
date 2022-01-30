@@ -54,7 +54,7 @@ CREATE TABLE labels (
   catalogue_id UUID NOT NULL,
   name TEXT NOT NULL,
   link_url TEXT,
-  ordering INT,
+  ordering FLOAT NOT NULL,
   is_private BOOLEAN,
   created TIMESTAMP DEFAULT NOW(),
   updated TIMESTAMP DEFAULT NOW(),
@@ -96,13 +96,26 @@ INSERT INTO catalogues (
 INSERT INTO labels (
   id,
   catalogue_id,
-  name
+  name,
+  ordering
 ) VALUES (
   'd5a998be-205c-4a5e-8f41-05f808cdc9e1',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label1'
+  'label1',
+  0
 ), (
   'fbe5c847-5419-487a-a803-e7b2ca9bfa7e',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label2'
+  'label2',
+  1
+), (
+  '51692a78-c744-4f8e-a2c5-d4a422fc657d',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label3',
+  2
+), (
+  '35b2a996-ab59-4dcd-9885-9a2a54d1608c',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label3',
+  3
 );
