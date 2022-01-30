@@ -19,7 +19,7 @@ const catalogueResolvers = {
   Query: {
     catalogues: async (
       _: null,
-      args: { id: string; edit_id: string }
+      args: { id: string; edit_id: string },
     ): Promise<Catalogue[]> => {
       let catalogues: QueryResult<Catalogue>;
 
@@ -27,24 +27,24 @@ const catalogueResolvers = {
         catalogues = await db.query(
           `SELECT 
             c.*,
-            json_agg(l) as labels
+            json_agg(l ORDER BY ordering) as labels
           from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-          [args.id]
+          [args.id],
         );
       } else if (args.edit_id) {
         catalogues = await db.query(
           `SELECT 
             c.*,
-            json_agg(l) as labels
+            json_agg(l ORDER BY ordering) as labels
           from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.edit_id = $1 GROUP BY c.id;`,
-          [args.edit_id]
+          [args.edit_id],
         );
       } else {
         catalogues = await db.query(
           `SELECT 
             c.*,
-            json_agg(l) as labels
-          from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id GROUP BY c.id;`
+            json_agg(l ORDER BY ordering) as labels
+          from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id GROUP BY c.id;`,
         );
       }
 
@@ -54,14 +54,14 @@ const catalogueResolvers = {
     myCatalogues: async (
       _: null,
       __: null,
-      { authorization }: Context
+      { authorization }: Context,
     ): Promise<CatalogueListItem[]> => {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
         `SELECT 
           c.*,
-          json_agg(l) as labels
+          json_agg(l ORDER BY ordering) as labels
         from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.user_id = $1 GROUP BY c.id;`,
-        [authorization]
+        [authorization],
       );
       return catalogues.rows;
     },
@@ -71,22 +71,22 @@ const catalogueResolvers = {
     createCatalogue: async (
       _: null,
       __: null,
-      context: Context
+      context: Context,
     ): Promise<Catalogue> => {
       // lazy solution to get the joined catalogue
       const newCatalogues: QueryResult<Catalogue> = await db.query(
         "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING *",
-        [context.authorization]
+        [context.authorization],
       );
       const fullCatalogues: QueryResult<Catalogue> = await db.query(
         `SELECT 
           c.*,
           json_agg(l) as labels
         from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-        [newCatalogues.rows[0].id]
+        [newCatalogues.rows[0].id],
       );
       const newCatalogue: Catalogue = await getFullCatalogue(
-        fullCatalogues.rows[0].id
+        fullCatalogues.rows[0].id,
       );
 
       return newCatalogue;
@@ -94,12 +94,12 @@ const catalogueResolvers = {
     deleteCatalogue: async (
       _,
       { id }: { id: string },
-      context: Context
+      context: Context,
     ): Promise<CatalogueListItem> => {
       // wheree id = $1 AND user_id = $2
       const deletedCatalogues: QueryResult<CatalogueListItem> = await db.query(
         "DELETE FROM catalogues WHERE id = $1 AND user_id = $2 RETURNING id, edit_id, user_id, status, title, description, created, updated",
-        [id, context.authorization]
+        [id, context.authorization],
       );
       const deletedCatalogue: CatalogueListItem = deletedCatalogues.rows[0];
       if (!deletedCatalogue) {
@@ -110,7 +110,7 @@ const catalogueResolvers = {
     },
     incrementCatalogueViews: async (
       _,
-      { id, edit_id }: { id: string; edit_id: string }
+      { id, edit_id }: { id: string; edit_id: string },
     ): Promise<Catalogue> => {
       if (!id && !edit_id) {
         throw new Error("No id or edit_id provided");
@@ -122,7 +122,7 @@ const catalogueResolvers = {
         `UPDATE catalogues SET views = views + 1 WHERE ${
           id ? "id" : "edit_id"
         } = $1 RETURNING *`,
-        [id || edit_id]
+        [id || edit_id],
       );
 
       if (!result.rows[0]) {
@@ -139,11 +139,11 @@ const catalogueResolvers = {
     },
     editCatalogue: async (
       _,
-      { key, value, id }: { key: string; value: string; id: string }
+      { key, value, id }: { key: string; value: string; id: string },
     ): Promise<Catalogue> => {
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
-        [value, id]
+        [value, id],
       );
 
       if (!result.rows[0]) {
@@ -160,11 +160,11 @@ const catalogueResolvers = {
     },
     editCatalogueFile: async (
       _,
-      { id, key, file }: { id: string; key: string; file: any }
+      { id, key, file }: { id: string; key: string; file: any },
     ) => {
       let preResult: QueryResult<Catalogue> = await db.query(
         "SELECT * FROM catalogues WHERE id = $1",
-        [id]
+        [id],
       );
       console.log("preResult.rows[0]", preResult.rows[0]);
       // need to not run this if we are going to add placeholders
@@ -183,7 +183,7 @@ const catalogueResolvers = {
 
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
-        [url, id]
+        [url, id],
       );
 
       const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
@@ -230,7 +230,7 @@ const catalogueResolvers = {
           } else {
             return payload.liveCatalogue.edit_id === variables.edit_id;
           }
-        }
+        },
       ),
     },
   },
