@@ -36,16 +36,25 @@ export const handleFile = async (
   return callbackReturn;
 };
 
-export const getFullCatalogue = async (id: string): Promise<Catalogue> => {
+export const getFullCatalogues = async (
+  keyValue: string,
+  key?: string
+): Promise<Catalogue[]> => {
   const fullCatalogues: QueryResult<Catalogue> = await db.query(
     `SELECT 
       c.*,
-      json_agg(l) as labels
-    from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-    [id]
+      json_agg(DISTINCT la.*) as labels,
+      json_agg(DISTINCT li.*) as listings
+    FROM catalogues c 
+    LEFT JOIN labels la ON c.id = la.catalogue_id
+    LEFT JOIN listings li ON c.id = li.catalogue_id
+    WHERE c.${key || "id"} = $1 GROUP BY c.id;`,
+    [keyValue]
   );
   if (!fullCatalogues.rows[0]) {
-    throw new Error("Catalogue not found");
+    throw new Error("No catalogues returned");
   }
-  return fullCatalogues.rows[0];
+
+  console.log("fullCatalogues", fullCatalogues.rows);
+  return fullCatalogues.rows;
 };

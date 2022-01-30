@@ -1,7 +1,7 @@
 import { withFilter } from "graphql-subscriptions";
 import { pubsub } from "../index";
 import {
-  getFullCatalogue,
+  getFullCatalogues,
   handleFile,
   verifyToken,
 } from "../../utils/functions";
@@ -10,45 +10,33 @@ import db from "../../../db";
 import { QueryResult } from "pg";
 import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
 
-// type EditCataloguesFields = {
-//   id: string;
-//   title: string;
-// };
-
 const catalogueResolvers = {
   Query: {
     catalogues: async (
       _: null,
       args: { id: string; edit_id: string }
     ): Promise<Catalogue[]> => {
-      let catalogues: QueryResult<Catalogue>;
+      let catalogues: Catalogue[];
 
       if (args.id) {
-        catalogues = await db.query(
-          `SELECT 
-            c.*,
-            json_agg(l) as labels
-          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-          [args.id]
-        );
+        catalogues = await getFullCatalogues(args.id);
       } else if (args.edit_id) {
-        catalogues = await db.query(
-          `SELECT 
-            c.*,
-            json_agg(l) as labels
-          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.edit_id = $1 GROUP BY c.id;`,
-          [args.edit_id]
-        );
+        catalogues = await getFullCatalogues(args.edit_id, "edit_id");
       } else {
-        catalogues = await db.query(
+        const res = await db.query(
           `SELECT 
             c.*,
-            json_agg(l) as labels
-          from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id GROUP BY c.id;`
+            json_agg(DISTINCT la.*) as labels,
+            json_agg(DISTINCT li.*) as listings
+          FROM catalogues c 
+          LEFT JOIN labels la ON c.id = la.catalogue_id
+          LEFT JOIN listings li ON c.id = li.catalogue_id
+          GROUP BY c.id;`
         );
+        catalogues = res.rows;
       }
 
-      return catalogues.rows;
+      return catalogues;
     },
 
     myCatalogues: async (
@@ -74,22 +62,17 @@ const catalogueResolvers = {
       context: Context
     ): Promise<Catalogue> => {
       // lazy solution to get the joined catalogue
-      const newCatalogues: QueryResult<Catalogue> = await db.query(
-        "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING *",
+      const newCataloguesRes: QueryResult<{ id: string }> = await db.query(
+        "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING id",
         [context.authorization]
       );
-      const fullCatalogues: QueryResult<Catalogue> = await db.query(
-        `SELECT 
-          c.*,
-          json_agg(l) as labels
-        from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-        [newCatalogues.rows[0].id]
-      );
-      const newCatalogue: Catalogue = await getFullCatalogue(
-        fullCatalogues.rows[0].id
-      );
+      console.log("newCatalogues", newCataloguesRes.rows);
+      const newCatalogues: Catalogue = (
+        await getFullCatalogues(newCataloguesRes.rows[0].id)
+      )[0];
+      console.log("newCatalogues", newCatalogues);
 
-      return newCatalogue;
+      return newCatalogues;
     },
     deleteCatalogue: async (
       _,
@@ -129,7 +112,11 @@ const catalogueResolvers = {
         throw new Error("Catalogue does not exist");
       }
       // second query to get the full catalogue
-      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
+      const catalogue: Catalogue = (
+        await getFullCatalogues(result.rows[0].id)
+      )[0];
+
+      console.log(catalogue);
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: catalogue,
@@ -150,7 +137,9 @@ const catalogueResolvers = {
         throw new Error("Catalogue does not exist");
       }
 
-      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
+      const catalogue: Catalogue = (
+        await getFullCatalogues(result.rows[0].id)
+      )[0];
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: catalogue,
@@ -184,7 +173,9 @@ const catalogueResolvers = {
         [url, id]
       );
 
-      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
+      const catalogue: Catalogue = (
+        await getFullCatalogues(result.rows[0].id)
+      )[0];
       if (!catalogue) {
         throw new Error("Catalogue does not exist");
       }

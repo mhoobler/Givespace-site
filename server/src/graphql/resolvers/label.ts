@@ -1,7 +1,7 @@
 import db from "../../../db";
 import { QueryResult } from "pg";
 import { Catalogue, Label } from "../../types";
-import { getFullCatalogue } from "../../utils/functions";
+import { getFullCatalogues } from "../../utils/functions";
 import { pubsub } from "../index";
 
 const labelResolvers = {
@@ -9,18 +9,22 @@ const labelResolvers = {
   Mutation: {
     createLabel: async (
       _: null,
-      { catalogue_id, name }: { catalogue_id: string; name: string },
+      { catalogue_id, name }: { catalogue_id: string; name: string }
     ) => {
-      const fullCatalogue = await getFullCatalogue(catalogue_id);
+      const fullCatalogue: Catalogue = (
+        await getFullCatalogues(catalogue_id)
+      )[0];
       if (!fullCatalogue) {
         throw new Error("No catalogue found");
       }
       const newLabelRes: QueryResult<Label> = await db.query(
         "INSERT INTO labels (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, fullCatalogue.labels.length],
+        [catalogue_id, name, fullCatalogue.labels.length]
       );
       const newLabel: Label = newLabelRes.rows[0];
-      const newFullCatalogue = await getFullCatalogue(catalogue_id);
+      const newFullCatalogue: Catalogue = await getFullCatalogues(
+        catalogue_id
+      )[0];
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: newFullCatalogue,
       });
@@ -30,14 +34,16 @@ const labelResolvers = {
     deleteLabel: async (_: null, { id }: { id: string }): Promise<Label> => {
       const deletedLabelRes: QueryResult<Label> = await db.query(
         "DELETE FROM labels WHERE id = $1 RETURNING *",
-        [id],
+        [id]
       );
       const deletedLabel: Label = deletedLabelRes.rows[0];
       if (!deletedLabel) {
         throw new Error("Label not found");
       }
 
-      const fullCatalogue = await getFullCatalogue(deletedLabel.catalogue_id);
+      const fullCatalogue: Catalogue = await getFullCatalogues(
+        deletedLabel.catalogue_id
+      )[0];
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: fullCatalogue,
@@ -47,25 +53,25 @@ const labelResolvers = {
     },
     reorderLabel: async (
       _: null,
-      { id, ordering }: { id: string; ordering: number },
+      { id, ordering }: { id: string; ordering: number }
     ): Promise<Label> => {
       // select all from labels where catalogue_id = id and order by ordering
       const labelRes: QueryResult<Label> = await db.query(
         "SELECT * FROM labels WHERE id = $1",
-        [id],
+        [id]
       );
       if (!labelRes.rows[0]) {
         throw new Error("Label not found");
       }
       const labelsRes: QueryResult<Label> = await db.query(
         "SELECT * FROM labels WHERE catalogue_id = $1 ",
-        [labelRes.rows[0].catalogue_id],
+        [labelRes.rows[0].catalogue_id]
       );
 
       const labels: Label[] = labelsRes.rows;
       // order catalogue by id
       const orderedLabels: Label[] = labels.sort(
-        (a, b) => a.ordering - b.ordering,
+        (a, b) => a.ordering - b.ordering
       );
       let newOrdering;
       if (ordering === 0) {
@@ -88,14 +94,14 @@ const labelResolvers = {
 
       const updatedLabelRes: QueryResult<Label> = await db.query(
         "UPDATE labels SET ordering = $1 WHERE id = $2 RETURNING *",
-        [newOrdering, id],
+        [newOrdering, id]
       );
       console.log("newOrdering", newOrdering);
       const updatedLabel: Label = updatedLabelRes.rows[0];
 
-      const fullCatalogue = await getFullCatalogue(
-        labelRes.rows[0].catalogue_id,
-      );
+      const fullCatalogue: Catalogue = await getFullCatalogues(
+        labelRes.rows[0].catalogue_id
+      )[0];
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: fullCatalogue,
