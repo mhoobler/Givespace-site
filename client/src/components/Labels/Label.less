@@ -1,0 +1,24 @@
+.label {
+  display: flex;
+  background-color: #343434;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 100px;
+
+  .delete-label {
+    display: none;
+  }
+
+  &.show-delete{
+    .delete-label {
+      line-height: 8px;
+      margin-left: 8px;
+      height: 24px;
+      width: 24px;
+      display: block;
+      padding: 0;
+      border: none;
+      border-radius: 100px;
+    }
+  }
+}

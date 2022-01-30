@@ -9,7 +9,7 @@ const labelResolvers = {
   Mutation: {
     createLabel: async (
       _: null,
-      { catalogue_id, name }: { catalogue_id: string; name: string }
+      { catalogue_id, name }: { catalogue_id: string; name: string },
     ) => {
       const fullCatalogue = await getFullCatalogue(catalogue_id);
       if (!fullCatalogue) {
@@ -18,6 +18,7 @@ const labelResolvers = {
       const newLabelRes: QueryResult<Label> = await db.query(
         "INSERT INTO labels (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
         [catalogue_id, name, fullCatalogue.labels.length]
+
       );
       const newLabel: Label = newLabelRes.rows[0];
       const newFullCatalogue = await getFullCatalogue(catalogue_id);
@@ -30,7 +31,7 @@ const labelResolvers = {
     deleteLabel: async (_: null, { id }: { id: string }): Promise<Label> => {
       const deletedLabelRes: QueryResult<Label> = await db.query(
         "DELETE FROM labels WHERE id = $1 RETURNING *",
-        [id]
+        [id],
       );
       const deletedLabel: Label = deletedLabelRes.rows[0];
       if (!deletedLabel) {
