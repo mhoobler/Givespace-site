@@ -7,6 +7,7 @@ import {
   UPDATE_CATALOGUE,
   UPDATE_CATALOGUE_FILES,
   CREATE_LABEL,
+  DELETE_LABEL,
 } from "../../graphql/schemas";
 import { useFieldEditing } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
@@ -73,6 +74,10 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
     useMutation(CREATE_LABEL);
   apolloHookErrorHandler("createLabelError", createLabelError);
 
+  const [deleteLabelMutation, { error: deleteLabelError }] =
+    useMutation(DELETE_LABEL);
+  apolloHookErrorHandler("deleteLabelError", deleteLabelError);
+
   return {
     incrementCatalogueViews,
     updateCatalogue,
@@ -80,6 +85,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
     catalogueSubscription,
     updateCatalogueFiles,
     addLabelMutation,
+    deleteLabelMutation,
   };
 };
 

@@ -1,5 +1,7 @@
 import React from "react";
 
+import "./Label.less";
+
 type LabelProps = {
   isEditing: boolean;
   deleteLabel: (id: string) => void;
@@ -13,10 +15,10 @@ const Label: React.FC<LabelProps> = ({ isEditing, deleteLabel, label }) => {
   };
 
   return (
-    <div className={`label ${isEditing ? "show-delete" : ""}`}>
+    <div className={`label f-center ${isEditing ? "show-delete" : ""}`}>
       <span>{label.name}</span>
       <button className="delete-label" onClick={handleDeleteClick}>
-        X
+        x
       </button>
     </div>
   );

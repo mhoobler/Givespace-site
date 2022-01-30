@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
 
+import "./LabelContainer.less";
+
 type Props = {
   addLabel: (name: string) => void;
 };
@@ -13,7 +15,10 @@ const LabelContainer: React.FC<Props> = ({ addLabel, children }) => {
       throw new Error("Could not get input");
     }
     if (isAdding) {
-      addLabel(inputRef.current.value);
+      if (inputRef.current.value === "") {
+        addLabel(inputRef.current.value);
+      }
+
       inputRef.current.value = "";
       setIsAdding(false);
     } else {
@@ -25,7 +30,7 @@ const LabelContainer: React.FC<Props> = ({ addLabel, children }) => {
   return (
     <div className="d-flex labels-container">
       {children}
-      <div className={`add-label-group ${isAdding ? "adding" : ""}`}>
+      <div className={`f-center add-label-group ${isAdding ? "adding" : ""}`}>
         <input ref={inputRef} className="add-label-input" type="text" />
         <button className="add-label-button add" onClick={handleAddLabel}>
           +

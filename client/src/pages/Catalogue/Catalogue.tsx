@@ -24,11 +24,12 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   // All ApolloHooks are moved to custom hook for organization
   const {
-    addLabelMutation,
     incrementCatalogueViews,
     updateCatalogue,
     catalogueSubscription,
     updateCatalogueFiles,
+    addLabelMutation,
+    deleteLabelMutation,
   } = useCatalogueApolloHooks({
     CatalogueIdVariables,
   });
@@ -115,6 +116,9 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const deleteLabel = (id: string) => {
     console.log(id);
+    deleteLabelMutation({
+      variables: { id },
+    });
   };
 
   return (

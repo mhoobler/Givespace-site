@@ -91,5 +91,14 @@ export const CREATE_LABEL = gql`
     }
   }
 `;
+
+export const DELETE_LABEL = gql`
+  ${LABEL_FIELDS}
+  mutation DeleteLabel($id: ID!) {
+    deleteLabel(id: $id) {
+      ...AllLabelFields
+    }
+  }
+`;
+
 //export const UPDATE_LABEL_ORDER = gql``;
-//export const DETEL_LABEL = gql``;
