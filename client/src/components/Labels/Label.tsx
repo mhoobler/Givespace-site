@@ -26,7 +26,7 @@ const Label: React.FC<LabelProps> = ({ isEditing, deleteLabel, label }) => {
   return (
     <div
       ref={(elm) => {
-        captureRef(elm, label.id);
+        captureRef(elm, label);
       }}
       className={`label f-center ${isEditing ? "show-delete" : ""}`}
     >

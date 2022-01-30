@@ -30,6 +30,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     updateCatalogueFiles,
     addLabelMutation,
     deleteLabelMutation,
+    reorderLabelMutation,
   } = useCatalogueApolloHooks({
     CatalogueIdVariables,
   });
@@ -121,6 +122,48 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
+  const reorderLabel = (id: string, ordering: number) => {
+    if (!catalogue.labels || catalogue.labels[0] === null) {
+      throw new Error("Tried ordering with no labels");
+    }
+
+    const labels = catalogue.labels
+      .map((e) => e)
+      .sort((a, b) => a.ordering - b.ordering);
+    const len = labels.length;
+    const targetIndex = labels.findIndex((e) => e.id === id);
+    const targetLabel = labels[targetIndex];
+    console.log(labels);
+    console.log(targetIndex);
+
+    if (!targetLabel) {
+      throw new Error("Could not find label with id: " + id);
+    }
+
+    const orderingLabel = catalogue.labels[ordering];
+    const nextOrdering = labels[ordering].ordering;
+    const prevOrdering = labels[ordering - 1].ordering;
+    if (!orderingLabel) {
+      throw new Error("Could not find label with index: " + ordering);
+    }
+
+    let newOrdering;
+
+    if (orderingLabel === targetLabel) {
+      console.log("Same label");
+      return;
+    } else if (ordering === len) {
+      newOrdering = labels[len - 1].ordering + 1;
+    } else if (ordering === 0) {
+      newOrdering = labels[0].ordering + 1;
+    } else {
+      newOrdering = (nextOrdering + prevOrdering) / 2;
+    }
+    reorderLabelMutation({
+      variables: { id, ordering: newOrdering },
+    });
+  };
+
   return (
     <div className="page-padding">
       <CatalogueToolbar editable={editable} />
@@ -137,6 +180,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         isEditing={isEditing}
         addLabel={addLabel}
         deleteLabel={deleteLabel}
+        reorderLabel={reorderLabel}
         labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
         items={null}
       />

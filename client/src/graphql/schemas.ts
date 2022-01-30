@@ -101,4 +101,11 @@ export const DELETE_LABEL = gql`
   }
 `;
 
-//export const UPDATE_LABEL_ORDER = gql``;
+export const UPDATE_LABEL_ORDER = gql`
+  ${LABEL_FIELDS}
+  mutation ReorderLabel($id: ID!, $ordering: Float!) {
+    reorderLabel(id: $id, ordering: $ordering) {
+      ...AllLabelFields
+    }
+  }
+`;

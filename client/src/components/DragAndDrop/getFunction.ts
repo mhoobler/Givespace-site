@@ -1,16 +1,21 @@
-type asf = {
+type ref = {
   elm: HTMLElement;
+  data: any;
   mousedown: (evt: MouseEvent) => void;
 };
 
-type elmRefs = {
-  [key: string]: asf;
+type refsMap = {
+  [key: string]: ref;
 };
 
 const px = (int: number): string => int + "px";
 
 export const getMouseDown =
-  (id: string, refs: elmRefs) => (evt: MouseEvent) => {
+  (id: string, refs: refsMap, reorderLabel: any) => (downEvt: MouseEvent) => {
+    const refsArr: ref[] = Object.values(refs).sort(
+      (a, b) => a.data.ordering - b.data.ordering,
+    );
+
     const currentTarget = refs[id].elm;
     const targetBoundingBox = currentTarget.getBoundingClientRect();
     const cloneTarget = currentTarget.cloneNode(true);
@@ -21,21 +26,15 @@ export const getMouseDown =
       throw new Error("No root found");
     }
 
-    const refElms = Object.values(refs).map(({ elm }) => elm);
-
     const separator = document.createElement("div");
     separator.style.width = "4px";
     separator.style.backgroundColor = "red";
     let isValidDrop = false;
-    let dropIndex = refElms.findIndex((elm) => elm === currentTarget);
+    let dropIndex = refsArr.findIndex((ref) => ref.elm === currentTarget);
     console.log(dropIndex);
 
-    const holdMouseTimeout = setTimeout(() => {
-      window.addEventListener("mouseup", MouseUp);
-      window.addEventListener("mousemove", MouseMove);
-    }, 250);
-
-    const MouseUp = (evt: MouseEvent) => {
+    const MouseUp = (upEvt: MouseEvent) => {
+      console.log("my");
       clearTimeout(holdMouseTimeout);
       window.removeEventListener("mouseup", MouseUp);
       window.removeEventListener("mousemove", MouseMove);
@@ -43,9 +42,14 @@ export const getMouseDown =
         separator.remove();
         append.remove();
       }
+      if (isValidDrop) {
+        reorderLabel(id, dropIndex);
+      }
     };
 
-    const MouseMove = (evt: MouseEvent) => {
+    window.addEventListener("mouseup", MouseUp);
+
+    const MouseMove = (moveEvt: MouseEvent) => {
       append = root.appendChild(cloneTarget) as HTMLElement;
       append.style.width = px(targetBoundingBox.width);
       append.style.height = px(targetBoundingBox.height);
@@ -55,25 +59,28 @@ export const getMouseDown =
       if (append) {
         const y2 = targetBoundingBox.width / 2;
         const x2 = targetBoundingBox.height / 2;
-        append.style.top = px(evt.pageY - x2);
-        append.style.left = px(evt.pageX - y2);
+        append.style.top = px(moveEvt.pageY - x2);
+        append.style.left = px(moveEvt.pageX - y2);
         separator.remove();
         isValidDrop = false;
 
-        for (let i = 0; i < refElms.length; i++) {
-          const elm = refElms[i];
+        for (let i = 0; i < refsArr.length; i++) {
+          const { elm } = refsArr[i];
           const bb = elm.getBoundingClientRect();
+
           // Is Left
-          if (evt.pageX > bb.left - 20 && evt.pageX < bb.left + 20) {
+          if (moveEvt.pageX > bb.left - 20 && moveEvt.pageX < bb.left + 20) {
             isValidDrop = true;
+            dropIndex = i;
             elm.parentNode!.insertBefore(separator, elm);
             console.log("is left of:", elm);
             break;
           }
-          // Is Right
 
-          if (evt.pageX > bb.right - 20 && evt.pageX < bb.right + 20) {
+          // Is Right
+          if (moveEvt.pageX > bb.right - 20 && moveEvt.pageX < bb.right + 20) {
             isValidDrop = true;
+            dropIndex = i + 1;
             elm.parentNode!.insertBefore(separator, elm.nextSibling);
             console.log("is right of:", elm);
             break;
@@ -81,4 +88,9 @@ export const getMouseDown =
         }
       }
     };
+
+    const holdMouseTimeout = setTimeout(() => {
+      console.log("to");
+      window.addEventListener("mousemove", MouseMove);
+    }, 750);
   };

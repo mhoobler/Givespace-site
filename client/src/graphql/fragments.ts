@@ -33,6 +33,7 @@ export const ALL_CATALOGUE_FIELDS = gql`
     labels {
       id
       name
+      ordering
     }
   }
 `;
@@ -57,6 +58,7 @@ export const CATALOGUE_FRAGMENT = gql`
     labels {
       id
       name
+      ordering
     }
   }
 `;

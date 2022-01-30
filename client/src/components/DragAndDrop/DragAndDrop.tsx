@@ -8,23 +8,28 @@ const DNDContext = createContext<any>({
 });
 const DNDProvider = DNDContext.Provider;
 
-type asf = {
-  elm: HTMLElement;
-  mousedown: (evt: MouseEvent) => void;
-};
-
 type elmRefs = {
-  [key: string]: asf;
+  [key: string]: {
+    elm: HTMLElement;
+    data: any;
+    mousedown: (evt: MouseEvent) => void;
+  };
 };
 
-const DragAndDrop: React.FC = ({ children }) => {
+type Props = {
+  reorderLabel: (id: string, ordering: number) => void;
+};
+
+const DragAndDrop: React.FC<Props> = ({ reorderLabel, children }) => {
   const elementsRef = useRef<elmRefs>({});
 
-  const captureRef = (elm: HTMLDivElement, id: string) => {
+  const captureRef = (elm: HTMLDivElement, data: any) => {
+    const { id } = data;
     if (!elementsRef.current[id]) {
       const ref = (elementsRef.current[id] = {
         elm,
-        mousedown: getMouseDown(id, elementsRef.current),
+        data,
+        mousedown: getMouseDown(id, elementsRef.current, reorderLabel),
       });
       ref.elm.addEventListener("mousedown", ref.mousedown);
     }

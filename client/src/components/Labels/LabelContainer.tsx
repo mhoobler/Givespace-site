@@ -5,9 +5,14 @@ import "./LabelContainer.less";
 
 type Props = {
   addLabel: (name: string) => void;
+  reorderLabel: (id: string, ordering: number) => void;
 };
 
-const LabelContainer: React.FC<Props> = ({ addLabel, children }) => {
+const LabelContainer: React.FC<Props> = ({
+  addLabel,
+  reorderLabel,
+  children,
+}) => {
   const [isAdding, setIsAdding] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -31,7 +36,7 @@ const LabelContainer: React.FC<Props> = ({ addLabel, children }) => {
   };
 
   return (
-    <DragAndDrop>
+    <DragAndDrop reorderLabel={reorderLabel}>
       <div className="d-flex labels-container">
         {children}
         <div className={`f-center add-label-group ${isAdding ? "adding" : ""}`}>
