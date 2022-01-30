@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import DragAndDrop from "../DragAndDrop/DragAndDrop";
 
 import "./LabelContainer.less";
 
@@ -30,15 +31,17 @@ const LabelContainer: React.FC<Props> = ({ addLabel, children }) => {
   };
 
   return (
-    <div className="d-flex labels-container">
-      {children}
-      <div className={`f-center add-label-group ${isAdding ? "adding" : ""}`}>
-        <input ref={inputRef} className="add-label-input" type="text" />
-        <button className="add-label-button add" onClick={handleAddLabel}>
-          +
-        </button>
+    <DragAndDrop>
+      <div className="d-flex labels-container">
+        {children}
+        <div className={`f-center add-label-group ${isAdding ? "adding" : ""}`}>
+          <input ref={inputRef} className="add-label-input" type="text" />
+          <button className="add-label-button add" onClick={handleAddLabel}>
+            +
+          </button>
+        </div>
       </div>
-    </div>
+    </DragAndDrop>
   );
 };
 
