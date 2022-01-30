@@ -22,6 +22,7 @@ type Label {
   catalogue_id: String!
   name: String!
   link_url: String
+  ordering: Float!
   is_private: Boolean
   created: Date!
   updated: Date!

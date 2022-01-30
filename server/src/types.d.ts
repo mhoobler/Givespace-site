@@ -39,6 +39,7 @@ export type Label = {
   catalogue_id: string;
   name: string;
   link_url: string;
+  ordering: number;
   is_private: boolean;
   created: Date;
   updated: Date;

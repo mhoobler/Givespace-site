@@ -117,6 +117,7 @@ const catalogueResolvers = {
       }
 
       // lazy solution to get the joined catalogue
+      // first query to make the change and get id
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET views = views + 1 WHERE ${
           id ? "id" : "edit_id"
@@ -127,7 +128,7 @@ const catalogueResolvers = {
       if (!result.rows[0]) {
         throw new Error("Catalogue does not exist");
       }
-
+      // second query to get the full catalogue
       const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
 
       pubsub.publish("CATALOGUE_EDITED", {
