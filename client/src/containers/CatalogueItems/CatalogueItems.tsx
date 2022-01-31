@@ -55,7 +55,7 @@ const CatalogueItems: React.FC<Props> = ({
       </div>
       <ListingCardsContainer>
         {listings.map((e: Listing) => (
-          <ListingCard listing={e} isEditing={isEditing} />
+          <ListingCard key={e.id} listing={e} isEditing={isEditing} />
         ))}
       </ListingCardsContainer>
     </div>

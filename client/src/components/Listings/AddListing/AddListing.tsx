@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 
+import "./AddListing.less";
+
 type Props = {
   handleAddListing: (name: string) => void;
 };
@@ -17,11 +19,13 @@ const AddListing: React.FC<Props> = ({ handleAddListing }) => {
   };
 
   return (
-    <div className="col-6 d-flex flex-column">
+    <div className="col-6 d-flex flex-column add-listing-container">
       <label>Add Item:</label>
-      <div className="flex">
-        <input ref={inputRef} type="text" />
-        <button onClick={handleClick}>Submit</button>
+      <div className="d-flex">
+        <div className="inputs-container">
+          <input ref={inputRef} type="text" />
+          <button onClick={handleClick}>+</button>
+        </div>
       </div>
     </div>
   );

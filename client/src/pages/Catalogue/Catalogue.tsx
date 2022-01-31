@@ -127,6 +127,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
+  const labels = catalogue.labels
+    ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
+    : [];
+
   const deleteLabel = (id: string) => {
     cache.evict({ id: `Label:${id}` });
     cache.gc();
@@ -137,11 +141,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   const reorderLabel = (id: string, ordering: number) => {
-    if (!catalogue.labels || catalogue.labels[0] === null) {
-      throw new Error("Tried ordering with no labels");
-    }
-
-    const labels = catalogue.labels;
     const len = labels.length;
     const targetIndex = labels.findIndex((e: any) => e.id === id);
     const targetLabel = labels[targetIndex];
@@ -150,7 +149,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       throw new Error("Could not find label with id: " + id);
     }
 
-    const orderingLabel = catalogue.labels[ordering]; // possible undefined
+    const orderingLabel = labels[ordering]; // possible undefined
 
     let newOrdering;
 
@@ -192,7 +191,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         addLabel={addLabel}
         deleteLabel={deleteLabel}
         reorderLabel={reorderLabel}
-        labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
+        labels={labels}
         listings={
           catalogue.listings && catalogue.listings[0] ? catalogue.listings : []
         }
