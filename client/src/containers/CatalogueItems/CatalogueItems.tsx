@@ -17,6 +17,8 @@ type Props = {
   labels: Label[];
   listings: Listing[];
   handleAddListing: (name: string) => void;
+  handleSelectListing: (listing: Listing) => void;
+  handleDeleteListing: (id: string) => void;
 };
 
 const CatalogueItems: React.FC<Props> = ({
@@ -27,6 +29,8 @@ const CatalogueItems: React.FC<Props> = ({
   reorderLabel,
   isEditing,
   handleAddListing,
+  handleSelectListing,
+  handleDeleteListing,
 }) => {
   return (
     <div className="row catalogue-items-container">
@@ -55,7 +59,13 @@ const CatalogueItems: React.FC<Props> = ({
       </div>
       <ListingCardsContainer>
         {listings.map((e: Listing) => (
-          <ListingCard key={e.id} listing={e} isEditing={isEditing} />
+          <ListingCard
+            key={e.id}
+            listing={e}
+            isEditing={isEditing}
+            handleSelectListing={handleSelectListing}
+            handleDeleteListing={handleDeleteListing}
+          />
         ))}
       </ListingCardsContainer>
     </div>

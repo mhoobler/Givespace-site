@@ -11,9 +11,11 @@ import {
 import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { dummyLabel } from "../../utils/references";
+import ListingModal from "./ListingModal";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   const CatalogueIdVariables = is_edit_id
@@ -127,7 +129,8 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
-  const labels = catalogue.labels
+  // labels
+  const sortedLabels = catalogue.labels
     ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
     : [];
 
@@ -141,27 +144,27 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   const reorderLabel = (id: string, ordering: number) => {
-    const len = labels.length;
-    const targetIndex = labels.findIndex((e: any) => e.id === id);
-    const targetLabel = labels[targetIndex];
+    const len = sortedLabels.length;
+    const targetIndex = sortedLabels.findIndex((e: any) => e.id === id);
+    const targetLabel = sortedLabels[targetIndex];
 
     if (!targetLabel) {
       throw new Error("Could not find label with id: " + id);
     }
 
-    const orderingLabel = labels[ordering]; // possible undefined
+    const orderingLabel = sortedLabels[ordering]; // possible undefined
 
     let newOrdering;
 
     if (orderingLabel === targetLabel) {
       return;
     } else if (ordering === len) {
-      newOrdering = labels[len - 1].ordering + 1;
+      newOrdering = sortedLabels[len - 1].ordering + 1;
     } else if (ordering === 0) {
-      newOrdering = labels[0].ordering - 1;
+      newOrdering = sortedLabels[0].ordering - 1;
     } else {
-      const nextOrdering = labels[ordering].ordering;
-      const prevOrdering = labels[ordering - 1].ordering;
+      const nextOrdering = sortedLabels[ordering].ordering;
+      const prevOrdering = sortedLabels[ordering - 1].ordering;
       newOrdering = (nextOrdering + prevOrdering) / 2;
     }
     reorderLabelMutation({
@@ -169,13 +172,30 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
-  // listing functions
+  // listings
+  const sortedListings =
+    catalogue.listings && catalogue.listings[0]
+      ? [...catalogue.listings].sort((a, b) => a.ordering - b.ordering)
+      : [];
+
   const handleAddListing = (name: string) => {
     console.log("handleAddListing", name);
   };
 
+  const handleListingModalClose = () => {
+    setSelectedListing(null);
+  };
+
+  const handleSelectListing = (listing: Listing) => {
+    setSelectedListing(listing);
+  };
+
+  const handleDeleteListing = (id: string) => {
+    console.log("handleDeleteListing", id);
+  };
+
   return (
-    <div className="page-padding">
+    <div className="page-wrapper">
       <CatalogueToolbar editable={editable} />
       <CatalogueHeader
         isEditing={isEditing}
@@ -191,11 +211,15 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         addLabel={addLabel}
         deleteLabel={deleteLabel}
         reorderLabel={reorderLabel}
-        labels={labels}
-        listings={
-          catalogue.listings && catalogue.listings[0] ? catalogue.listings : []
-        }
+        labels={sortedLabels}
+        listings={sortedListings}
         handleAddListing={handleAddListing}
+        handleSelectListing={handleSelectListing}
+        handleDeleteListing={handleDeleteListing}
+      />
+      <ListingModal
+        listing={selectedListing}
+        handleClose={handleListingModalClose}
       />
     </div>
   );
