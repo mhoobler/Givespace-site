@@ -19,7 +19,6 @@ const CatalogueItems: React.FC<Props> = ({
   reorderLabel,
   isEditing,
 }) => {
-  console.log(labels);
   return (
     <div className="row catalogue-items-container">
       {/* add item, sort */}
@@ -29,7 +28,11 @@ const CatalogueItems: React.FC<Props> = ({
       </div>
       {/* labels */}
       <div className="col-12">
-        <LabelContainer addLabel={addLabel} reorderLabel={reorderLabel}>
+        <LabelContainer
+          addLabel={addLabel}
+          reorderLabel={reorderLabel}
+          isEditing={isEditing}
+        >
           {labels.map((e: Label) => (
             <Label
               key={e.id}

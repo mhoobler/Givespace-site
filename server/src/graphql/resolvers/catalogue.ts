@@ -1,7 +1,7 @@
 import { withFilter } from "graphql-subscriptions";
 import { pubsub } from "../index";
 import {
-  getFullCatalogue,
+  getFullCatalogues,
   handleFile,
   verifyToken,
 } from "../../utils/functions";
@@ -10,58 +10,46 @@ import db from "../../../db";
 import { QueryResult } from "pg";
 import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
 
-// type EditCataloguesFields = {
-//   id: string;
-//   title: string;
-// };
-
 const catalogueResolvers = {
   Query: {
     catalogues: async (
       _: null,
-      args: { id: string; edit_id: string },
+      args: { id: string; edit_id: string }
     ): Promise<Catalogue[]> => {
-      let catalogues: QueryResult<Catalogue>;
+      let catalogues: Catalogue[];
 
       if (args.id) {
-        catalogues = await db.query(
-          `SELECT 
-            c.*,
-            json_agg(l ORDER BY ordering) as labels
-          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-          [args.id],
-        );
+        catalogues = await getFullCatalogues(args.id);
       } else if (args.edit_id) {
-        catalogues = await db.query(
-          `SELECT 
-            c.*,
-            json_agg(l ORDER BY ordering) as labels
-          from catalogues c JOIN labels l on c.id = l.catalogue_id WHERE c.edit_id = $1 GROUP BY c.id;`,
-          [args.edit_id],
-        );
+        catalogues = await getFullCatalogues(args.edit_id, "edit_id");
       } else {
-        catalogues = await db.query(
+        const res = await db.query(
           `SELECT 
             c.*,
-            json_agg(l ORDER BY ordering) as labels
-          from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id GROUP BY c.id;`,
+            json_agg(DISTINCT la.*) as labels,
+            json_agg(DISTINCT li.*) as listings
+          FROM catalogues c 
+          LEFT JOIN labels la ON c.id = la.catalogue_id
+          LEFT JOIN listings li ON c.id = li.catalogue_id
+          GROUP BY c.id;`
         );
+        catalogues = res.rows;
       }
 
-      return catalogues.rows;
+      return catalogues;
     },
 
     myCatalogues: async (
       _: null,
       __: null,
-      { authorization }: Context,
+      { authorization }: Context
     ): Promise<CatalogueListItem[]> => {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
         `SELECT 
           c.*,
           json_agg(l ORDER BY ordering) as labels
         from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.user_id = $1 GROUP BY c.id;`,
-        [authorization],
+        [authorization]
       );
       return catalogues.rows;
     },
@@ -71,35 +59,30 @@ const catalogueResolvers = {
     createCatalogue: async (
       _: null,
       __: null,
-      context: Context,
+      context: Context
     ): Promise<Catalogue> => {
       // lazy solution to get the joined catalogue
-      const newCatalogues: QueryResult<Catalogue> = await db.query(
-        "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING *",
-        [context.authorization],
+      const newCataloguesRes: QueryResult<{ id: string }> = await db.query(
+        "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING id",
+        [context.authorization]
       );
-      const fullCatalogues: QueryResult<Catalogue> = await db.query(
-        `SELECT 
-          c.*,
-          json_agg(l) as labels
-        from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-        [newCatalogues.rows[0].id],
-      );
-      const newCatalogue: Catalogue = await getFullCatalogue(
-        fullCatalogues.rows[0].id,
-      );
+      console.log("newCatalogues", newCataloguesRes.rows);
+      const newCatalogues: Catalogue = (
+        await getFullCatalogues(newCataloguesRes.rows[0].id)
+      )[0];
+      console.log("newCatalogues", newCatalogues);
 
-      return newCatalogue;
+      return newCatalogues;
     },
     deleteCatalogue: async (
       _,
       { id }: { id: string },
-      context: Context,
+      context: Context
     ): Promise<CatalogueListItem> => {
       // wheree id = $1 AND user_id = $2
       const deletedCatalogues: QueryResult<CatalogueListItem> = await db.query(
         "DELETE FROM catalogues WHERE id = $1 AND user_id = $2 RETURNING id, edit_id, user_id, status, title, description, created, updated",
-        [id, context.authorization],
+        [id, context.authorization]
       );
       const deletedCatalogue: CatalogueListItem = deletedCatalogues.rows[0];
       if (!deletedCatalogue) {
@@ -110,7 +93,7 @@ const catalogueResolvers = {
     },
     incrementCatalogueViews: async (
       _,
-      { id, edit_id }: { id: string; edit_id: string },
+      { id, edit_id }: { id: string; edit_id: string }
     ): Promise<Catalogue> => {
       if (!id && !edit_id) {
         throw new Error("No id or edit_id provided");
@@ -122,14 +105,18 @@ const catalogueResolvers = {
         `UPDATE catalogues SET views = views + 1 WHERE ${
           id ? "id" : "edit_id"
         } = $1 RETURNING *`,
-        [id || edit_id],
+        [id || edit_id]
       );
 
       if (!result.rows[0]) {
         throw new Error("Catalogue does not exist");
       }
       // second query to get the full catalogue
-      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
+      const catalogue: Catalogue = (
+        await getFullCatalogues(result.rows[0].id)
+      )[0];
+
+      console.log(catalogue);
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: catalogue,
@@ -139,18 +126,20 @@ const catalogueResolvers = {
     },
     editCatalogue: async (
       _,
-      { key, value, id }: { key: string; value: string; id: string },
+      { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Catalogue> => {
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
-        [value, id],
+        [value, id]
       );
 
       if (!result.rows[0]) {
         throw new Error("Catalogue does not exist");
       }
 
-      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
+      const catalogue: Catalogue = (
+        await getFullCatalogues(result.rows[0].id)
+      )[0];
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: catalogue,
@@ -160,20 +149,18 @@ const catalogueResolvers = {
     },
     editCatalogueFile: async (
       _,
-      { id, key, file }: { id: string; key: string; file: any },
+      { id, key, file }: { id: string; key: string; file: any }
     ) => {
       let preResult: QueryResult<Catalogue> = await db.query(
         "SELECT * FROM catalogues WHERE id = $1",
-        [id],
+        [id]
       );
-      console.log("preResult.rows[0]", preResult.rows[0]);
       // need to not run this if we are going to add placeholders
       if (preResult && preResult.rows && preResult.rows[0][key]) {
         const splitUrl = preResult.rows[0][key].split("/");
         const fileName = splitUrl[splitUrl.length - 1];
         try {
           await deleteFromGC(fileName);
-          console.log("deleted from gc");
         } catch (e) {
           console.log("File to delete does not exist: ", e);
         }
@@ -183,10 +170,12 @@ const catalogueResolvers = {
 
       const result: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
-        [url, id],
+        [url, id]
       );
 
-      const catalogue: Catalogue = await getFullCatalogue(result.rows[0].id);
+      const catalogue: Catalogue = (
+        await getFullCatalogues(result.rows[0].id)
+      )[0];
       if (!catalogue) {
         throw new Error("Catalogue does not exist");
       }
@@ -230,7 +219,7 @@ const catalogueResolvers = {
           } else {
             return payload.liveCatalogue.edit_id === variables.edit_id;
           }
-        },
+        }
       ),
     },
   },

@@ -9,7 +9,8 @@ import {
   CatalogueToolbar,
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
-import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
+import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
+import { dummyLabel } from "../../utils/references";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
@@ -41,7 +42,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     // delay gives time for the subscription to get set up
     setTimeout(() => {
       incrementCatalogueViews();
-      console.log("incremented views");
     }, 1);
   }, []);
 
@@ -54,8 +54,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // by CATALOGUE_FRAGMENT
   const catalogue: CatalogueType | null = cache.readFragment({
     id: `Catalogue:${catalogueSubscription.data.liveCatalogue.id}`,
-    fragment: CATALOGUE_FRAGMENT,
+    fragment: ALL_CATALOGUE_FIELDS,
+    fragmentName: "AllCatalogueFields",
   });
+  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -76,7 +78,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleFileInput = (file: File | undefined, objectKey: string) => {
     if (file) {
-      console.log("fileOnSubmit", file);
       updateCatalogueFiles({
         variables: {
           id: catalogue.id,
@@ -102,11 +103,22 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     handleTextInput(ISOString, objectKey);
   };
 
-  //console.log(catalogue);
-  //console.log(catalogueSubscription);
   // TODO: These still need to update Cache
   const addLabel = (name: string) => {
-    //console.log(name, catalogue.id);
+    cache.modify({
+      id: `Catalogue:${catalogue.id}`,
+      fields: {
+        labels(existing) {
+          if (existing && !existing[0]) {
+            return [{ ...dummyLabel, name, ordering: existing.length }];
+          }
+          return [
+            ...existing,
+            { ...dummyLabel, name, ordering: existing.length },
+          ];
+        },
+      },
+    });
     addLabelMutation({
       variables: {
         name,
@@ -116,9 +128,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   const deleteLabel = (id: string) => {
-    console.log(id);
+    cache.evict({ id: `Label:${id}` });
+    cache.gc();
     deleteLabelMutation({
       variables: { id },
+      fetchPolicy: "no-cache",
     });
   };
 

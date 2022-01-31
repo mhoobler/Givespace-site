@@ -10,7 +10,7 @@ export const verifyToken = (token: string): Boolean => {
   try {
     const decoded = jwt.verify(
       token.split("bearer ")[1],
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET
     );
     return true;
   } catch (err) {
@@ -21,10 +21,9 @@ export const verifyToken = (token: string): Boolean => {
 
 export const handleFile = async (
   file: any,
-  callback: (fileName: string, path: string) => Promise<any>,
+  callback: (fileName: string, path: string) => Promise<any>
 ): Promise<any> => {
   // creates the file locally, runs the callback, then deletes the file
-  console.log("file", file);
   const { createReadStream, filename, mimetype, encoding } = await file;
   const stream = createReadStream();
   const pathToFile = path.join(__dirname, "../images/", filename);
@@ -37,16 +36,24 @@ export const handleFile = async (
   return callbackReturn;
 };
 
-export const getFullCatalogue = async (id: string): Promise<Catalogue> => {
+export const getFullCatalogues = async (
+  keyValue: string,
+  key?: string
+): Promise<Catalogue[]> => {
   const fullCatalogues: QueryResult<Catalogue> = await db.query(
     `SELECT 
       c.*,
-      json_agg(l ORDER BY ordering) as labels
-    from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.id = $1 GROUP BY c.id;`,
-    [id],
+      json_agg(DISTINCT la.*) as labels,
+      json_agg(DISTINCT li.*) as listings
+    FROM catalogues c 
+    LEFT JOIN labels la ON c.id = la.catalogue_id
+    LEFT JOIN listings li ON c.id = li.catalogue_id
+    WHERE c.${key || "id"} = $1 GROUP BY c.id;`,
+    [keyValue]
   );
   if (!fullCatalogues.rows[0]) {
-    throw new Error("Catalogue not found");
+    throw new Error("No catalogues returned");
   }
-  return fullCatalogues.rows[0];
+
+  return fullCatalogues.rows;
 };
