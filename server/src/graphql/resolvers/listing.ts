@@ -67,8 +67,7 @@ const listingResolvers = {
           liveCatalogue: newFullCatalogue,
         });
       };
-      setTimeout(scrapeData, 10000);
-      // scrapeData();
+      scrapeData();
 
       return newListing;
     },
@@ -118,6 +117,7 @@ const listingResolvers = {
 
       return result.rows[0];
     },
+    // TODO: add edit image
     reorderListing: async (
       _: null,
       { id, ordering }: { id: string; ordering: number }
