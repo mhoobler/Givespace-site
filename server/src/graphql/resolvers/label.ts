@@ -17,9 +17,16 @@ const labelResolvers = {
       if (!fullCatalogue) {
         throw new Error("No catalogue found");
       }
+
+      const maxOrdering: any = fullCatalogue.labels.reduce(
+        // @ts-ignore
+        (max, label) => Math.max(max, label.ordering),
+        0
+      );
+
       const newLabelRes: QueryResult<Label> = await db.query(
         "INSERT INTO labels (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, fullCatalogue.labels.length]
+        [catalogue_id, name, maxOrdering + 1]
       );
       const newLabel: Label = newLabelRes.rows[0];
       const newFullCatalogue: Catalogue = (
