@@ -30,7 +30,7 @@ CREATE TABLE listings (
   link_url TEXT,
   image_url TEXT,
   description TEXT,
-  ordering INT NOT NULL,
+  ordering FLOAT NOT NULL,
   show_price BOOLEAN DEFAULT true,
   price NUMERIC,
   created TIMESTAMP DEFAULT NOW(),
@@ -134,15 +134,5 @@ INSERT INTO listings (
   '269a378d-97d7-46fa-a5c2-83c99e4fa7b6',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item1',
-  1
-), (
-  'c126fffa-3193-43a4-ae60-1198dda6fa51',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'item2',
-  2
-), (
-  '555b1aa8-540f-405f-a9e0-3118dae98a87',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'item3',
   3
 );

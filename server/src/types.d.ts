@@ -63,3 +63,10 @@ export type Listing = {
 export enum SubscriptionLabels {
   CATALOGUE_EDITED = "CATALOGUE_EDITED",
 }
+
+export type ScrapedFeatures = {
+  image_url: string;
+  item_url: string;
+  name: string;
+  price: number;
+};

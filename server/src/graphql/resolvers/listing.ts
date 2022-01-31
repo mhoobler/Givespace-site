@@ -1,8 +1,9 @@
 import db from "../../../db";
 import { QueryResult } from "pg";
-import { Catalogue, Label, Listing } from "../../types";
+import { Catalogue, Label, Listing, ScrapedFeatures } from "../../types";
 import { getFullCatalogues } from "../../utils/functions";
 import { pubsub } from "../index";
+import scrapeItemFeatures from "../../utils/amazonScraper";
 
 const listingResolvers = {
   Query: {},
@@ -10,108 +11,134 @@ const listingResolvers = {
     createListing: async (
       _: null,
       { catalogue_id, name }: { catalogue_id: string; name: string }
-    ): Listing => {
+    ): Promise<Listing> => {
       const fullCatalogue: Catalogue = (
         await getFullCatalogues(catalogue_id)
       )[0];
       if (!fullCatalogue) {
         throw new Error("No catalogue found");
       }
-      const newListingRes: QueryResult<Label> = await db.query(
+      console.log("fullCatalogue", fullCatalogue);
+      // get the max ordering from fullCatalogue.listings
+      const maxOrdering: any = fullCatalogue.listings.reduce(
+        // @ts-ignore
+        (max, listing) => Math.max(max, listing.ordering),
+        0
+      );
+      const newListingRes: QueryResult<Listing> = await db.query(
         "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, fullCatalogue.listings.length]
+        [catalogue_id, name, maxOrdering + 1]
       );
       const newListing: Listing = newListingRes.rows[0];
+
       const newFullCatalogue: Catalogue = (
         await getFullCatalogues(catalogue_id)
       )[0];
-
-      console.log("newFullCatalogue", newFullCatalogue);
 
       pubsub.publish("CATALOGUE_EDITED", {
         liveCatalogue: newFullCatalogue,
       });
 
-      return newLabel;
+      const scrapeData = async () => {
+        const features: ScrapedFeatures = await scrapeItemFeatures(name);
+
+        const currentListingRes: QueryResult<Listing> = await db.query(
+          "SELECT * FROM listings WHERE id = $1",
+          [newListing.id]
+        );
+        const currentListing: Listing = currentListingRes.rows[0];
+
+        const updateListingRes: QueryResult<Listing> = await db.query(
+          "UPDATE listings SET image_url = $1, price = $2 WHERE id = $3 RETURNING *",
+          [
+            currentListing.image_url || features.image_url,
+            currentListing.price || features.price,
+            newListing.id,
+          ]
+        );
+        const updatedListing: Listing = updateListingRes.rows[0];
+
+        console.log("updatedListing", updatedListing);
+
+        const newFullCatalogue: Catalogue = (
+          await getFullCatalogues(catalogue_id)
+        )[0];
+        pubsub.publish("CATALOGUE_EDITED", {
+          liveCatalogue: newFullCatalogue,
+        });
+      };
+      setTimeout(scrapeData, 10000);
+      // scrapeData();
+
+      return newListing;
     },
-    // deleteLabel: async (_: null, { id }: { id: string }): Promise<Label> => {
-    //   const deletedLabelRes: QueryResult<Label> = await db.query(
-    //     "DELETE FROM labels WHERE id = $1 RETURNING *",
-    //     [id]
-    //   );
-    //   const deletedLabel: Label = deletedLabelRes.rows[0];
-    //   if (!deletedLabel) {
-    //     throw new Error("Label not found");
-    //   }
+    deleteListing: async (
+      _: null,
+      { id }: { id: string }
+    ): Promise<Listing> => {
+      const deletedListingRes: QueryResult<Listing> = await db.query(
+        "DELETE FROM listings WHERE id = $1 RETURNING *",
+        [id]
+      );
+      const deletedListing: Listing = deletedListingRes.rows[0];
+      if (!deletedListing) {
+        throw new Error("Listing not found");
+      }
 
-    //   const fullCatalogue: Catalogue = (
-    //     await getFullCatalogues(deletedLabel.catalogue_id)
-    //   )[0];
+      const fullCatalogue: Catalogue = (
+        await getFullCatalogues(deletedListing.catalogue_id)
+      )[0];
 
-    //   pubsub.publish("CATALOGUE_EDITED", {
-    //     liveCatalogue: fullCatalogue,
-    //   });
+      pubsub.publish("CATALOGUE_EDITED", {
+        liveCatalogue: fullCatalogue,
+      });
 
-    //   return deletedLabel;
-    // },
-    // reorderLabel: async (
-    //   _: null,
-    //   { id, ordering }: { id: string; ordering: number }
-    // ): Promise<Label> => {
-    //   // select all from labels where catalogue_id = id and order by ordering
-    //   //const labelRes: QueryResult<Label> = await db.query(
-    //   //  "SELECT * FROM labels WHERE id = $1",
-    //   //  [id],
-    //   //);
-    //   //if (!labelRes.rows[0]) {
-    //   //  throw new Error("Label not found");
-    //   //}
-    //   //const labelsRes: QueryResult<Label> = await db.query(
-    //   //  "SELECT * FROM labels WHERE catalogue_id = $1 ",
-    //   //  [labelRes.rows[0].catalogue_id],
-    //   //);
+      return deletedListing;
+    },
+    editListing: async (
+      _,
+      { key, value, id }: { key: string; value: string; id: string }
+    ): Promise<Listing> => {
+      const result: QueryResult<Listing> = await db.query(
+        `UPDATE listings SET ${key} = $1 WHERE id = $2 RETURNING *`,
+        [value, id]
+      );
 
-    //   //const labels: Label[] = labelsRes.rows;
-    //   //// order catalogue by id
-    //   // const orderedLabels: Label[] = labels.sort(
-    //   //  (a, b) => a.ordering - b.ordering,
-    //   // );
-    //   // let newOrdering;
-    //   // if (ordering === 0) {
-    //   //  newOrdering = orderedLabels[0].ordering - 1;
-    //   // } else if (ordering === orderedLabels.length - 1) {
-    //   //  newOrdering = orderedLabels[orderedLabels.length - 1].ordering + 1;
-    //   // } else {
-    //   //  let lowerLabelOrdering = orderedLabels[ordering - 1].ordering;
-    //   //  let higherLabelOrdering = orderedLabels[ordering].ordering;
-    //   //  if (orderedLabels[ordering - 1].id === id) {
-    //   //    lowerLabelOrdering = orderedLabels[ordering].ordering;
-    //   //    higherLabelOrdering = orderedLabels[ordering + 1].ordering;
-    //   //  }
-    //   //  if (orderedLabels[ordering].id === id) {
-    //   //    return labelRes.rows[0];
-    //   //  } else {
-    //   //    newOrdering = (lowerLabelOrdering + higherLabelOrdering) / 2;
-    //   //  }
-    //   // }
+      if (!result.rows[0]) {
+        throw new Error("Listing does not exist");
+      }
 
-    //   const updatedLabelRes: QueryResult<Label> = await db.query(
-    //     "UPDATE labels SET ordering = $1 WHERE id = $2 RETURNING *",
-    //     [ordering, id]
-    //   );
-    //   console.log("newOrdering", ordering);
-    //   const updatedLabel: Label = updatedLabelRes.rows[0];
+      const catalogue: Catalogue = (
+        await getFullCatalogues(result.rows[0].catalogue_id)
+      )[0];
 
-    //   const fullCatalogue: Catalogue = (
-    //     await getFullCatalogues(updatedLabelRes.rows[0].catalogue_id)
-    //   )[0];
+      pubsub.publish("CATALOGUE_EDITED", {
+        liveCatalogue: catalogue,
+      });
 
-    //   pubsub.publish("CATALOGUE_EDITED", {
-    //     liveCatalogue: fullCatalogue,
-    //   });
+      return result.rows[0];
+    },
+    reorderListing: async (
+      _: null,
+      { id, ordering }: { id: string; ordering: number }
+    ): Promise<Listing> => {
+      console.log("START");
+      const updatedListingRes: QueryResult<Listing> = await db.query(
+        "UPDATE listings SET ordering = $1 WHERE id = $2 RETURNING *",
+        [ordering, id]
+      );
+      const updatedListing: Listing = updatedListingRes.rows[0];
+      console.log("updatedListing", updatedListing);
+      const fullCatalogue: Catalogue = (
+        await getFullCatalogues(updatedListing.catalogue_id)
+      )[0];
 
-    //   return updatedLabel;
-    // },
+      pubsub.publish("CATALOGUE_EDITED", {
+        liveCatalogue: fullCatalogue,
+      });
+
+      return updatedListing;
+    },
   },
   Subscription: {},
 };
