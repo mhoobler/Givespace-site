@@ -70,6 +70,7 @@ export const LABEL_FIELDS = gql`
     name
     link_url
     is_private
+    ordering
     created
     updated
   }

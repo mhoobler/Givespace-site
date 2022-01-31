@@ -116,6 +116,6 @@ INSERT INTO labels (
 ), (
   '35b2a996-ab59-4dcd-9885-9a2a54d1608c',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label3',
+  'label4',
   3
 );

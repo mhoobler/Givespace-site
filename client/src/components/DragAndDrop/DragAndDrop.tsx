@@ -25,13 +25,13 @@ const DragAndDrop: React.FC<Props> = ({ reorderLabel, children }) => {
 
   const captureRef = (elm: HTMLDivElement, data: any) => {
     const { id } = data;
-    if (!elementsRef.current[id]) {
+    if (elm) {
       const ref = (elementsRef.current[id] = {
         elm,
         data,
         mousedown: getMouseDown(id, elementsRef.current, reorderLabel),
       });
-      ref.elm.addEventListener("mousedown", ref.mousedown);
+      ref.elm.onmousedown = ref.mousedown;
     }
   };
 
