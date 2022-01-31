@@ -187,7 +187,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         addLabel={addLabel}
         deleteLabel={deleteLabel}
         reorderLabel={reorderLabel}
-        labels={catalogueSubscription.data.liveCatalogue.labels}
+        labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
         items={null}
       />
     </div>
