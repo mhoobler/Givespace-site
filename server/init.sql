@@ -30,11 +30,11 @@ CREATE TABLE listings (
   link_url TEXT,
   image_url TEXT,
   description TEXT,
-  ordering INT,
-  show_price BOOLEAN,
+  ordering INT NOT NULL,
+  show_price BOOLEAN DEFAULT true,
   price NUMERIC,
-  created TIMESTAMP,
-  updated TIMESTAMP,
+  created TIMESTAMP DEFAULT NOW(),
+  updated TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id),
   FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE
 );
@@ -55,7 +55,7 @@ CREATE TABLE labels (
   name TEXT NOT NULL,
   link_url TEXT,
   ordering FLOAT NOT NULL,
-  is_private BOOLEAN,
+  is_private BOOLEAN DEFAULT false,
   created TIMESTAMP DEFAULT NOW(),
   updated TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id),
@@ -101,21 +101,48 @@ INSERT INTO labels (
 ) VALUES (
   'd5a998be-205c-4a5e-8f41-05f808cdc9e1',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label1',
+  'label0',
   0
 ), (
   'fbe5c847-5419-487a-a803-e7b2ca9bfa7e',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label2',
+  'label1',
   1
 ), (
   '51692a78-c744-4f8e-a2c5-d4a422fc657d',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label3',
+  'label2',
   2
 ), (
   '35b2a996-ab59-4dcd-9885-9a2a54d1608c',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label3',
+  'label4',
+  3
+);
+
+INSERT INTO listings (
+  id,
+  catalogue_id,
+  name,
+  ordering
+) VALUES (
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item0',
+  0
+), (
+  '269a378d-97d7-46fa-a5c2-83c99e4fa7b6',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item1',
+  1
+), (
+  'c126fffa-3193-43a4-ae60-1198dda6fa51',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item2',
+  2
+), (
+  '555b1aa8-540f-405f-a9e0-3118dae98a87',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item3',
   3
 );

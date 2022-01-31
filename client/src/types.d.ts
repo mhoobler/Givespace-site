@@ -28,7 +28,8 @@ interface CatalogueType extends CatalogueStub {
   profile_picture_url: string | null;
   event_date: string | null;
   location: string | null;
-  labels: Label[] | null;
+  labels: Label[];
+  listings: Listing[];
 }
 
 interface Label {
@@ -40,4 +41,18 @@ interface Label {
   link_url: string | null;
   created: string;
   updated: string;
+}
+
+interface Listing {
+  id: string;
+  catalogue_id: string;
+  name: string;
+  link_url: string | null;
+  image_url: string | null;
+  description: string | null;
+  ordering: number;
+  show_price: Boolean;
+  price: number | null;
+  created: Date;
+  updated: Date;
 }

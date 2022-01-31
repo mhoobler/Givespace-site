@@ -7,9 +7,11 @@ export const apolloHookErrorHandler = (
 ): void => {
   if (hookError) {
     if (warning) {
-      console.warn(`ERROR at "${path}":\n\n${hookError}`);
+      console.log(hookError);
+      console.warn(`☝️☝️☝️ ERROR at "${path}" ☝️☝️☝️`);
     } else {
-      throw new Error(`ERROR at "${path}":\n\n${hookError}`);
+      console.log(hookError);
+      throw new Error(`☝️☝️☝️ ERROR at "${path}" ☝️☝️☝️`);
     }
   }
 };

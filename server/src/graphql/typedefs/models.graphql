@@ -6,9 +6,10 @@ type Catalogue {
   title: String!
   description: String!
   labels: [Label]!
+  listings: [Listing]!
   created: Date!
   updated: Date!
-  views: Int
+  views: Int!
   header_image_url: String
   header_color: String!
   author: String
@@ -18,12 +19,26 @@ type Catalogue {
 }
 
 type Label {
-  id: String!
+  id: ID!
   catalogue_id: String!
   name: String!
   link_url: String
   ordering: Float!
-  is_private: Boolean
+  is_private: Boolean!
+  created: Date!
+  updated: Date!
+}
+
+type Listing {
+  id: ID!
+  catalogue_id: String!
+  name: String!
+  link_url: String
+  image_url: String
+  description: String
+  ordering: Float!
+  show_price: Boolean!
+  price: Float
   created: Date!
   updated: Date!
 }

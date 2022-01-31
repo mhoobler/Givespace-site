@@ -9,7 +9,8 @@ import {
   CatalogueToolbar,
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
-import { CATALOGUE_FRAGMENT } from "../../graphql/fragments";
+import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
+import { dummyLabel } from "../../utils/references";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
@@ -30,6 +31,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     updateCatalogueFiles,
     addLabelMutation,
     deleteLabelMutation,
+    reorderLabelMutation,
   } = useCatalogueApolloHooks({
     CatalogueIdVariables,
   });
@@ -40,7 +42,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     // delay gives time for the subscription to get set up
     setTimeout(() => {
       incrementCatalogueViews();
-      console.log("incremented views");
     }, 1);
   }, []);
 
@@ -53,8 +54,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // by CATALOGUE_FRAGMENT
   const catalogue: CatalogueType | null = cache.readFragment({
     id: `Catalogue:${catalogueSubscription.data.liveCatalogue.id}`,
-    fragment: CATALOGUE_FRAGMENT,
+    fragment: ALL_CATALOGUE_FIELDS,
+    fragmentName: "AllCatalogueFields",
   });
+  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -75,7 +78,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleFileInput = (file: File | undefined, objectKey: string) => {
     if (file) {
-      console.log("fileOnSubmit", file);
       updateCatalogueFiles({
         variables: {
           id: catalogue.id,
@@ -101,11 +103,22 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     handleTextInput(ISOString, objectKey);
   };
 
-  console.log(catalogue);
-  console.log(catalogueSubscription);
   // TODO: These still need to update Cache
   const addLabel = (name: string) => {
-    console.log(name, catalogue.id);
+    cache.modify({
+      id: `Catalogue:${catalogue.id}`,
+      fields: {
+        labels(existing) {
+          if (existing && !existing[0]) {
+            return [{ ...dummyLabel, name, ordering: existing.length }];
+          }
+          return [
+            ...existing,
+            { ...dummyLabel, name, ordering: existing.length },
+          ];
+        },
+      },
+    });
     addLabelMutation({
       variables: {
         name,
@@ -115,9 +128,45 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   const deleteLabel = (id: string) => {
-    console.log(id);
+    cache.evict({ id: `Label:${id}` });
+    cache.gc();
     deleteLabelMutation({
       variables: { id },
+      fetchPolicy: "no-cache",
+    });
+  };
+
+  const reorderLabel = (id: string, ordering: number) => {
+    if (!catalogue.labels || catalogue.labels[0] === null) {
+      throw new Error("Tried ordering with no labels");
+    }
+
+    const labels = catalogue.labels;
+    const len = labels.length;
+    const targetIndex = labels.findIndex((e: any) => e.id === id);
+    const targetLabel = labels[targetIndex];
+
+    if (!targetLabel) {
+      throw new Error("Could not find label with id: " + id);
+    }
+
+    const orderingLabel = catalogue.labels[ordering]; // possible undefined
+
+    let newOrdering;
+
+    if (orderingLabel === targetLabel) {
+      return;
+    } else if (ordering === len) {
+      newOrdering = labels[len - 1].ordering + 1;
+    } else if (ordering === 0) {
+      newOrdering = labels[0].ordering - 1;
+    } else {
+      const nextOrdering = labels[ordering].ordering;
+      const prevOrdering = labels[ordering - 1].ordering;
+      newOrdering = (nextOrdering + prevOrdering) / 2;
+    }
+    reorderLabelMutation({
+      variables: { id, ordering: newOrdering },
     });
   };
 
@@ -137,7 +186,8 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         isEditing={isEditing}
         addLabel={addLabel}
         deleteLabel={deleteLabel}
-        labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
+        reorderLabel={reorderLabel}
+        labels={catalogueSubscription.data.liveCatalogue.labels}
         items={null}
       />
     </div>

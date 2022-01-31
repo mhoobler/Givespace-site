@@ -6,6 +6,7 @@ import "./CatalogueItems.less";
 type Props = {
   addLabel: (name: string) => void;
   deleteLabel: (id: string) => void;
+  reorderLabel: (id: string, ordering: number) => void;
   isEditing: boolean;
   labels: Label[];
   items: null; // TODO: CHANGE THIS
@@ -15,9 +16,9 @@ const CatalogueItems: React.FC<Props> = ({
   labels,
   addLabel,
   deleteLabel,
+  reorderLabel,
   isEditing,
 }) => {
-  console.log(labels);
   return (
     <div className="row catalogue-items-container">
       {/* add item, sort */}
@@ -27,7 +28,11 @@ const CatalogueItems: React.FC<Props> = ({
       </div>
       {/* labels */}
       <div className="col-12">
-        <LabelContainer addLabel={addLabel}>
+        <LabelContainer
+          addLabel={addLabel}
+          reorderLabel={reorderLabel}
+          isEditing={isEditing}
+        >
           {labels.map((e: Label) => (
             <Label
               key={e.id}
