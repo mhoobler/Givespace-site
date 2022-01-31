@@ -1,5 +1,11 @@
 import React from "react";
-import { LabelContainer, Label } from "../../components";
+import {
+  LabelContainer,
+  Label,
+  ListingCard,
+  ListingCardsContainer,
+  AddListing,
+} from "../../components";
 
 import "./CatalogueItems.less";
 
@@ -9,21 +15,24 @@ type Props = {
   reorderLabel: (id: string, ordering: number) => void;
   isEditing: boolean;
   labels: Label[];
-  items: null; // TODO: CHANGE THIS
+  listings: Listing[];
+  handleAddListing: (name: string) => void;
 };
 
 const CatalogueItems: React.FC<Props> = ({
   labels,
+  listings,
   addLabel,
   deleteLabel,
   reorderLabel,
   isEditing,
+  handleAddListing,
 }) => {
   return (
     <div className="row catalogue-items-container">
       {/* add item, sort */}
       <div className="row">
-        <div className="col-md-6 col-sm-12">Add Item</div>
+        <AddListing handleAddListing={handleAddListing} />
         <div className="col-md-6 col-sm-12">Sort</div>
       </div>
       {/* labels */}
@@ -44,6 +53,11 @@ const CatalogueItems: React.FC<Props> = ({
           ))}
         </LabelContainer>
       </div>
+      <ListingCardsContainer>
+        {listings.map((e: Listing) => (
+          <ListingCard listing={e} isEditing={isEditing} />
+        ))}
+      </ListingCardsContainer>
     </div>
   );
 };

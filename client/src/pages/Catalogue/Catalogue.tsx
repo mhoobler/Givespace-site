@@ -170,6 +170,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
+  // listing functions
+  const handleAddListing = (name: string) => {
+    console.log("handleAddListing", name);
+  };
+
   return (
     <div className="page-padding">
       <CatalogueToolbar editable={editable} />
@@ -188,7 +193,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         deleteLabel={deleteLabel}
         reorderLabel={reorderLabel}
         labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
-        items={null}
+        listings={
+          catalogue.listings && catalogue.listings[0] ? catalogue.listings : []
+        }
+        handleAddListing={handleAddListing}
       />
     </div>
   );
