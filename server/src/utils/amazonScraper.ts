@@ -1,7 +1,6 @@
 import { ScrapedFeatures } from "../types";
-
-const fetch = require("node-fetch");
-const cheerio = require("cheerio");
+import fetch from "node-fetch";
+import cheerio from "cheerio";
 
 const scrapeItemFeatures = async (name: string): Promise<ScrapedFeatures> => {
   const formattedItem = encodeURIComponent(name).replace(/%20/g, "+");
