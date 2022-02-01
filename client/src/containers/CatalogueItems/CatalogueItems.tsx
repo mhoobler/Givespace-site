@@ -32,6 +32,7 @@ const CatalogueItems: React.FC<Props> = ({
   handleSelectListing,
   handleDeleteListing,
 }) => {
+  console.log("labels", labels);
   return (
     <div className="row catalogue-items-container">
       {/* add item, sort */}

@@ -9,6 +9,7 @@ const CreateCatalogueButton = (): React.ReactElement => {
   const [createCatalogue, { loading, data, error }] =
     useMutation(CREATE_CATALOGUE);
   apolloHookErrorHandler("CreateCatalogueButton.tsx", error);
+  console.log("data", data);
 
   const navigate = useNavigate();
   useEffect(() => {

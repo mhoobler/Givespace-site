@@ -48,7 +48,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       incrementCatalogueViews();
     }, 1);
   }, []);
-
   if (!catalogueSubscription.data) {
     return <div>Loading...</div>;
   }
@@ -61,7 +60,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     fragment: ALL_CATALOGUE_FIELDS,
     fragmentName: "AllCatalogueFields",
   });
-  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -132,9 +130,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   // labels
-  const sortedLabels = catalogue.labels
-    ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
-    : [];
+  const sortedLabels =
+    catalogue.labels && catalogue.labels[0] !== null
+      ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
+      : [];
 
   const deleteLabel = (id: string) => {
     cache.evict({ id: `Label:${id}` });
@@ -230,10 +229,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleSelectListing={handleSelectListing}
         handleDeleteListing={handleDeleteListing}
       />
-      <ListingModal
+      {/* <ListingModal
         listing={selectedListing}
         handleClose={handleListingModalClose}
-      />
+      /> */}
     </div>
   );
 

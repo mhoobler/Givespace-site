@@ -68,15 +68,15 @@ const catalogueResolvers = {
       _: null,
       __: null,
       context: Context
-    ): Promise<Catalogue> => {
+    ): Promise<CatalogueListItem> => {
       // lazy solution to get the joined catalogue
-      const newCataloguesRes: QueryResult<{ id: string }> = await db.query(
-        "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING id",
+      const newCataloguesRes: QueryResult<CatalogueListItem> = await db.query(
+        "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING *",
         [context.authorization]
       );
-      const newCatalogue: Catalogue = (
-        await getFullCatalogues(newCataloguesRes.rows[0].id)
-      )[0];
+      const newCatalogue: CatalogueListItem = newCataloguesRes.rows[0];
+
+      notExist("Catalogue", newCatalogue);
 
       return newCatalogue;
     },

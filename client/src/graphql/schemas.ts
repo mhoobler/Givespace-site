@@ -31,10 +31,10 @@ export const MY_CATALOGUES = gql`
 `;
 
 export const CREATE_CATALOGUE = gql`
-  ${ALL_CATALOGUE_FIELDS}
+  ${CATALOGUE_LIST_ITEM_FIELDS}
   mutation CreateCatalogue {
     createCatalogue {
-      ...AllCatalogueFields
+      ...CatalogueListItemFields
     }
   }
 `;
