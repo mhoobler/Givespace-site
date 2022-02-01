@@ -31,6 +31,14 @@ const ListingCard: React.FC<Props> = ({
       </div>
       <div className="card-body" onClick={handleSelect}>
         <h4>{listing.name}</h4>
+        {/* TODO: DELETE THIS */}
+        <img
+          style={{ width: "100px" }}
+          src={
+            listing.image_url ||
+            "https://media.wired.com/photos/592722c1af95806129f51b71/master/pass/MIT-Web-Loading.jpg"
+          }
+        />
       </div>
     </div>
   );

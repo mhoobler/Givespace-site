@@ -3,6 +3,7 @@ import {
   LABEL_FIELDS,
   ALL_CATALOGUE_FIELDS,
   CATALOGUE_LIST_ITEM_FIELDS,
+  LISTING_FIELDS,
 } from "./fragments";
 
 export const GET_JWT = gql`
@@ -42,7 +43,7 @@ export const DELTETE_CATALOGUE = gql`
   ${CATALOGUE_LIST_ITEM_FIELDS}
   mutation DeleteCatalogue($id: ID!) {
     deleteCatalogue(id: $id) {
-      ...CatalogueListItemFields
+      ...AllListingFields
     }
   }
 `;
@@ -106,6 +107,24 @@ export const UPDATE_LABEL_ORDER = gql`
   mutation ReorderLabel($id: ID!, $ordering: Float!) {
     reorderLabel(id: $id, ordering: $ordering) {
       ...AllLabelFields
+    }
+  }
+`;
+
+export const CREATE_LISTING = gql`
+  ${LISTING_FIELDS}
+  mutation CreateListing($catalogue_id: ID!, $name: String!) {
+    createListing(catalogue_id: $catalogue_id, name: $name) {
+      ...AllListingFields
+    }
+  }
+`;
+
+export const DELETE_LISTING = gql`
+  ${LISTING_FIELDS}
+  mutation DeleteListing($id: ID!) {
+    deleteListing(id: $id) {
+      ...AllListingFields
     }
   }
 `;

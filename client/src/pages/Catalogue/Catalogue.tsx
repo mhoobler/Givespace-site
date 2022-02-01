@@ -34,6 +34,8 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     addLabelMutation,
     deleteLabelMutation,
     reorderLabelMutation,
+    createListing,
+    deleteListing,
   } = useCatalogueApolloHooks({
     CatalogueIdVariables,
   });
@@ -180,6 +182,12 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleAddListing = (name: string) => {
     console.log("handleAddListing", name);
+    createListing({
+      variables: {
+        name,
+        catalogue_id: catalogue.id,
+      },
+    });
   };
 
   const handleListingModalClose = () => {
@@ -192,6 +200,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleDeleteListing = (id: string) => {
     console.log("handleDeleteListing", id);
+    deleteListing({
+      variables: {
+        id,
+      },
+    });
   };
 
   return (
