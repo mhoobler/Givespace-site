@@ -31,25 +31,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     ? { edit_id: corresponding_id }
     : { id: corresponding_id };
 
-  useEffect(() => {
-    const current = JSON.parse(markedForDeletion[markedForDeletion.length - 1]);
-    const [id, type] = current.id.split(":");
-    setTimeout(() => {
-      handleDeletion(
-        id,
-        type as GraphqlModel,
-        current.obj,
-        markedForDeletion,
-        setMarkedForDeletion,
-        () =>
-          deleteLabelMutation({
-            variables: { id },
-            fetchPolicy: "no-cache",
-          })
-      );
-    }, 1000);
-  }, [markedForDeletion]);
-
   // Inputs need to toggle from Editing to Display state
   const [isEditing, setIsEditing] = useState(false);
 
@@ -170,20 +151,20 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       markedForDeletion,
       setMarkedForDeletion
     );
-    // setTimeout(() => {
-    //   handleDeletion(
-    //     id,
-    //     "Label" as GraphqlModel,
-    //     label,
-    //     markedForDeletion,
-    //     setMarkedForDeletion,
-    //     () =>
-    //       deleteLabelMutation({
-    //         variables: { id },
-    //         fetchPolicy: "no-cache",
-    //       })
-    //   );
-    // }, 1000);
+    setTimeout(() => {
+      handleDeletion(
+        id,
+        "Label" as GraphqlModel,
+        label,
+        markedForDeletion,
+        setMarkedForDeletion,
+        () =>
+          deleteLabelMutation({
+            variables: { id },
+            fetchPolicy: "no-cache",
+          })
+      );
+    }, 1000);
   };
 
   const reorderLabel = (id: string, ordering: number) => {
