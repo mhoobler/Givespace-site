@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { updateCatalogueCache } from "../../utils/functions";
+import {
+  handleCacheDeletion,
+  handleDeletion,
+  initializeDeletion,
+  maxOrdering,
+  updateCatalogueCache,
+} from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 import {
@@ -10,17 +16,39 @@ import {
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
-import { dummyLabel } from "../../utils/references";
+import { dummyLabel, dummyListing } from "../../utils/references";
 import ListingModal from "./ListingModal";
+import { UndoNotification } from "../../components";
+import { useMarkedForDeletion } from "../../state/store";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
+  const { markedForDeletion, setMarkedForDeletion } = useMarkedForDeletion();
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   const CatalogueIdVariables = is_edit_id
     ? { edit_id: corresponding_id }
     : { id: corresponding_id };
+
+  useEffect(() => {
+    const current = JSON.parse(markedForDeletion[markedForDeletion.length - 1]);
+    const [id, type] = current.id.split(":");
+    setTimeout(() => {
+      handleDeletion(
+        id,
+        type as GraphqlModel,
+        current.obj,
+        markedForDeletion,
+        setMarkedForDeletion,
+        () =>
+          deleteLabelMutation({
+            variables: { id },
+            fetchPolicy: "no-cache",
+          })
+      );
+    }, 1000);
+  }, [markedForDeletion]);
 
   // Inputs need to toggle from Editing to Display state
   const [isEditing, setIsEditing] = useState(false);
@@ -131,17 +159,31 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   // labels
   const sortedLabels =
-    catalogue.labels && catalogue.labels[0] !== null
+    catalogue.labels && catalogue.labels[0]
       ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
       : [];
 
   const deleteLabel = (id: string) => {
-    cache.evict({ id: `Label:${id}` });
-    cache.gc();
-    deleteLabelMutation({
-      variables: { id },
-      fetchPolicy: "no-cache",
-    });
+    const label = initializeDeletion(
+      id,
+      "Label" as GraphqlModel,
+      markedForDeletion,
+      setMarkedForDeletion
+    );
+    // setTimeout(() => {
+    //   handleDeletion(
+    //     id,
+    //     "Label" as GraphqlModel,
+    //     label,
+    //     markedForDeletion,
+    //     setMarkedForDeletion,
+    //     () =>
+    //       deleteLabelMutation({
+    //         variables: { id },
+    //         fetchPolicy: "no-cache",
+    //       })
+    //   );
+    // }, 1000);
   };
 
   const reorderLabel = (id: string, ordering: number) => {
@@ -155,7 +197,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
     const orderingLabel = sortedLabels[ordering]; // possible undefined
 
-    let newOrdering;
+    let newOrdering: number;
 
     if (orderingLabel === targetLabel) {
       return;
@@ -168,6 +210,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       const prevOrdering = sortedLabels[ordering - 1].ordering;
       newOrdering = (nextOrdering + prevOrdering) / 2;
     }
+    updateCatalogueCache(`Label:${id}`, "ordering", newOrdering);
     reorderLabelMutation({
       variables: { id, ordering: newOrdering },
     });
@@ -181,11 +224,45 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleAddListing = (name: string) => {
     console.log("handleAddListing", name);
+    cache.modify({
+      id: `Catalogue:${catalogue.id}`,
+      fields: {
+        listings(existing) {
+          if (existing && !existing[0]) {
+            return [
+              {
+                ...dummyListing,
+                name: "doll",
+                ordering: 0,
+              },
+            ];
+          }
+          return [
+            ...existing,
+            {
+              ...dummyListing,
+              name: "doll",
+              ordering: maxOrdering(existing) + 1,
+            },
+          ];
+        },
+      },
+    });
     createListing({
       variables: {
         name,
         catalogue_id: catalogue.id,
       },
+    });
+  };
+
+  const handleDeleteListing = (id: string) => {
+    handleCacheDeletion(`Listing:${id}`);
+    deleteListing({
+      variables: {
+        id,
+      },
+      fetchPolicy: "no-cache",
     });
   };
 
@@ -195,15 +272,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleSelectListing = (listing: Listing) => {
     setSelectedListing(listing);
-  };
-
-  const handleDeleteListing = (id: string) => {
-    console.log("handleDeleteListing", id);
-    deleteListing({
-      variables: {
-        id,
-      },
-    });
   };
 
   return (
@@ -218,6 +286,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
+      <UndoNotification />
       <CatalogueItems
         isEditing={isEditing}
         addLabel={addLabel}
@@ -229,10 +298,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleSelectListing={handleSelectListing}
         handleDeleteListing={handleDeleteListing}
       />
-      {/* <ListingModal
+      <ListingModal
         listing={selectedListing}
         handleClose={handleListingModalClose}
-      /> */}
+      />
     </div>
   );
 

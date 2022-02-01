@@ -77,6 +77,7 @@ export const notExist = (whatText: string, res: any): void => {
 };
 
 export const maxOrdering = (list: any[]): number => {
+  if (!list[0]) return 0;
   return list.reduce(
     // @ts-ignore
     (max, listing) => Math.max(max, listing.ordering),

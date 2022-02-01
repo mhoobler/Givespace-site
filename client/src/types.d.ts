@@ -56,3 +56,9 @@ interface Listing {
   created: Date;
   updated: Date;
 }
+
+enum GraphqlModel {
+  catalogue = "Catalogue",
+  label = "Label",
+  listing = "Listing",
+}
