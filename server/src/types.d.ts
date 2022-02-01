@@ -64,7 +64,7 @@ export enum SubscriptionLabels {
   CATALOGUE_EDITED = "CATALOGUE_EDITED",
 }
 
-export type ScrapedFeatures = {
+export type AmazonScrapedFeatures = {
   image_url: string;
   item_url: string;
   name: string;

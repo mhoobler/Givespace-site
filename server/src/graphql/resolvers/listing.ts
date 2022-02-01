@@ -1,9 +1,14 @@
 import db from "../../../db";
 import { QueryResult } from "pg";
-import { Catalogue, Label, Listing, ScrapedFeatures } from "../../types";
-import { getFullCatalogues } from "../../utils/functions";
+import { AmazonScrapedFeatures, Catalogue, Label, Listing } from "../../types";
+import {
+  getFullCatalogues,
+  maxOrdering,
+  notExist,
+  publishCatalogue,
+} from "../../utils/functions";
 import { pubsub } from "../index";
-import scrapeItemFeatures from "../../utils/amazonScraper";
+import scrapeItemFeatures from "../../scraping/amazon";
 
 const listingResolvers = {
   Query: {},
@@ -15,32 +20,19 @@ const listingResolvers = {
       const fullCatalogue: Catalogue = (
         await getFullCatalogues(catalogue_id)
       )[0];
-      if (!fullCatalogue) {
-        throw new Error("No catalogue found");
-      }
-      console.log("fullCatalogue", fullCatalogue);
-      // get the max ordering from fullCatalogue.listings
-      const maxOrdering: any = fullCatalogue.listings.reduce(
-        // @ts-ignore
-        (max, listing) => Math.max(max, listing.ordering),
-        0
-      );
+
+      notExist("Catalogue", fullCatalogue);
+
       const newListingRes: QueryResult<Listing> = await db.query(
         "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, maxOrdering + 1]
+        [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
       );
       const newListing: Listing = newListingRes.rows[0];
 
-      const newFullCatalogue: Catalogue = (
-        await getFullCatalogues(catalogue_id)
-      )[0];
-
-      pubsub.publish("CATALOGUE_EDITED", {
-        liveCatalogue: newFullCatalogue,
-      });
+      publishCatalogue(catalogue_id);
 
       const scrapeData = async () => {
-        const features: ScrapedFeatures = await scrapeItemFeatures(name);
+        const features: AmazonScrapedFeatures = await scrapeItemFeatures(name);
 
         const currentListingRes: QueryResult<Listing> = await db.query(
           "SELECT * FROM listings WHERE id = $1",
@@ -51,21 +43,16 @@ const listingResolvers = {
         const updateListingRes: QueryResult<Listing> = await db.query(
           "UPDATE listings SET image_url = $1, price = $2 WHERE id = $3 RETURNING *",
           [
+            // if none of the following exist yet replace with scrape data
             currentListing.image_url || features.image_url,
             currentListing.price || features.price,
             newListing.id,
           ]
         );
         const updatedListing: Listing = updateListingRes.rows[0];
+        notExist("Listing", updatedListing);
 
-        console.log("updatedListing", updatedListing);
-
-        const newFullCatalogue: Catalogue = (
-          await getFullCatalogues(catalogue_id)
-        )[0];
-        pubsub.publish("CATALOGUE_EDITED", {
-          liveCatalogue: newFullCatalogue,
-        });
+        publishCatalogue(catalogue_id);
       };
       scrapeData();
 
@@ -80,17 +67,9 @@ const listingResolvers = {
         [id]
       );
       const deletedListing: Listing = deletedListingRes.rows[0];
-      if (!deletedListing) {
-        throw new Error("Listing not found");
-      }
+      notExist("Listing", deletedListing);
 
-      const fullCatalogue: Catalogue = (
-        await getFullCatalogues(deletedListing.catalogue_id)
-      )[0];
-
-      pubsub.publish("CATALOGUE_EDITED", {
-        liveCatalogue: fullCatalogue,
-      });
+      publishCatalogue(deletedListing.catalogue_id);
 
       return deletedListing;
     },
@@ -98,44 +77,30 @@ const listingResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Listing> => {
-      const result: QueryResult<Listing> = await db.query(
+      const editedListingRaw: QueryResult<Listing> = await db.query(
         `UPDATE listings SET ${key} = $1 WHERE id = $2 RETURNING *`,
         [value, id]
       );
 
-      if (!result.rows[0]) {
-        throw new Error("Listing does not exist");
-      }
+      notExist("Listing", editedListingRaw.rows[0]);
 
-      const catalogue: Catalogue = (
-        await getFullCatalogues(result.rows[0].catalogue_id)
-      )[0];
+      publishCatalogue(editedListingRaw.rows[0].catalogue_id);
 
-      pubsub.publish("CATALOGUE_EDITED", {
-        liveCatalogue: catalogue,
-      });
-
-      return result.rows[0];
+      return editedListingRaw.rows[0];
     },
     // TODO: add edit image
     reorderListing: async (
       _: null,
       { id, ordering }: { id: string; ordering: number }
     ): Promise<Listing> => {
-      console.log("START");
       const updatedListingRes: QueryResult<Listing> = await db.query(
         "UPDATE listings SET ordering = $1 WHERE id = $2 RETURNING *",
         [ordering, id]
       );
       const updatedListing: Listing = updatedListingRes.rows[0];
-      console.log("updatedListing", updatedListing);
-      const fullCatalogue: Catalogue = (
-        await getFullCatalogues(updatedListing.catalogue_id)
-      )[0];
+      notExist("Listing", updatedListing);
 
-      pubsub.publish("CATALOGUE_EDITED", {
-        liveCatalogue: fullCatalogue,
-      });
+      publishCatalogue(updatedListing.catalogue_id);
 
       return updatedListing;
     },

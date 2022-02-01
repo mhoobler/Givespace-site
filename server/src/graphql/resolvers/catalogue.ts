@@ -1,14 +1,18 @@
 import { withFilter } from "graphql-subscriptions";
 import { pubsub } from "../index";
 import {
+  deleteFileIfNotUsed,
   getFullCatalogues,
   handleFile,
+  notExist,
+  publishCatalogue,
   verifyToken,
 } from "../../utils/functions";
 import { CatalogueListItem, Catalogue, Context } from "../../types";
 import db from "../../../db";
 import { QueryResult } from "pg";
 import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
+import { UserInputError } from "apollo-server-express";
 
 const catalogueResolvers = {
   Query: {
@@ -16,6 +20,10 @@ const catalogueResolvers = {
       _: null,
       args: { id: string; edit_id: string }
     ): Promise<Catalogue[]> => {
+      if (!args.id && !args.edit_id) {
+        throw new UserInputError("No id or edit_id provided");
+      }
+
       let catalogues: Catalogue[];
 
       if (args.id) {
@@ -66,13 +74,11 @@ const catalogueResolvers = {
         "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING id",
         [context.authorization]
       );
-      console.log("newCatalogues", newCataloguesRes.rows);
-      const newCatalogues: Catalogue = (
+      const newCatalogue: Catalogue = (
         await getFullCatalogues(newCataloguesRes.rows[0].id)
       )[0];
-      console.log("newCatalogues", newCatalogues);
 
-      return newCatalogues;
+      return newCatalogue;
     },
     deleteCatalogue: async (
       _,
@@ -85,9 +91,8 @@ const catalogueResolvers = {
         [id, context.authorization]
       );
       const deletedCatalogue: CatalogueListItem = deletedCatalogues.rows[0];
-      if (!deletedCatalogue) {
-        throw new Error("Catalogue does not exist");
-      }
+
+      notExist("Catalogue", deletedCatalogue);
 
       return deletedCatalogue;
     },
@@ -96,7 +101,7 @@ const catalogueResolvers = {
       { id, edit_id }: { id: string; edit_id: string }
     ): Promise<Catalogue> => {
       if (!id && !edit_id) {
-        throw new Error("No id or edit_id provided");
+        throw new UserInputError("No id or edit_id provided");
       }
 
       // lazy solution to get the joined catalogue
@@ -108,19 +113,10 @@ const catalogueResolvers = {
         [id || edit_id]
       );
 
-      if (!result.rows[0]) {
-        throw new Error("Catalogue does not exist");
-      }
+      notExist("Catalogue", result.rows[0]);
+
       // second query to get the full catalogue
-      const catalogue: Catalogue = (
-        await getFullCatalogues(result.rows[0].id)
-      )[0];
-
-      console.log(catalogue);
-
-      pubsub.publish("CATALOGUE_EDITED", {
-        liveCatalogue: catalogue,
-      });
+      const catalogue = await publishCatalogue(result.rows[0].id);
 
       return catalogue;
     },
@@ -128,22 +124,14 @@ const catalogueResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Catalogue> => {
-      const result: QueryResult<Catalogue> = await db.query(
+      const updatedCatalogueRes: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
         [value, id]
       );
 
-      if (!result.rows[0]) {
-        throw new Error("Catalogue does not exist");
-      }
+      notExist("Catalogue", updatedCatalogueRes.rows[0]);
 
-      const catalogue: Catalogue = (
-        await getFullCatalogues(result.rows[0].id)
-      )[0];
-
-      pubsub.publish("CATALOGUE_EDITED", {
-        liveCatalogue: catalogue,
-      });
+      const catalogue = await publishCatalogue(id);
 
       return catalogue;
     },
@@ -155,54 +143,26 @@ const catalogueResolvers = {
         "SELECT * FROM catalogues WHERE id = $1",
         [id]
       );
+
+      notExist("Catalogue", preResult.rows[0]);
+
       // need to not run this if we are going to add placeholders
-      if (preResult && preResult.rows && preResult.rows[0][key]) {
-        const splitUrl = preResult.rows[0][key].split("/");
-        const fileName = splitUrl[splitUrl.length - 1];
-        try {
-          await deleteFromGC(fileName);
-        } catch (e) {
-          console.log("File to delete does not exist: ", e);
-        }
+      if (preResult.rows[0][key]) {
+        // TODO: test and optimize so that it does not need the await
+        await deleteFileIfNotUsed(preResult.rows[0][key]);
       }
 
       const url = await handleFile(file, uploadToGC);
 
-      const result: QueryResult<Catalogue> = await db.query(
+      const updatedCatalogueRes: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,
         [url, id]
       );
 
-      const catalogue: Catalogue = (
-        await getFullCatalogues(result.rows[0].id)
-      )[0];
-      if (!catalogue) {
-        throw new Error("Catalogue does not exist");
-      }
-
-      pubsub.publish("CATALOGUE_EDITED", {
-        liveCatalogue: catalogue,
-      });
+      const catalogue = await publishCatalogue(updatedCatalogueRes.rows[0].id);
 
       return catalogue;
     },
-
-    // updateCatalogue: async (
-    //   _: null,
-    //   args: EditCataloguesFields,
-    //   _context: Context,
-    // ): Promise<Catalogue> => {
-    //   const updatedCatalogue: QueryResult<Catalogue> = await db.query(
-    //     "UPDATE catalogues SET title = $1 WHERE id = $2 RETURNING *",
-    //     [args.title, args.id],
-    //   );
-    //   if (updatedCatalogue.rowCount === 0) {
-    //     throw new Error("Could not edit catalogue");
-    //   }
-
-    //   console.log("updatedCatalogue", updatedCatalogue);
-    //   return updatedCatalogue.rows[0];
-    // },
   },
   Subscription: {
     liveCatalogue: {
@@ -212,7 +172,7 @@ const catalogueResolvers = {
         () => pubsub.asyncIterator("CATALOGUE_EDITED"),
         (payload, variables) => {
           if (!variables.id && !variables.edit_id) {
-            throw new Error("No id or edit_id provided");
+            throw new UserInputError("No id or edit_id provided");
           }
           if (variables.id) {
             return payload.liveCatalogue.id === variables.id;

@@ -85,12 +85,14 @@ INSERT INTO catalogues (
   id,
   edit_id,
   user_id,
-  title
+  title,
+  header_image_url
 ) VALUES (
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
-  'title1'
+  'title1',
+  'https://storage.googleapis.com/givespace-pictures/skull.jpg'
 ); 
 
 INSERT INTO labels (

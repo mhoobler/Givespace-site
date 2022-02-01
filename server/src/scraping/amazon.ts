@@ -1,13 +1,14 @@
-import { ScrapedFeatures } from "../types";
+import { AmazonScrapedFeatures } from "../types";
 import fetch from "node-fetch";
 import cheerio from "cheerio";
 
-const scrapeItemFeatures = async (name: string): Promise<ScrapedFeatures> => {
+const scrapeItemFeatures = async (
+  name: string
+): Promise<AmazonScrapedFeatures> => {
   const formattedItem = encodeURIComponent(name).replace(/%20/g, "+");
   const URL = `https://www.amazon.com/s?k=${formattedItem}&ref=nb_sb_noss_2`;
   const amazon_res = await fetch(URL);
   const html = await amazon_res.text();
-  console.log(html.length);
   const $ = cheerio.load(html);
   const head = $(".s-asin");
   let features;
@@ -34,7 +35,6 @@ const scrapeItemFeatures = async (name: string): Promise<ScrapedFeatures> => {
     }
   });
 
-  console.log("features", features);
   return features;
 };
 
