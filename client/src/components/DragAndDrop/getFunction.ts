@@ -15,6 +15,7 @@ export const getMouseDown =
     const refsArr: ref[] = Object.values(refs).sort(
       (a, b) => a.data.ordering - b.data.ordering,
     );
+    console.log(downEvt);
     console.log(refsArr.map((e) => e.data.ordering));
 
     const currentTarget = refs[id].elm;
@@ -88,5 +89,5 @@ export const getMouseDown =
 
     const holdMouseTimeout = setTimeout(() => {
       window.addEventListener("mousemove", MouseMove);
-    }, 750);
+    }, 125);
   };

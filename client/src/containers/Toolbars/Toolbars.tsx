@@ -8,7 +8,7 @@ interface CatalogueToolbarProps extends ToolbarProps {
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ children }) => {
-  return <nav className="row toolbar-container">{children}</nav>;
+  return <nav className="toolbar-container">{children}</nav>;
 };
 
 const CatalogueToolbar: React.FC<CatalogueToolbarProps> = ({}) => {
