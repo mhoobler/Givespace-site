@@ -39,66 +39,6 @@ export const handleCacheDeletion = (cacheId: string) => {
   cache.gc();
 };
 
-export const initializeDeletion = (
-  id: string,
-  type: GraphqlModel,
-  markedForDeletion: string[],
-  setMarkedForDeletion: (value: string[]) => any
-) => {
-  const cacheId = `${type}:${id}`;
-
-  let fragment: DocumentNode;
-  if (type === "Label") fragment = LABEL_FIELDS;
-  else if (type === "Listing") fragment = LISTING_FIELDS;
-  else fragment = ALL_CATALOGUE_FIELDS;
-  const obj = cache.readFragment({
-    id: cacheId,
-    fragment,
-  });
-  console.log("obj", obj);
-
-  const markedObj = {
-    id: cacheId,
-    obj,
-  };
-
-  setMarkedForDeletion([...markedForDeletion, JSON.stringify(markedObj)]);
-
-  handleCacheDeletion(cacheId);
-
-  return obj;
-};
-
-export const handleDeletion = (
-  id: string,
-  type: GraphqlModel,
-  data: any,
-  markedForDeletion: string[],
-  setMarkedForDeletion: (value: string[]) => void,
-  callback: () => any
-) => {
-  const cacheId = `${type}:${id}`;
-  console.log("markedForDeletion", markedForDeletion);
-
-  let fragment: DocumentNode;
-  if (type === "Label") fragment = LABEL_FIELDS;
-  else if (type === "Listing") fragment = LISTING_FIELDS;
-  else fragment = ALL_CATALOGUE_FIELDS;
-
-  if (markedForDeletion.find((item) => item === cacheId)) {
-    console.log("Deleted");
-    setMarkedForDeletion(markedForDeletion.filter((item) => item !== cacheId));
-    callback();
-  } else {
-    console.log("Undoood");
-    client.writeFragment({
-      id: cacheId,
-      fragment,
-      data,
-    });
-  }
-};
-
 export const maxOrdering = (list: any[]): number => {
   if (!list[0]) return 0;
   return list.reduce(

@@ -43,7 +43,7 @@ export const DELTETE_CATALOGUE = gql`
   ${CATALOGUE_LIST_ITEM_FIELDS}
   mutation DeleteCatalogue($id: ID!) {
     deleteCatalogue(id: $id) {
-      ...AllListingFields
+      ...CatalogueListItemFields
     }
   }
 `;

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   handleCacheDeletion,
-  handleDeletion,
-  initializeDeletion,
   maxOrdering,
   updateCatalogueCache,
 } from "../../utils/functions";
@@ -18,12 +16,9 @@ import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { dummyLabel, dummyListing } from "../../utils/references";
 import ListingModal from "./ListingModal";
-import { UndoNotification } from "../../components";
-import { useMarkedForDeletion } from "../../state/store";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
-  const { markedForDeletion, setMarkedForDeletion } = useMarkedForDeletion();
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
@@ -145,26 +140,11 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       : [];
 
   const deleteLabel = (id: string) => {
-    const label = initializeDeletion(
-      id,
-      "Label" as GraphqlModel,
-      markedForDeletion,
-      setMarkedForDeletion
-    );
-    setTimeout(() => {
-      handleDeletion(
-        id,
-        "Label" as GraphqlModel,
-        label,
-        markedForDeletion,
-        setMarkedForDeletion,
-        () =>
-          deleteLabelMutation({
-            variables: { id },
-            fetchPolicy: "no-cache",
-          })
-      );
-    }, 1000);
+    handleCacheDeletion(`Listing:${id}`);
+    deleteLabelMutation({
+      variables: { id },
+      fetchPolicy: "no-cache",
+    });
   };
 
   const reorderLabel = (id: string, ordering: number) => {
@@ -267,7 +247,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
-      <UndoNotification />
       <CatalogueItems
         isEditing={isEditing}
         addLabel={addLabel}
@@ -279,10 +258,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleSelectListing={handleSelectListing}
         handleDeleteListing={handleDeleteListing}
       />
-      <ListingModal
+      {/* <ListingModal
         listing={selectedListing}
         handleClose={handleListingModalClose}
-      />
+      /> */}
     </div>
   );
 

@@ -18,16 +18,3 @@ export const useFieldEditing = (): FieldEditing => {
   };
   return { fieldEditing, setFieldEditing };
 };
-
-const markedForDeletionVar: ReactiveVar<string[]> = makeVar<string[]>([]);
-type MarkedForDeletionFields = {
-  markedForDeletion: string[];
-  setMarkedForDeletion: (value: string[]) => void;
-};
-export const useMarkedForDeletion = (): MarkedForDeletionFields => {
-  const markedForDeletion = useReactiveVar(markedForDeletionVar);
-  const setMarkedForDeletion = (value: string[]) => {
-    markedForDeletionVar(value);
-  };
-  return { markedForDeletion, setMarkedForDeletion };
-};
