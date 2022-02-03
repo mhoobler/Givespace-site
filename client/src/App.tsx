@@ -3,24 +3,45 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home, Catalogue, CatalogueSelect } from "./pages";
 import { useQuery } from "@apollo/client";
 import { MY_CATALOGUES } from "./graphql/schemas";
-import { apolloHookErrorHandler } from "./utils/functions";
+import {
+  apolloHookErrorHandler,
+  handleCacheDeletion,
+  handleDeletion,
+} from "./utils/functions";
 
 import "./App.less";
-import { useCurrentlyUndo, useRemove } from "./state/store";
+import { useMarkedForDeletion, useRemoveMFD } from "./state/store";
+import { cache } from "./graphql/clientConfig";
 
 const App = () => {
-  const { remove, setRemove } = useRemove();
-  const { currentlyUndo, setCurrentlyUndo } = useCurrentlyUndo();
+  const { removeMFD, setRemoveMFD } = useRemoveMFD();
+  const { markedForDeletion, setMarkedForDeletion } = useMarkedForDeletion();
   const myCatalogues = useQuery(MY_CATALOGUES);
   apolloHookErrorHandler("App.tsx", myCatalogues.error);
 
   useEffect(() => {
-    if (remove && currentlyUndo.find((cu) => cu.id === remove)) {
-      console.log("Removing from currentlyUndo", remove);
-      setCurrentlyUndo(currentlyUndo.filter((cui) => cui.id !== remove));
-      setRemove(null);
+    // handling undo and clearing of undo list
+    if (removeMFD && markedForDeletion.find((mfd) => mfd.id === removeMFD.id)) {
+      const currentMFD = markedForDeletion.find(
+        (mfd) => mfd.id === removeMFD.id
+      )!;
+
+      if (removeMFD.isUndo) {
+        cache.writeFragment({
+          id: currentMFD.id,
+          fragment: currentMFD.fragment,
+          data: currentMFD.data,
+        });
+      } else {
+      }
+
+      setMarkedForDeletion(
+        markedForDeletion.filter((mfd) => mfd.id !== removeMFD.id)
+      );
+
+      setRemoveMFD(null);
     }
-  }, [remove, setRemove, currentlyUndo, setCurrentlyUndo]);
+  }, [removeMFD, setRemoveMFD, markedForDeletion, setMarkedForDeletion]);
 
   return (
     <div className="app">

@@ -12,14 +12,18 @@ import {
   CREATE_LISTING,
   DELETE_LISTING,
 } from "../../graphql/schemas";
-import { useFieldEditing } from "../../state/store";
-import { apolloHookErrorHandler } from "../../utils/functions";
+import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
+import {
+  apolloHookErrorHandler,
+  handleCacheDeletion,
+} from "../../utils/functions";
 
 type Props = {
   CatalogueIdVariables: any;
 };
 
 const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
+  const { markedForDeletion } = useMarkedForDeletion();
   const { fieldEditing } = useFieldEditing();
 
   const [
@@ -54,6 +58,20 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
           variables: CatalogueIdVariables,
           data: catalogue,
         });
+        // prevents labels from being shown if MFD
+        const labelsMFD = catalogue.labels.filter((label: Label) =>
+          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === label.id)
+        );
+        labelsMFD.forEach((label: Label) => {
+          handleCacheDeletion(`Label:${label.id}`);
+        });
+        // prevents labels from being shown if MFD
+        const listingsMFD = catalogue.listings.filter((listing: Listing) =>
+          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === listing.id)
+        );
+        listingsMFD.forEach((listing: Listing) => {
+          handleCacheDeletion(`Listing:${listing.id}`);
+        });
       }
     },
   });
@@ -79,7 +97,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
 
   const [deleteLabelMutation, { error: deleteLabelError }] =
     useMutation(DELETE_LABEL);
-  apolloHookErrorHandler("deleteLabelError", deleteLabelError);
+  apolloHookErrorHandler("deleteLabelError", deleteLabelError, true);
 
   const [reorderLabelMutation, { error: reorderLabelError }] =
     useMutation(UPDATE_LABEL_ORDER);
@@ -90,7 +108,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
   apolloHookErrorHandler("createListingError", createListingError);
   const [deleteListing, { error: deleteListingError }] =
     useMutation(DELETE_LISTING);
-  apolloHookErrorHandler("deleteListingError", deleteListingError);
+  apolloHookErrorHandler("deleteListingError", deleteListingError, true);
 
   return {
     incrementCatalogueViews,

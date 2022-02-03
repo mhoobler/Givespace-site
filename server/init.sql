@@ -143,7 +143,7 @@ INSERT INTO labels (
 ), (
   '35b8a996-ab59-4dcd-9885-9a2a54d1608c',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label8', 
+  'label8',
   8
 );
 
@@ -158,8 +158,23 @@ INSERT INTO listings (
   'item0',
   0
 ), (
-  '269a378d-97d7-46fa-a5c2-83c99e4fa7b6',
+  '261a378d-97d7-46fa-a5c2-83c99e4fa7b6',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item1',
+  1
+), (
+  '262a378d-97d7-46fa-a5c2-83c99e4fa7b6',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item2',
+  2
+), (
+  '263a378d-97d7-46fa-a5c2-83c99e4fa7b6',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item3',
   3
+), (
+  '264a378d-97d7-46fa-a5c2-83c99e4fa7b6',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item4',
+  4
 );

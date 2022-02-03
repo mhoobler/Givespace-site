@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   handleCacheDeletion,
+  handleDeletion,
   maxOrdering,
   updateCatalogueCache,
 } from "../../utils/functions";
@@ -13,16 +14,22 @@ import {
   CatalogueToolbar,
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
-import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
+import {
+  ALL_CATALOGUE_FIELDS,
+  LABEL_FIELDS,
+  LISTING_FIELDS,
+} from "../../graphql/fragments";
 import { dummyLabel, dummyListing } from "../../utils/references";
 import ListingModal from "./ListingModal";
-import { useCurrentlyUndo, useRemove } from "../../state/store";
+import { useMarkedForDeletion, useRemoveMFD } from "../../state/store";
+import { DocumentNode } from "graphql";
+import { UndoNotification } from "../../components";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-  const { currentlyUndo, setCurrentlyUndo } = useCurrentlyUndo();
-  const { setRemove } = useRemove();
+  const { markedForDeletion, setMarkedForDeletion } = useMarkedForDeletion();
+  const { setRemoveMFD } = useRemoveMFD();
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   const CatalogueIdVariables = is_edit_id
@@ -143,19 +150,19 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       : [];
 
   const deleteLabel = (id: string) => {
-    handleCacheDeletion(`Listing:${id}`);
-    const deleteLabelTimeout = setTimeout(() => {
-      console.log("Deleted Label");
-      deleteLabelMutation({
-        variables: { id },
-        fetchPolicy: "no-cache",
-      });
-      setRemove(`Listing:${id}`);
-    }, 2000);
-    setCurrentlyUndo([
-      ...currentlyUndo,
-      { id: `Listing:${id}`, timeout: deleteLabelTimeout },
-    ]);
+    handleDeletion(
+      id,
+      "Label",
+      () =>
+        deleteLabelMutation({
+          variables: { id },
+          fetchPolicy: "no-cache",
+        }),
+      "name",
+      setRemoveMFD,
+      markedForDeletion,
+      setMarkedForDeletion
+    );
   };
 
   const reorderLabel = (id: string, ordering: number) => {
@@ -229,13 +236,21 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   const handleDeleteListing = (id: string) => {
-    handleCacheDeletion(`Listing:${id}`);
-    deleteListing({
-      variables: {
-        id,
-      },
-      fetchPolicy: "no-cache",
-    });
+    handleDeletion(
+      id,
+      "Listing",
+      () =>
+        deleteListing({
+          variables: {
+            id,
+          },
+          fetchPolicy: "no-cache",
+        }),
+      "name",
+      setRemoveMFD,
+      markedForDeletion,
+      setMarkedForDeletion
+    );
   };
 
   const handleListingModalClose = () => {
@@ -258,19 +273,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
-      {/* @ts-ignore */}
-      {currentlyUndo.map((cu) => (
-        <button
-          key={cu.id}
-          onClick={() => {
-            console.log("Undo Label");
-            clearTimeout(cu.timeout);
-            setRemove(cu.id);
-          }}
-        >
-          Undo {cu.id}
-        </button>
-      ))}
+      <UndoNotification />
       <CatalogueItems
         isEditing={isEditing}
         addLabel={addLabel}

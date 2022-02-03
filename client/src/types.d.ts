@@ -62,3 +62,16 @@ enum GraphqlModel {
   label = "Label",
   listing = "Listing",
 }
+
+type MarkedForDeletion = {
+  id: string;
+  text: string;
+  timeout: any;
+  data: any;
+  fragment: DocumentNode;
+};
+
+type RemoveMFD = {
+  id: string;
+  isUndo: boolean;
+} | null;

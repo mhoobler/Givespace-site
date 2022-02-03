@@ -47,3 +47,57 @@ export const maxOrdering = (list: any[]): number => {
     list[0].ordering
   );
 };
+
+export const handleDeletion = (
+  id: string,
+  type: string,
+  deletionMutation: () => void,
+  textField?: string,
+  setRemoveMFD?: (value: RemoveMFD) => void,
+  markedForDeletion?: MarkedForDeletion[],
+  setMarkedForDeletion?: (value: MarkedForDeletion[]) => void
+) => {
+  const cacheId = `${type}:${id}`;
+
+  // if it will contain undo functionality
+  if (textField && setRemoveMFD && markedForDeletion && setMarkedForDeletion) {
+    const deleteTimeout = setTimeout(() => {
+      deletionMutation();
+      setRemoveMFD({ id: cacheId, isUndo: false });
+    }, 5000);
+
+    let fragment: DocumentNode;
+    let fragmentName: string;
+    if (type === "Label") {
+      fragment = LABEL_FIELDS;
+      fragmentName = "AllLabelFields";
+    } else if (type === "Listing") {
+      fragment = LISTING_FIELDS;
+      fragmentName = "AllListingFields";
+    } else {
+      fragment = ALL_CATALOGUE_FIELDS;
+      fragmentName = "AllCatalogueFields";
+    }
+
+    const data: any = cache.readFragment({
+      id: cacheId,
+      fragment,
+      fragmentName,
+    });
+
+    setMarkedForDeletion([
+      ...markedForDeletion,
+      {
+        id: cacheId,
+        text: `${type.toLocaleLowerCase()} "${data[textField]}" deletion`,
+        timeout: deleteTimeout,
+        data,
+        fragment,
+      },
+    ]);
+  } else {
+    deletionMutation();
+  }
+
+  handleCacheDeletion(cacheId);
+};

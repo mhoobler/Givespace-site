@@ -1,4 +1,9 @@
-import { makeVar, ReactiveVar, useReactiveVar } from "@apollo/client";
+import {
+  DocumentNode,
+  makeVar,
+  ReactiveVar,
+  useReactiveVar,
+} from "@apollo/client";
 
 // Special hooks that triggers an update of a Query or
 // subcription when its value changes
@@ -19,28 +24,30 @@ export const useFieldEditing = (): FieldEditing => {
   return { fieldEditing, setFieldEditing };
 };
 
-const currentlyUndoVar: ReactiveVar<any[]> = makeVar<any[]>([]);
-type CurrentlyUndo = {
-  currentlyUndo: any[];
-  setCurrentlyUndo: (value: any[]) => void;
+const markedForDeletionVar: ReactiveVar<MarkedForDeletion[]> = makeVar<
+  MarkedForDeletion[]
+>([]);
+type UseMarkedForDeletion = {
+  markedForDeletion: MarkedForDeletion[];
+  setMarkedForDeletion: (value: MarkedForDeletion[]) => void;
 };
-export const useCurrentlyUndo = (): CurrentlyUndo => {
-  const currentlyUndo = useReactiveVar(currentlyUndoVar);
-  const setCurrentlyUndo = (value: any[]) => {
-    currentlyUndoVar(value);
+export const useMarkedForDeletion = (): UseMarkedForDeletion => {
+  const markedForDeletion = useReactiveVar(markedForDeletionVar);
+  const setMarkedForDeletion = (value: MarkedForDeletion[]) => {
+    markedForDeletionVar(value);
   };
-  return { currentlyUndo, setCurrentlyUndo };
+  return { markedForDeletion, setMarkedForDeletion };
 };
 
-const removeVar: ReactiveVar<any> = makeVar<any>(null);
+const removeMFDVar: ReactiveVar<RemoveMFD> = makeVar<RemoveMFD>(null);
 type Remove = {
-  remove: any;
-  setRemove: (value: any) => void;
+  removeMFD: RemoveMFD;
+  setRemoveMFD: (value: RemoveMFD) => void;
 };
-export const useRemove = (): Remove => {
-  const remove = useReactiveVar(removeVar);
-  const setRemove = (value: any) => {
-    removeVar(value);
+export const useRemoveMFD = (): Remove => {
+  const removeMFD = useReactiveVar(removeMFDVar);
+  const setRemoveMFD = (value: RemoveMFD) => {
+    removeMFDVar(value);
   };
-  return { remove, setRemove };
+  return { removeMFD, setRemoveMFD };
 };
