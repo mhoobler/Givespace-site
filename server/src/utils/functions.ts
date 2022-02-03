@@ -5,6 +5,9 @@ import * as fs from "fs";
 import { QueryResult } from "pg";
 import { Catalogue } from "../types";
 import db from "../../db";
+import { pubsub } from "../graphql/index";
+import { UserInputError } from "apollo-server-express";
+import { deleteFromGC } from "./googleCloud";
 
 export const verifyToken = (token: string): Boolean => {
   try {
@@ -51,9 +54,58 @@ export const getFullCatalogues = async (
     WHERE c.${key || "id"} = $1 GROUP BY c.id;`,
     [keyValue]
   );
-  if (!fullCatalogues.rows[0]) {
-    throw new Error("No catalogues returned");
-  }
+  notExist("Catalogue", fullCatalogues.rows[0]);
 
   return fullCatalogues.rows;
+};
+
+export const publishCatalogue = async (
+  catalogue_id: string
+): Promise<Catalogue> => {
+  const fullCatalogue: Catalogue = (await getFullCatalogues(catalogue_id))[0];
+
+  pubsub.publish("CATALOGUE_EDITED", {
+    liveCatalogue: fullCatalogue,
+  });
+  return fullCatalogue;
+};
+
+export const notExist = (whatText: string, res: any): void => {
+  if (!res) {
+    throw new UserInputError(`${whatText} does not exist`);
+  }
+};
+
+export const maxOrdering = (list: any[]): number => {
+  if (!list[0]) return 0;
+  return list.reduce(
+    // @ts-ignore
+    (max, listing) => Math.max(max, listing.ordering),
+    list[0].ordering
+  );
+};
+
+export const deleteFileIfNotUsed = async (url) => {
+  const cataloguesWithUrl = await db.query(
+    "SELECT * FROM catalogues WHERE header_image_url = $1 OR profile_picture_url = $1;",
+    [url]
+  );
+  const listingsWithUrl = await db.query(
+    "SELECT * FROM listings WHERE image_url = $1;",
+    [url]
+  );
+  const isUsedCount =
+    listingsWithUrl.rows.length + cataloguesWithUrl.rows.length;
+  const bucketUrl = `https://storage.googleapis.com/${process.env.GC_BUCKET_ID}/`;
+  if (isUsedCount === 1 && url.includes(bucketUrl)) {
+    const splitUrl = url.split("/");
+    const fileName = splitUrl[splitUrl.length - 1];
+    try {
+      await deleteFromGC(fileName);
+      return true;
+    } catch (e) {
+      console.log("File to delete does not exist: ", e);
+    }
+  }
+  return false;
 };

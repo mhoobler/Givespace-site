@@ -30,7 +30,7 @@ CREATE TABLE listings (
   link_url TEXT,
   image_url TEXT,
   description TEXT,
-  ordering INT NOT NULL,
+  ordering FLOAT NOT NULL,
   show_price BOOLEAN DEFAULT true,
   price NUMERIC,
   created TIMESTAMP DEFAULT NOW(),
@@ -85,12 +85,14 @@ INSERT INTO catalogues (
   id,
   edit_id,
   user_id,
-  title
+  title,
+  header_image_url
 ) VALUES (
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
-  'title1'
+  'title1',
+  'https://storage.googleapis.com/givespace-pictures/skull.jpg'
 ); 
 
 INSERT INTO labels (
@@ -116,8 +118,33 @@ INSERT INTO labels (
 ), (
   '35b2a996-ab59-4dcd-9885-9a2a54d1608c',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label4',
+  'label3',
   3
+), (
+  '35b4a996-ab59-4dcd-9885-9a2a54d1608c',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label4',
+  4
+), (
+  '35b5a996-ab59-4dcd-9885-9a2a54d1608c',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label5',
+  5
+), (
+  '35b6a996-ab59-4dcd-9885-9a2a54d1608c',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label6',
+  6
+), ( 
+  '35b7a996-ab59-4dcd-9885-9a2a54d1608c',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label7',
+  7
+), (
+  '35b8a996-ab59-4dcd-9885-9a2a54d1608c',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'label8',
+  8
 );
 
 INSERT INTO listings (
@@ -131,18 +158,23 @@ INSERT INTO listings (
   'item0',
   0
 ), (
-  '269a378d-97d7-46fa-a5c2-83c99e4fa7b6',
+  '261a378d-97d7-46fa-a5c2-83c99e4fa7b6',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item1',
   1
 ), (
-  'c126fffa-3193-43a4-ae60-1198dda6fa51',
+  '262a378d-97d7-46fa-a5c2-83c99e4fa7b6',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item2',
   2
 ), (
-  '555b1aa8-540f-405f-a9e0-3118dae98a87',
+  '263a378d-97d7-46fa-a5c2-83c99e4fa7b6',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item3',
   3
+), (
+  '264a378d-97d7-46fa-a5c2-83c99e4fa7b6',
+  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  'item4',
+  4
 );

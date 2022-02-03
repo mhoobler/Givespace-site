@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, MouseEvent } from "react";
 
 // TODO: I think this whole page needs touch up
 import "./Modal.less";
@@ -10,8 +10,23 @@ type ModalProps = {
 };
 
 const Modal: React.FC<ModalProps> = ({ className, show, close, children }) => {
+  const outterRef = useRef<HTMLDivElement>(null);
+
+  //Close the modal if we click on the outterRef
+  const handleOutterClick = (evt: React.SyntheticEvent<HTMLDivElement>) => {
+    if (outterRef.current) {
+      if (evt.target === outterRef.current) {
+        close();
+      }
+    }
+  };
+
   return (
-    <div className={`modal ${show && "show"} ${className || ""}`}>
+    <div
+      className={`modal ${show && "show"} ${className || ""}`}
+      onClick={handleOutterClick}
+      ref={outterRef}
+    >
       <div className="modal-dialog">
         <div className="modal-content">{children}</div>
       </div>

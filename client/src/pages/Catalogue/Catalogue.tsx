@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { updateCatalogueCache } from "../../utils/functions";
+import {
+  handleDeletion,
+  maxOrdering,
+  updateCatalogueCache,
+} from "../../utils/functions";
 import useCatalogueApolloHooks from "./useCatalogueApolloHooks";
 
 import {
@@ -10,10 +14,16 @@ import {
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
-import { dummyLabel } from "../../utils/references";
+import { dummyLabel, dummyListing } from "../../utils/references";
+import ListingModal from "./ListingModal";
+import { useMarkedForDeletion, useRemoveMFD } from "../../state/store";
+import { UndoNotification } from "../../components";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const { markedForDeletion, setMarkedForDeletion } = useMarkedForDeletion();
+  const { setRemoveMFD } = useRemoveMFD();
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   const CatalogueIdVariables = is_edit_id
@@ -21,7 +31,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     : { id: corresponding_id };
 
   // Inputs need to toggle from Editing to Display state
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
 
   // All ApolloHooks are moved to custom hook for organization
   const {
@@ -32,6 +42,8 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     addLabelMutation,
     deleteLabelMutation,
     reorderLabelMutation,
+    createListing,
+    deleteListing,
   } = useCatalogueApolloHooks({
     CatalogueIdVariables,
   });
@@ -44,7 +56,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       incrementCatalogueViews();
     }, 1);
   }, []);
-
   if (!catalogueSubscription.data) {
     return <div>Loading...</div>;
   }
@@ -57,7 +68,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     fragment: ALL_CATALOGUE_FIELDS,
     fragmentName: "AllCatalogueFields",
   });
-  console.log("catalogue", catalogue);
 
   if (!catalogue) {
     return <h1>Catalogue not found</h1>;
@@ -127,51 +137,126 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     });
   };
 
+  // labels
+  const sortedLabels =
+    catalogue.labels && catalogue.labels[0]
+      ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
+      : [];
+
   const deleteLabel = (id: string) => {
-    cache.evict({ id: `Label:${id}` });
-    cache.gc();
-    deleteLabelMutation({
-      variables: { id },
-      fetchPolicy: "no-cache",
-    });
+    handleDeletion(
+      id,
+      "Label",
+      () =>
+        deleteLabelMutation({
+          variables: { id },
+          fetchPolicy: "no-cache",
+        }),
+      "name",
+      setRemoveMFD,
+      markedForDeletion,
+      setMarkedForDeletion
+    );
   };
 
   const reorderLabel = (id: string, ordering: number) => {
-    if (!catalogue.labels || catalogue.labels[0] === null) {
-      throw new Error("Tried ordering with no labels");
-    }
-
-    const labels = catalogue.labels;
-    const len = labels.length;
-    const targetIndex = labels.findIndex((e: any) => e.id === id);
-    const targetLabel = labels[targetIndex];
+    const len = sortedLabels.length;
+    const targetIndex = sortedLabels.findIndex((e: any) => e.id === id);
+    const targetLabel = sortedLabels[targetIndex];
 
     if (!targetLabel) {
       throw new Error("Could not find label with id: " + id);
     }
 
-    const orderingLabel = catalogue.labels[ordering]; // possible undefined
+    const orderingLabel = sortedLabels[ordering]; // possible undefined
 
-    let newOrdering;
+    let newOrdering: number;
 
     if (orderingLabel === targetLabel) {
       return;
     } else if (ordering === len) {
-      newOrdering = labels[len - 1].ordering + 1;
+      newOrdering = sortedLabels[len - 1].ordering + 1;
     } else if (ordering === 0) {
-      newOrdering = labels[0].ordering - 1;
+      newOrdering = sortedLabels[0].ordering - 1;
     } else {
-      const nextOrdering = labels[ordering].ordering;
-      const prevOrdering = labels[ordering - 1].ordering;
+      const nextOrdering = sortedLabels[ordering].ordering;
+      const prevOrdering = sortedLabels[ordering - 1].ordering;
       newOrdering = (nextOrdering + prevOrdering) / 2;
     }
+    updateCatalogueCache(`Label:${id}`, "ordering", newOrdering);
     reorderLabelMutation({
       variables: { id, ordering: newOrdering },
     });
   };
 
+  // listings
+  const sortedListings =
+    catalogue.listings && catalogue.listings[0]
+      ? [...catalogue.listings].sort((a, b) => a.ordering - b.ordering)
+      : [];
+
+  const handleAddListing = (name: string) => {
+    console.log("handleAddListing", name);
+    cache.modify({
+      id: `Catalogue:${catalogue.id}`,
+      fields: {
+        listings(existing) {
+          if (existing && !existing[0]) {
+            return [
+              {
+                ...dummyListing,
+                name: "doll",
+                ordering: 0,
+              },
+            ];
+          }
+          return [
+            ...existing,
+            {
+              ...dummyListing,
+              name: "doll",
+              ordering: maxOrdering(existing) + 1,
+            },
+          ];
+        },
+      },
+    });
+    createListing({
+      variables: {
+        name,
+        catalogue_id: catalogue.id,
+      },
+    });
+  };
+
+  const handleDeleteListing = (id: string) => {
+    handleDeletion(
+      id,
+      "Listing",
+      () =>
+        deleteListing({
+          variables: {
+            id,
+          },
+          fetchPolicy: "no-cache",
+        }),
+      "name",
+      setRemoveMFD,
+      markedForDeletion,
+      setMarkedForDeletion
+    );
+  };
+
+  const handleListingModalClose = () => {
+    setSelectedListing(null);
+  };
+
+  const handleSelectListing = (listing: Listing) => {
+    setSelectedListing(listing);
+  };
+
   return (
-    <div className="page-padding">
+    <div className="page-wrapper">
       <CatalogueToolbar editable={editable} />
       <CatalogueHeader
         isEditing={isEditing}
@@ -182,13 +267,21 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
+      <UndoNotification />
       <CatalogueItems
         isEditing={isEditing}
         addLabel={addLabel}
         deleteLabel={deleteLabel}
         reorderLabel={reorderLabel}
-        labels={catalogue.labels && catalogue.labels[0] ? catalogue.labels : []}
-        items={null}
+        labels={sortedLabels}
+        listings={sortedListings}
+        handleAddListing={handleAddListing}
+        handleSelectListing={handleSelectListing}
+        handleDeleteListing={handleDeleteListing}
+      />
+      <ListingModal
+        listing={selectedListing}
+        handleClose={handleListingModalClose}
       />
     </div>
   );

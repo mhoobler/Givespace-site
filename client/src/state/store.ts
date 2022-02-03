@@ -18,3 +18,31 @@ export const useFieldEditing = (): FieldEditing => {
   };
   return { fieldEditing, setFieldEditing };
 };
+
+const markedForDeletionVar: ReactiveVar<MarkedForDeletion[]> = makeVar<
+  MarkedForDeletion[]
+>([]);
+type UseMarkedForDeletion = {
+  markedForDeletion: MarkedForDeletion[];
+  setMarkedForDeletion: (value: MarkedForDeletion[]) => void;
+};
+export const useMarkedForDeletion = (): UseMarkedForDeletion => {
+  const markedForDeletion = useReactiveVar(markedForDeletionVar);
+  const setMarkedForDeletion = (value: MarkedForDeletion[]) => {
+    markedForDeletionVar(value);
+  };
+  return { markedForDeletion, setMarkedForDeletion };
+};
+
+const removeMFDVar: ReactiveVar<RemoveMFD> = makeVar<RemoveMFD>(null);
+type Remove = {
+  removeMFD: RemoveMFD;
+  setRemoveMFD: (value: RemoveMFD) => void;
+};
+export const useRemoveMFD = (): Remove => {
+  const removeMFD = useReactiveVar(removeMFDVar);
+  const setRemoveMFD = (value: RemoveMFD) => {
+    removeMFDVar(value);
+  };
+  return { removeMFD, setRemoveMFD };
+};

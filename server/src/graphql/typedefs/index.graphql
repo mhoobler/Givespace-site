@@ -15,6 +15,11 @@ type Mutation {
   createLabel(catalogue_id: String!, name: String!): Label!
   deleteLabel(id: ID!): Label!
   reorderLabel(id: ID!, ordering: Float!): Label!
+
+  createListing(catalogue_id: ID!, name: String!): Listing!
+  deleteListing(id: ID!): Listing!
+  editListing(id: ID!, key: String!, value: String!): Listing!
+  reorderListing(id: ID!, ordering: Float!): Listing!
   # updateCatalogue(id: ID!, title: String!): Catalogue!
 }
 

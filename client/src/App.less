@@ -1,10 +1,23 @@
+
+.app {
+  background-color: #dfdfdf;
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  margin: 0 0;
+}
+
 .page-padding {
-  padding: 0 0;
 }
 
 .f-center {
   justify-content: center;
   align-items: center;
+}
+
+.hidden {
+  display: none !important;
 }
 
 @media screen {
@@ -13,13 +26,13 @@
 
   // md
   @media (min-width: 768px) {
-    .page-padding {
-      padding: 0 6.625rem;
-    }
   }
 
   // lg
   @media (min-width: 992px) {
+    .page-wrapper {
+      margin: 0 6.625rem;
+    }
   }
 
   // xl

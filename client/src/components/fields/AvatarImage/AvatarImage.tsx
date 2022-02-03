@@ -45,7 +45,7 @@ const AvatarImage: React.FC<Props> = ({
   };
 
   return (
-    <>
+    <div>
       <ToggleEdit className="avatar-image-container" isEditing={isEditing}>
         {/* open modal, display image */}
         {/* TODO: Replace Icon */}
@@ -82,7 +82,7 @@ const AvatarImage: React.FC<Props> = ({
           </button>
         </Modal.Footer>
       </Modal>
-    </>
+    </div>
   );
 };
 

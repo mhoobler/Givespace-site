@@ -13,3 +13,18 @@ export const dummyLabel = {
   created: "",
   updated: "",
 };
+
+export const dummyListing = {
+  __typename: "Listing",
+  id: "",
+  catalogue_id: "",
+  name: "",
+  link_url: null,
+  image_url: null,
+  description: null,
+  ordering: 0,
+  show_price: true,
+  price: null,
+  created: "",
+  updated: "",
+};
