@@ -13,7 +13,7 @@ if (!authorization) {
 }
 
 export const httpLink = createUploadLink({
-  uri: "http://localhost:4000/graphql",
+  uri: window.location.origin + "/graphql",
   headers: {
     authorization: localStorage.getItem("authorization")
       ? localStorage.getItem("authorization")
@@ -22,7 +22,7 @@ export const httpLink = createUploadLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: "ws://localhost:4000/graphql",
+  uri: window.location.origin.replace(/^http/, "ws") + "/graphql",
   options: {
     reconnect: true,
     connectionParams: {
@@ -42,7 +42,7 @@ const splitLink = split(
   },
   wsLink,
   // @ts-ignore
-  httpLink
+  httpLink,
 );
 
 export const cache = new InMemoryCache();

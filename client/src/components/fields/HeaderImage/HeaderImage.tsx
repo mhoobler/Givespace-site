@@ -1,8 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, ChangeEvent } from "react";
 
 import ToggleEdit from "../../ToggleEdit/ToggleEdit";
 import Modal from "../../Modal/Modal";
 import { acceptedImageFiles } from "../../../utils/references";
+
+import canvasHelper from "./canvasHelper";
 
 import "./HeaderImage.less";
 
@@ -24,25 +26,41 @@ const HeaderImage: React.FC<Props> = ({
   const [showModal, setShowModal] = useState(false);
 
   const fileRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleModal = () => setShowModal((prev) => !prev);
 
-  const handleClickSubmit = () => {
-    if (!fileRef.current) {
-      throw new Error("Could not find fileRef for AvatarImage");
+  const handleFileChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    if (!evt.target.files) {
+      throw new Error("No files property on event target");
     }
-    const { files } = fileRef.current;
-
-    if (!files[0]) {
-      throw new Error("No file selected");
+    if (!canvasRef.current) {
+      throw new Error("Could not find cavasRef for HeaderImage");
     }
-    const file = files[0] as File;
 
+    const file = evt.target.files[0];
     if (!acceptedImageFiles.includes(file.type)) {
       throw new Error("Invalid file type");
     }
 
-    handleSubmit(file, keyProp);
+    if (file) {
+      const img = new Image();
+      img.onload = canvasHelper(canvasRef.current, img);
+      img.src = URL.createObjectURL(file);
+    }
+  };
+
+  const handleClickSubmit = () => {
+    if (!fileRef.current) {
+      throw new Error("Could not find fileRef for HeaderImage");
+    }
+
+    const { files } = fileRef.current;
+    if (!files[0]) {
+      throw new Error("No file selected");
+    }
+
+    //handleSubmit(file, keyProp);
   };
 
   return (
@@ -70,8 +88,10 @@ const HeaderImage: React.FC<Props> = ({
         <Modal.Header close={handleModal}>Edit Header Image</Modal.Header>
         <Modal.Body>
           {/* TODO: Should probably replace with a React Component */}
+          <canvas ref={canvasRef} width="200px" height="200px" />
           <input
             ref={fileRef}
+            onChange={handleFileChange}
             className={`toggle-input file-input ${className || ""}`}
             type="file"
             name={keyProp}
