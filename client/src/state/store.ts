@@ -19,15 +19,28 @@ export const useFieldEditing = (): FieldEditing => {
   return { fieldEditing, setFieldEditing };
 };
 
-const currentlyUndoVar: ReactiveVar<any> = makeVar<any>(null);
+const currentlyUndoVar: ReactiveVar<any[]> = makeVar<any[]>([]);
 type CurrentlyUndo = {
-  currentlyUndo: any;
-  setCurrentlyUndo: (value: any) => void;
+  currentlyUndo: any[];
+  setCurrentlyUndo: (value: any[]) => void;
 };
 export const useCurrentlyUndo = (): CurrentlyUndo => {
   const currentlyUndo = useReactiveVar(currentlyUndoVar);
-  const setCurrentlyUndo = (value: any) => {
+  const setCurrentlyUndo = (value: any[]) => {
     currentlyUndoVar(value);
   };
   return { currentlyUndo, setCurrentlyUndo };
+};
+
+const removeVar: ReactiveVar<any> = makeVar<any>(null);
+type Remove = {
+  remove: any;
+  setRemove: (value: any) => void;
+};
+export const useRemove = (): Remove => {
+  const remove = useReactiveVar(removeVar);
+  const setRemove = (value: any) => {
+    removeVar(value);
+  };
+  return { remove, setRemove };
 };

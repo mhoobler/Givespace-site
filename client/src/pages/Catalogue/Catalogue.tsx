@@ -16,12 +16,13 @@ import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { dummyLabel, dummyListing } from "../../utils/references";
 import ListingModal from "./ListingModal";
-import { useCurrentlyUndo } from "../../state/store";
+import { useCurrentlyUndo, useRemove } from "../../state/store";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const { currentlyUndo, setCurrentlyUndo } = useCurrentlyUndo();
+  const { setRemove } = useRemove();
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   const CatalogueIdVariables = is_edit_id
@@ -29,7 +30,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     : { id: corresponding_id };
 
   // Inputs need to toggle from Editing to Display state
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
 
   // All ApolloHooks are moved to custom hook for organization
   const {
@@ -149,9 +150,12 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         variables: { id },
         fetchPolicy: "no-cache",
       });
-      setCurrentlyUndo(null);
+      setRemove(`Listing:${id}`);
     }, 2000);
-    setCurrentlyUndo(deleteLabelTimeout);
+    setCurrentlyUndo([
+      ...currentlyUndo,
+      { id: `Listing:${id}`, timeout: deleteLabelTimeout },
+    ]);
   };
 
   const reorderLabel = (id: string, ordering: number) => {
@@ -254,17 +258,19 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
-      {currentlyUndo && (
+      {/* @ts-ignore */}
+      {currentlyUndo.map((cu) => (
         <button
+          key={cu.id}
           onClick={() => {
             console.log("Undo Label");
-            clearTimeout(currentlyUndo);
-            setCurrentlyUndo(null);
+            clearTimeout(cu.timeout);
+            setRemove(cu.id);
           }}
         >
-          Undoooooo
+          Undo {cu.id}
         </button>
-      )}
+      ))}
       <CatalogueItems
         isEditing={isEditing}
         addLabel={addLabel}
