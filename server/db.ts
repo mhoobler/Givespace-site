@@ -10,7 +10,7 @@ const db = new Client({
 
 if (process.env.NODE_ENV !== "production") {
   var queries = fs
-    .readFileSync("init.sql")
+    .readFileSync(__dirname + "/init.sql")
     .toString()
     .replace(/(\r\n|\n|\r)/gm, " ") // remove newlines
     .replace(/\s+/g, " ") // excess white space

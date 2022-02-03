@@ -1,4 +1,4 @@
-import db from "../../../db";
+import db from "../../db";
 import { QueryResult } from "pg";
 import { AmazonScrapedFeatures, Catalogue, Label, Listing } from "../../types";
 import {

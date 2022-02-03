@@ -56,22 +56,3 @@ interface Listing {
   created: Date;
   updated: Date;
 }
-
-enum GraphqlModel {
-  catalogue = "Catalogue",
-  label = "Label",
-  listing = "Listing",
-}
-
-type MarkedForDeletion = {
-  id: string;
-  text: string;
-  timeout: any;
-  data: any;
-  fragment: DocumentNode;
-};
-
-type RemoveMFD = {
-  id: string;
-  isUndo: boolean;
-} | null;

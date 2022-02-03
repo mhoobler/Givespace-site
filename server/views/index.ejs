@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Testing</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <% if(process.env.NODE_ENV === "development"){ %>
+    <script src="http://localhost:3000/index.js"></script>
+    <% } else { %>
+    <script src="/index.js" charset="utf-8"></script>
+    <% }  %>
+  </body>
+</html>
+

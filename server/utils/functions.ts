@@ -4,8 +4,8 @@ import { finished } from "stream/promises";
 import * as fs from "fs";
 import { QueryResult } from "pg";
 import { Catalogue } from "../types";
-import db from "../../db";
-import { pubsub } from "../graphql/index";
+import db from "../db";
+import { pubsub } from "../gql/index";
 import { UserInputError } from "apollo-server-express";
 import { deleteFromGC } from "./googleCloud";
 

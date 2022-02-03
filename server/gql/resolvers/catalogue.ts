@@ -9,7 +9,7 @@ import {
   verifyToken,
 } from "../../utils/functions";
 import { CatalogueListItem, Catalogue, Context } from "../../types";
-import db from "../../../db";
+import db from "../../db";
 import { QueryResult } from "pg";
 import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
 import { UserInputError } from "apollo-server-express";

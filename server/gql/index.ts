@@ -7,7 +7,8 @@ import { httpServer } from "../app";
 import schema from "./schema";
 import { PubSub } from "graphql-subscriptions";
 import fetch from "node-fetch";
-import { Context } from "src/types";
+
+type Context = any;
 
 export const pubsub = new PubSub();
 

@@ -1,30 +1,30 @@
-import express, { Request, Response } from "express";
-import path from "path";
 import dotenv from "dotenv";
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-console.log("index.ts is run");
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.resolve(__dirname, "../../client/build")));
-} else {
-  dotenv.config();
-}
-
+dotenv.config();
+import { app, httpServer } from "./app";
+import apolloServer from "./gql";
+import { Request, Response } from "express";
 import db from "./db";
+import { graphqlUploadExpress } from "graphql-upload";
 
-app.get("*", async (req: Request, res: Response) => {
-  try {
-    const { rows } = await db.query("SELECT * FROM catalogues");
-    console.log(rows);
-    res.send({ message: rows });
-  } catch (err) {
-    console.log(err);
-  }
-});
+const startServers = async () => {
+  app.get("/test", async (req: Request, res: Response) => {
+    try {
+      const { rows } = await db.query("SELECT * FROM catalogues");
+      res.send({ message: rows });
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
-app.listen(PORT, () => {
-  console.log("app.listening");
-});
+  await apolloServer.start();
+  app.use(graphqlUploadExpress());
+  apolloServer.applyMiddleware({ app });
+
+  httpServer.listen(process.env.PORT, () =>
+    console.log(
+      `🚀 Server ready at http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`
+    )
+  );
+};
+
+startServers();
