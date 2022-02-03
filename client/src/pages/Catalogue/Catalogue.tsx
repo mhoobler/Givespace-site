@@ -16,10 +16,12 @@ import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { dummyLabel, dummyListing } from "../../utils/references";
 import ListingModal from "./ListingModal";
+import { useCurrentlyUndo } from "../../state/store";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const { currentlyUndo, setCurrentlyUndo } = useCurrentlyUndo();
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   const CatalogueIdVariables = is_edit_id
@@ -141,10 +143,15 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const deleteLabel = (id: string) => {
     handleCacheDeletion(`Listing:${id}`);
-    deleteLabelMutation({
-      variables: { id },
-      fetchPolicy: "no-cache",
-    });
+    const deleteLabelTimeout = setTimeout(() => {
+      console.log("Deleted Label");
+      deleteLabelMutation({
+        variables: { id },
+        fetchPolicy: "no-cache",
+      });
+      setCurrentlyUndo(null);
+    }, 2000);
+    setCurrentlyUndo(deleteLabelTimeout);
   };
 
   const reorderLabel = (id: string, ordering: number) => {
@@ -247,6 +254,17 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDateInput={handleDateInput}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
+      {currentlyUndo && (
+        <button
+          onClick={() => {
+            console.log("Undo Label");
+            clearTimeout(currentlyUndo);
+            setCurrentlyUndo(null);
+          }}
+        >
+          Undoooooo
+        </button>
+      )}
       <CatalogueItems
         isEditing={isEditing}
         addLabel={addLabel}
