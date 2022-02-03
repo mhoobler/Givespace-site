@@ -1,0 +1,50 @@
+// Label stuff TO BE MOVED
+
+.labels-container {
+  display: flex;
+  flex-wrap: wrap;
+
+  >* {
+    margin: 4px;
+  }
+}
+
+.add-label-group {
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  box-sizing: content-box;
+  transition: width 0.4s;
+  background-color: #343434;
+  padding: 2px;
+  border-radius: 100px;
+
+  &.adding {
+    width: 10rem;
+
+    .add-label-input {
+      width: 8rem;
+      padding: 0px 8px;
+      opacity: 100%;
+    }
+  }
+
+  .add-label-input {
+    width: 0rem;
+    padding: 0;
+    border: none;
+    box-shadow: 0px 0px 4px black;
+    transition: width 0.4s, opacity 0.2s;
+    border-radius: 100px;
+    opacity: 0%;
+  }
+
+}
+
+.add-label-button {
+  background-color: transparent;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border: none;
+}

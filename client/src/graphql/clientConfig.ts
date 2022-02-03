@@ -6,13 +6,14 @@ import { createUploadLink } from "apollo-upload-client";
 
 const authorization = localStorage.getItem("authorization");
 if (!authorization) {
-  const newUuid = uuidv4();
+  // const newUuid = uuidv4();
+  const newUuid = "6a3a2967-0258-4caf-8fef-f844c060b2f2";
   console.log("newUuid", newUuid);
   localStorage.setItem("authorization", newUuid);
 }
 
 export const httpLink = createUploadLink({
-  uri: "http://localhost:4000/graphql",
+  uri: window.location.origin + "/graphql",
   headers: {
     authorization: localStorage.getItem("authorization")
       ? localStorage.getItem("authorization")
@@ -21,7 +22,7 @@ export const httpLink = createUploadLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: "ws://localhost:4000/graphql",
+  uri: window.location.origin.replace(/^http/, "ws") + "/graphql",
   options: {
     reconnect: true,
     connectionParams: {
@@ -41,7 +42,7 @@ const splitLink = split(
   },
   wsLink,
   // @ts-ignore
-  httpLink
+  httpLink,
 );
 
 export const cache = new InMemoryCache();

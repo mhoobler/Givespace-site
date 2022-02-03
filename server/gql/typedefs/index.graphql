@@ -1,0 +1,28 @@
+type Query {
+  getJwt: String!
+  catalogues(id: ID, edit_id: String): [Catalogue!]
+  myCatalogues: [Catalogue!]
+}
+
+type Mutation {
+  createCatalogue: Catalogue!
+  deleteCatalogue(id: ID!): Catalogue!
+  incrementCatalogueViews(id: ID, edit_id: String): Catalogue!
+  editCatalogue(id: ID!, key: String!, value: String!): Catalogue!
+  editCatalogueFile(id: ID!, key: String!, file: Upload!): Catalogue!
+  singleUpload(file: Upload!): File!
+
+  createLabel(catalogue_id: String!, name: String!): Label!
+  deleteLabel(id: ID!): Label!
+  reorderLabel(id: ID!, ordering: Float!): Label!
+
+  createListing(catalogue_id: ID!, name: String!): Listing!
+  deleteListing(id: ID!): Listing!
+  editListing(id: ID!, key: String!, value: String!): Listing!
+  reorderListing(id: ID!, ordering: Float!): Listing!
+  # updateCatalogue(id: ID!, title: String!): Catalogue!
+}
+
+type Subscription {
+  liveCatalogue(id: ID, edit_id: String): Catalogue!
+}

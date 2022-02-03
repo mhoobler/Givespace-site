@@ -1,5 +1,10 @@
 import { gql } from "@apollo/client";
-import { ALL_CATALOGUE_FIELDS, CATALOGUE_LIST_ITEM_FIELDS } from "./fragments";
+import {
+  LABEL_FIELDS,
+  ALL_CATALOGUE_FIELDS,
+  CATALOGUE_LIST_ITEM_FIELDS,
+  LISTING_FIELDS,
+} from "./fragments";
 
 export const GET_JWT = gql`
   query GetJwt {
@@ -26,10 +31,10 @@ export const MY_CATALOGUES = gql`
 `;
 
 export const CREATE_CATALOGUE = gql`
-  ${ALL_CATALOGUE_FIELDS}
+  ${CATALOGUE_LIST_ITEM_FIELDS}
   mutation CreateCatalogue {
     createCatalogue {
-      ...AllCatalogueFields
+      ...CatalogueListItemFields
     }
   }
 `;
@@ -75,6 +80,51 @@ export const UPDATE_CATALOGUE_FILES = gql`
   mutation EditCatalogueFile($key: String!, $file: Upload!, $id: ID!) {
     editCatalogueFile(key: $key, id: $id, file: $file) {
       ...AllCatalogueFields
+    }
+  }
+`;
+
+export const CREATE_LABEL = gql`
+  ${LABEL_FIELDS}
+  mutation CreateLabel($catalogue_id: String!, $name: String!) {
+    createLabel(catalogue_id: $catalogue_id, name: $name) {
+      ...AllLabelFields
+    }
+  }
+`;
+
+export const DELETE_LABEL = gql`
+  ${LABEL_FIELDS}
+  mutation DeleteLabel($id: ID!) {
+    deleteLabel(id: $id) {
+      ...AllLabelFields
+    }
+  }
+`;
+
+export const UPDATE_LABEL_ORDER = gql`
+  ${LABEL_FIELDS}
+  mutation ReorderLabel($id: ID!, $ordering: Float!) {
+    reorderLabel(id: $id, ordering: $ordering) {
+      ...AllLabelFields
+    }
+  }
+`;
+
+export const CREATE_LISTING = gql`
+  ${LISTING_FIELDS}
+  mutation CreateListing($catalogue_id: ID!, $name: String!) {
+    createListing(catalogue_id: $catalogue_id, name: $name) {
+      ...AllListingFields
+    }
+  }
+`;
+
+export const DELETE_LISTING = gql`
+  ${LISTING_FIELDS}
+  mutation DeleteListing($id: ID!) {
+    deleteListing(id: $id) {
+      ...AllListingFields
     }
   }
 `;

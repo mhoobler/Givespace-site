@@ -1,0 +1,60 @@
+.card {
+  flex: 0 0 46%;
+  margin-top: 1.5rem;
+  border: 1px solid #9f9f9f !important;
+  border-radius: 15px !important;
+
+  &.editing {
+    .card-header {
+      display: block;
+    }
+  }
+
+  .card-header {
+    display: none;
+    position: relative;
+    user-select: none;
+    padding: 0;
+
+    button {
+      text-align: center;
+      line-height: 8px;
+      background-color: #494949;
+      color: white;
+      border-radius: 100px;
+      height: 24px;
+      width: 24px;
+      position: absolute;
+      top: -8px;
+      right: -12px
+    }
+  }
+}
+
+@media screen {
+  // sm
+  @media (min-width: 576px) {
+  }
+
+  // md
+  @media (min-width: 768px) {
+    .card {
+      flex: 0 0 31%;
+    }
+  }
+
+  // lg
+  @media (min-width: 992px) {
+  }
+
+  // xl
+  @media (min-width: 1200px) {
+    .card {
+      flex: 0 0 21%;
+    }
+  }
+
+  // xxl
+  @media (min-width: 1400px) {
+  }
+}

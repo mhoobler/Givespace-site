@@ -1,0 +1,111 @@
+import db from "../../db";
+import { QueryResult } from "pg";
+import { AmazonScrapedFeatures, Catalogue, Label, Listing } from "../../types";
+import {
+  getFullCatalogues,
+  maxOrdering,
+  notExist,
+  publishCatalogue,
+} from "../../utils/functions";
+import { pubsub } from "../index";
+import scrapeItemFeatures from "../../scraping/amazon";
+
+const listingResolvers = {
+  Query: {},
+  Mutation: {
+    createListing: async (
+      _: null,
+      { catalogue_id, name }: { catalogue_id: string; name: string }
+    ): Promise<Listing> => {
+      const fullCatalogue: Catalogue = (
+        await getFullCatalogues(catalogue_id)
+      )[0];
+
+      notExist("Catalogue", fullCatalogue);
+
+      const newListingRes: QueryResult<Listing> = await db.query(
+        "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
+        [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
+      );
+      const newListing: Listing = newListingRes.rows[0];
+
+      publishCatalogue(catalogue_id);
+
+      const scrapeData = async () => {
+        const features: AmazonScrapedFeatures = await scrapeItemFeatures(name);
+
+        const currentListingRes: QueryResult<Listing> = await db.query(
+          "SELECT * FROM listings WHERE id = $1",
+          [newListing.id]
+        );
+        const currentListing: Listing = currentListingRes.rows[0];
+
+        const updateListingRes: QueryResult<Listing> = await db.query(
+          "UPDATE listings SET image_url = $1, price = $2 WHERE id = $3 RETURNING *",
+          [
+            // if none of the following exist yet replace with scrape data
+            currentListing.image_url || features.image_url,
+            currentListing.price || features.price,
+            newListing.id,
+          ]
+        );
+        const updatedListing: Listing = updateListingRes.rows[0];
+        notExist("Listing", updatedListing);
+
+        publishCatalogue(catalogue_id);
+      };
+      scrapeData();
+
+      return newListing;
+    },
+    deleteListing: async (
+      _: null,
+      { id }: { id: string }
+    ): Promise<Listing> => {
+      const deletedListingRes: QueryResult<Listing> = await db.query(
+        "DELETE FROM listings WHERE id = $1 RETURNING *",
+        [id]
+      );
+      const deletedListing: Listing = deletedListingRes.rows[0];
+      notExist("Listing", deletedListing);
+
+      publishCatalogue(deletedListing.catalogue_id);
+
+      return deletedListing;
+    },
+    editListing: async (
+      _,
+      { key, value, id }: { key: string; value: string; id: string }
+    ): Promise<Listing> => {
+      const editedListingRaw: QueryResult<Listing> = await db.query(
+        `UPDATE listings SET ${key} = $1 WHERE id = $2 RETURNING *`,
+        [value, id]
+      );
+
+      notExist("Listing", editedListingRaw.rows[0]);
+
+      publishCatalogue(editedListingRaw.rows[0].catalogue_id);
+
+      return editedListingRaw.rows[0];
+    },
+    // TODO: add edit image
+    reorderListing: async (
+      _: null,
+      { id, ordering }: { id: string; ordering: number }
+    ): Promise<Listing> => {
+      const updatedListingRes: QueryResult<Listing> = await db.query(
+        "UPDATE listings SET ordering = $1 WHERE id = $2 RETURNING *",
+        [ordering, id]
+      );
+      const updatedListing: Listing = updatedListingRes.rows[0];
+      notExist("Listing", updatedListing);
+
+      publishCatalogue(updatedListing.catalogue_id);
+
+      return updatedListing;
+    },
+  },
+  Subscription: {},
+};
+
+export default listingResolvers;
