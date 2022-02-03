@@ -1,5 +1,5 @@
 import { DocumentNode } from "graphql";
-import client, { cache } from "../graphql/clientConfig";
+import { cache } from "../graphql/clientConfig";
 import {
   ALL_CATALOGUE_FIELDS,
   LABEL_FIELDS,
