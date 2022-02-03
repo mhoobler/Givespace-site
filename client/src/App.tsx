@@ -3,11 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home, Catalogue, CatalogueSelect } from "./pages";
 import { useQuery } from "@apollo/client";
 import { MY_CATALOGUES } from "./graphql/schemas";
-import {
-  apolloHookErrorHandler,
-  handleCacheDeletion,
-  handleDeletion,
-} from "./utils/functions";
+import { apolloHookErrorHandler } from "./utils/functions";
 
 import "./App.less";
 import { useMarkedForDeletion, useRemoveMFD } from "./state/store";

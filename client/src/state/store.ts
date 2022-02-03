@@ -1,9 +1,4 @@
-import {
-  DocumentNode,
-  makeVar,
-  ReactiveVar,
-  useReactiveVar,
-} from "@apollo/client";
+import { makeVar, ReactiveVar, useReactiveVar } from "@apollo/client";
 
 // Special hooks that triggers an update of a Query or
 // subcription when its value changes

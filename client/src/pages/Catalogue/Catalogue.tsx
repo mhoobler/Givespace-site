@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  handleCacheDeletion,
   handleDeletion,
   maxOrdering,
   updateCatalogueCache,
@@ -14,15 +13,10 @@ import {
   CatalogueToolbar,
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
-import {
-  ALL_CATALOGUE_FIELDS,
-  LABEL_FIELDS,
-  LISTING_FIELDS,
-} from "../../graphql/fragments";
+import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { dummyLabel, dummyListing } from "../../utils/references";
 import ListingModal from "./ListingModal";
 import { useMarkedForDeletion, useRemoveMFD } from "../../state/store";
-import { DocumentNode } from "graphql";
 import { UndoNotification } from "../../components";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
@@ -285,10 +279,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleSelectListing={handleSelectListing}
         handleDeleteListing={handleDeleteListing}
       />
-      {/* <ListingModal
+      <ListingModal
         listing={selectedListing}
         handleClose={handleListingModalClose}
-      /> */}
+      />
     </div>
   );
 
