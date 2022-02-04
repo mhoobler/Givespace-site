@@ -9,7 +9,7 @@
     "dev-server": "nodemon server/index.ts",
     "dev-client": "webpack serve --config webpack.config.js",
     "build": "yarn build-server && yarn build-client",
-    "build-server": "yarn tsc && cp -r server/views dist/ && cp -r server/gql/typedefs dist/gql/typedefs",
+    "build-server": "yarn tsc && cp -r server/views dist/ && cp -r server/gql/typedefs dist/gql/",
     "build-client": "webpack --config webpack.config.js"
   },
   "dependencies": {

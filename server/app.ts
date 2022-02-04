@@ -22,6 +22,11 @@ const app = express();
 app.set("views", path.resolve(__dirname, "views"));
 app.set("view engine", "ejs");
 
+app.get("*", (req, _res, next) => {
+  console.log(req.path);
+  next();
+});
+
 app.use(express.static(path.resolve(__dirname, "build")));
 
 app.get("/", async (_req, res) => {
