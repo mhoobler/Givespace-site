@@ -27,16 +27,28 @@ export const handleFile = async (
   callback: (fileName: string, path: string) => Promise<any>
 ): Promise<any> => {
   // creates the file locally, runs the callback, then deletes the file
-  const { createReadStream, filename, mimetype, encoding } = await file;
-  const stream = createReadStream();
-  const pathToFile = path.join(__dirname, "../images/", filename);
-  const out = fs.createWriteStream(pathToFile);
-  stream.pipe(out);
-  await finished(out);
-  const callbackReturn = await callback(filename, pathToFile);
-  await fs.promises.unlink(pathToFile);
+  try {
+    const { createReadStream, filename, mimetype, encoding } = await file;
+    const pathToFile = path.join(__dirname, "../images/", filename);
 
-  return callbackReturn;
+    const stream = createReadStream();
+    await new Promise((resolve, reject) =>
+      stream
+        .on("error", (error) => {
+          fs.promises.unlink(pathToFile);
+          reject(error);
+        })
+        .pipe(fs.createWriteStream(pathToFile))
+        .on("error", (error) => reject(error))
+        .on("finish", () => resolve("done"))
+    );
+    const callbackReturn = await callback(filename, pathToFile);
+    await fs.promises.unlink(pathToFile);
+
+    return callbackReturn;
+  } catch {
+    throw new UserInputError("File upload failed");
+  }
 };
 
 export const getFullCatalogues = async (
