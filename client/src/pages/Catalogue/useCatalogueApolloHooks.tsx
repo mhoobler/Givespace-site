@@ -11,6 +11,7 @@ import {
   UPDATE_LABEL_ORDER,
   CREATE_LISTING,
   DELETE_LISTING,
+  EDIT_LISTING_FILE,
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 import {
@@ -110,6 +111,10 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
     useMutation(DELETE_LISTING);
   apolloHookErrorHandler("deleteListingError", deleteListingError, true);
 
+  const [editListingFile, { error: updateListingFileError }] =
+    useMutation(EDIT_LISTING_FILE);
+  apolloHookErrorHandler("editListingFileError", updateListingFileError, true);
+
   return {
     incrementCatalogueViews,
     updateCatalogue,
@@ -121,6 +126,7 @@ const CatalogueApolloHooks = ({ CatalogueIdVariables }: Props) => {
     reorderLabelMutation,
     createListing,
     deleteListing,
+    editListingFile,
   };
 };
 

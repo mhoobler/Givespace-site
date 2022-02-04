@@ -36,9 +36,9 @@ const FileInput: React.FC<Props> = ({
         type="file"
         onChange={handleFileInput}
         name={keyProp}
-        accept="*.png,*.jpeg,*.jpg, *.txt"
+        accept="*.png,*.jpeg,*.jpg,*.txt ,*.gif"
       />
-      <div className={`toggle-display`}>header_image_url: {value}</div>
+      <div className={`toggle-display`}>image_url: {value}</div>
     </ToggleEdit>
   );
 };

@@ -280,6 +280,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDeleteListing={handleDeleteListing}
       />
       <ListingModal
+        isEditing={isEditing}
         listing={selectedListing}
         handleClose={handleListingModalClose}
       />

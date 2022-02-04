@@ -128,3 +128,12 @@ export const DELETE_LISTING = gql`
     }
   }
 `;
+
+export const EDIT_LISTING_FILE = gql`
+  ${LISTING_FIELDS}
+  mutation EditListingFile($file: Upload!, $id: ID!) {
+    editListingFile(id: $id, file: $file) {
+      ...AllListingFields
+    }
+  }
+`;

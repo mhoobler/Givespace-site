@@ -19,6 +19,7 @@ type Mutation {
   createListing(catalogue_id: ID!, name: String!): Listing!
   deleteListing(id: ID!): Listing!
   editListing(id: ID!, key: String!, value: String!): Listing!
+  editListingFile(id: ID!, file: Upload!): Listing!
   reorderListing(id: ID!, ordering: Float!): Listing!
   # updateCatalogue(id: ID!, title: String!): Catalogue!
 }

@@ -2,13 +2,16 @@ import db from "../../db";
 import { QueryResult } from "pg";
 import { AmazonScrapedFeatures, Catalogue, Label, Listing } from "../../types";
 import {
+  deleteFileIfNotUsed,
   getFullCatalogues,
+  handleFile,
   maxOrdering,
   notExist,
   publishCatalogue,
 } from "../../utils/functions";
 import { pubsub } from "../index";
 import scrapeItemFeatures from "../../scraping/amazon";
+import { uploadToGC } from "../../utils/googleCloud";
 
 const listingResolvers = {
   Query: {},
@@ -88,7 +91,31 @@ const listingResolvers = {
 
       return editedListingRaw.rows[0];
     },
-    // TODO: add edit image
+    editListingFile: async (_, { id, file }: { id: string; file: any }) => {
+      let preResult: QueryResult<Listing> = await db.query(
+        "SELECT * FROM listings WHERE id = $1",
+        [id]
+      );
+
+      notExist("Listing", preResult.rows[0]);
+
+      // need to not run this if we are going to add placeholders
+      if (preResult.rows[0].image_url) {
+        // TODO: test and optimize so that it does not need the await
+        await deleteFileIfNotUsed(preResult.rows[0].image_url);
+      }
+
+      const url = await handleFile(file, uploadToGC);
+
+      const updatedListingRes: QueryResult<Listing> = await db.query(
+        `UPDATE listings SET image_url = $1 WHERE id = $2 RETURNING *`,
+        [url, id]
+      );
+
+      publishCatalogue(updatedListingRes.rows[0].catalogue_id);
+
+      return updatedListingRes.rows[0];
+    },
     reorderListing: async (
       _: null,
       { id, ordering }: { id: string; ordering: number }
