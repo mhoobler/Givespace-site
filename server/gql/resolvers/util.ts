@@ -9,7 +9,7 @@ import { uploadToGC } from "../../utils/googleCloud";
 import { handleFile } from "../../utils/functions";
 const Cloud = require("@google-cloud/storage");
 
-const serviceKeyPath = path.join(__dirname, "../../../bucket-key.json");
+const serviceKeyPath = path.join(__dirname, "../../bucket-key.json");
 const { Storage } = Cloud;
 const GC_PROJECT_ID = "givespace";
 const GC_BUCKET_ID = "givespace-pictures";

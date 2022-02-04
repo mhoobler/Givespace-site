@@ -1,7 +1,7 @@
 import * as path from "path";
 const Cloud = require("@google-cloud/storage");
 
-const serviceKeyPath = path.join(__dirname, "../../bucket-key.json");
+const serviceKeyPath = path.join(__dirname, "../bucket-key.json");
 const { Storage } = Cloud;
 const storage = new Storage({
   keyFilename: serviceKeyPath,

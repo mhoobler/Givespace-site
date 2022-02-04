@@ -22,7 +22,7 @@ export const httpLink = createUploadLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: window.location.origin.replace(/^http/, "ws") + "/graphql",
+  uri: window.location.origin.replace(/^http/, "wss") + "/graphql",
   options: {
     reconnect: true,
     connectionParams: {
