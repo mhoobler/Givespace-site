@@ -26,7 +26,7 @@ CREATE TABLE catalogues (
 CREATE TABLE listings (
   id UUID DEFAULT uuid_generate_v4(),
   catalogue_id UUID NOT NULL,
-  name TEXT NOT NULL,
+  name TEXT,
   link_url TEXT,
   image_url TEXT,
   description TEXT,

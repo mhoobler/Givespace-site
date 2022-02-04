@@ -46,7 +46,7 @@ interface Label {
 interface Listing {
   id: string;
   catalogue_id: string;
-  name: string;
+  name: string | null;
   link_url: string | null;
   image_url: string | null;
   description: string | null;
