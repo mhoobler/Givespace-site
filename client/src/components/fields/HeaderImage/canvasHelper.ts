@@ -1,5 +1,5 @@
-const MAX_H = window.innerHeight * 0.3;
-const MAX_W = window.innerWidth * 0.6;
+const MAX_H = window.innerHeight * 0.6;
+const MAX_W = window.innerWidth * 0.8;
 
 type BorderKeys = "top" | "right" | "bottom" | "left" | "rect";
 
