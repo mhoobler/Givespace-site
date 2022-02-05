@@ -47,8 +47,9 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
       throw new Error("No <body> was found in canvasHelper");
     }
 
+    // is used evt.path because of the img.onload event
     const { height, width } = evt.path[0];
-    let ratio;
+    let ratio: number;
 
     if (MAX_W > MAX_H) {
       ratio = MAX_H / height;
@@ -64,33 +65,53 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
       right: canvas.width,
       bottom: canvas.width / 4,
     };
+    //@ts-ignore
+    const check = {
+      top: (y: number) => !(borders.top + y < 0),
+      left: (x: number) => !(borders.left + x < 0),
+      right: (x: number) => !(borders.right + x > canvas.width),
+      bottom: (y: number) => !(borders.bottom + y > canvas.height),
+    };
+
     const moveBorders = (x: number, y: number) => {
-      borders.top += y;
-      borders.bottom += y;
-      borders.left += x;
-      borders.right += x;
+      if (check.top(y) && check.bottom(y)) {
+        borders.top += y;
+        borders.bottom += y;
+      }
+      if (check.right(x) && check.left(x)) {
+        borders.left += x;
+        borders.right += x;
+      }
       paths = getPath(borders);
     };
     const scaleBorders = (x: number, y: number, border: string) => {
       switch (border) {
         case "left": {
-          borders.left += x;
-          borders.top += x / 4;
+          if (check.left(x) && check.top(x / 4)) {
+            borders.left += x;
+            borders.top += x / 4;
+          }
           break;
         }
         case "top": {
-          borders.top += y;
-          borders.left += y * 4;
+          if (check.top(y) && check.left(y * 4)) {
+            borders.top += y;
+            borders.left += y * 4;
+          }
           break;
         }
         case "right": {
-          borders.right += x;
-          borders.bottom += x / 4;
+          if (check.right(x) && check.bottom(x / 4)) {
+            borders.right += x;
+            borders.bottom += x / 4;
+          }
           break;
         }
         case "bottom": {
-          borders.bottom += y;
-          borders.right += y * 4;
+          if (check.bottom(y) && check.right(y * 4)) {
+            borders.bottom += y;
+            borders.right += y * 4;
+          }
           break;
         }
         default: {
@@ -100,6 +121,7 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
       paths = getPath(borders);
     };
 
+    let targetPath: "top" | "right" | "bottom" | "left" | "rect" | null = null;
     let paths = getPath(borders);
     const isInPath = (x: number, y: number) => {
       const inTop = ctx.isPointInStroke(paths.top, x, y);
@@ -126,36 +148,42 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
       return null;
     };
 
-    const redraw = () => {
+    let frame: any;
+
+    const redraw = (editing: boolean = true) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.lineWidth = 4;
-      for (let p of Object.values(paths)) {
-        ctx.stroke(p);
-      }
 
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
-      ctx.rect(0, 0, canvas.width, borders.top);
-      ctx.rect(0, 0, borders.left, canvas.height);
-      ctx.rect(borders.right, 0, canvas.width, canvas.height);
-      ctx.rect(0, borders.bottom, canvas.width, canvas.height);
-      ctx.fill();
+      if (editing) {
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        ctx.rect(0, 0, canvas.width, borders.top);
+        ctx.rect(0, 0, borders.left, canvas.height);
+        ctx.rect(borders.right, 0, canvas.width, canvas.height);
+        ctx.rect(0, borders.bottom, canvas.width, canvas.height);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.lineWidth = 4;
+        for (let p of Object.values(paths)) {
+          ctx.stroke(p);
+        }
+        if (targetPath !== null) {
+          ctx.strokeStyle = "rgba(0, 255, 0, 0.6)";
+          ctx.stroke(paths[targetPath]);
+        }
+        frame = window.requestAnimationFrame(() => redraw());
+      } else {
+        cancelAnimationFrame(frame);
+      }
     };
 
     const handleMouseMove = (evt: MouseEvent) => {
       const { offsetX, offsetY } = evt;
-      const targetPath = isInPath(offsetX, offsetY);
+      targetPath = isInPath(offsetX, offsetY);
 
       if (targetPath !== null) {
         body.style.cursor = "pointer";
-        for (let p of Object.values(paths)) {
-          if (p === paths[targetPath]) {
-            ctx.strokeStyle = "rgba(0, 255, 0, 0.6)";
-            ctx.stroke(p);
-          }
-        }
       } else {
         body.style.cursor = "default";
       }
@@ -163,7 +191,7 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
 
     const handleMouseDown = (downevt: MouseEvent) => {
       const { offsetX, offsetY } = downevt;
-      const targetPath = isInPath(offsetX, offsetY) || "";
+      targetPath = isInPath(offsetX, offsetY);
       let subX = 0;
       let subY = 0;
 
@@ -179,12 +207,12 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
 
         if (targetPath === "rect") {
           moveBorders(moveX, moveY);
-        } else {
+        } else if (targetPath !== null) {
           scaleBorders(moveX, moveY, targetPath);
         }
 
         for (let p of Object.values(paths)) {
-          if (targetPath !== "" && p === paths[targetPath]) {
+          if (targetPath !== null && p === paths[targetPath]) {
             ctx.strokeStyle = "rgba(0, 255, 0, 0.6)";
             ctx.stroke(p);
           }
@@ -198,7 +226,7 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
         canvas.onmousemove = handleMouseMove;
       };
 
-      if (Object.keys(paths).includes(targetPath)) {
+      if (targetPath !== null && Object.keys(paths).includes(targetPath)) {
         canvas.onmousemove = null;
         window.addEventListener("mouseup", handleMouseUp);
         window.addEventListener("mousemove", handleMouseDrag);
@@ -207,5 +235,59 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
 
     canvas.onmousemove = handleMouseMove;
     canvas.onmousedown = handleMouseDown;
-    window.requestAnimationFrame(redraw);
+
+    redraw();
+
+    (canvas as any).getCroppedImage = (cb: any) => {
+      const { top, left, bottom, right } = borders;
+      redraw(false);
+      canvas.height = evt.path[0].height;
+      canvas.width = evt.path[0].width;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(
+        left / ratio,
+        top / ratio,
+        (right - left) / ratio,
+        (bottom - top) / ratio,
+      );
+
+      const canvas2 = document.createElement("canvas");
+      canvas2.width = imageData.width;
+      canvas2.height = imageData.height;
+      const ctx2 = canvas2.getContext("2d");
+      if (ctx2 === null) {
+        throw new Error("problem creating ctx2 in canvasHelper");
+      }
+
+      ctx2.putImageData(imageData, 0, 0);
+      return canvas2.toBlob(cb, "image/jpeg", 0.9);
+    };
+
+    // For testing
+    (canvas as any).getDataURL = () => {
+      const { top, left, bottom, right } = borders;
+      redraw(false);
+      canvas.height = evt.path[0].height;
+      canvas.width = evt.path[0].width;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(
+        left / ratio,
+        top / ratio,
+        (right - left) / ratio,
+        (bottom - top) / ratio,
+      );
+
+      const canvas2 = document.createElement("canvas");
+      canvas2.width = imageData.width;
+      canvas2.height = imageData.height;
+      const ctx2 = canvas2.getContext("2d");
+      if (ctx2 === null) {
+        throw new Error("problem creating ctx2 in canvasHelper");
+      }
+
+      ctx2.putImageData(imageData, 0, 0);
+      return canvas2.toDataURL("image/jpeg");
+    };
   };

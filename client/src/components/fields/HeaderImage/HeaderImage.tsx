@@ -60,6 +60,18 @@ const HeaderImage: React.FC<Props> = ({
       throw new Error("No file selected");
     }
 
+    //const c: any = canvasRef.current;
+    //const test21 = document.getElementById("test21") as HTMLImageElement;
+    //test21.src = c.getDataURL();
+    //console.log(test21.src);
+
+    console.log(
+      (canvasRef.current as any).getCroppedImage((blob: any) => {
+        handleSubmit(new File([blob], "apple2.jpeg"), keyProp);
+      }),
+    );
+    console.log(files[0]);
+
     //handleSubmit(file, keyProp);
   };
 
@@ -76,10 +88,10 @@ const HeaderImage: React.FC<Props> = ({
             <div className="icon-btn">Click This</div>
           </div>
           <div className={`toggle-input image-wrapper`}>
-            <img src={value} alt="" />
+            <img id="test21" src={value} alt="" />
           </div>
           <div className={`toggle-display image-wrapper`}>
-            <img src={value} alt="" />
+            <img id="test21" src={value} alt="" />
           </div>
         </div>
       </ToggleEdit>
