@@ -11,11 +11,11 @@ import {
   CatalogueHeader,
   CatalogueItems,
   CatalogueToolbar,
+  ListingModal,
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { dummyLabel, dummyListing } from "../../utils/references";
-import ListingModal from "./ListingModal";
 import { useMarkedForDeletion, useRemoveMFD } from "../../state/store";
 import { UndoNotification } from "../../components";
 
