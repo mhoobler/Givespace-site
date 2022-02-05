@@ -30,6 +30,7 @@ export const handleFile = async (
   try {
     const { createReadStream, filename, mimetype, encoding } = await file;
     const pathToFile = path.join(__dirname, "../images/", filename);
+    console.log("pathToFile", pathToFile);
 
     const stream = createReadStream();
     await new Promise((resolve, reject) =>
@@ -54,6 +55,7 @@ export const handleFile = async (
     await fs.promises.unlink(pathToFile);
 
     return callbackReturn;
+    // return "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Bonnet_macaque_%28Macaca_radiata%29_Photograph_By_Shantanu_Kuveskar.jpg/220px-Bonnet_macaque_%28Macaca_radiata%29_Photograph_By_Shantanu_Kuveskar.jpg";
   } catch {
     throw new UserInputError("File upload failed");
   }

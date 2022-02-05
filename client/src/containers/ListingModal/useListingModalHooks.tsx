@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { EDIT_LISTING } from "../../graphql/schemas";
+import { EDIT_LISTING, EDIT_LISTING_FILE } from "../../graphql/schemas";
 import { apolloHookErrorHandler } from "../../utils/functions";
 
 const ListingApolloHooks = () => {
@@ -17,8 +17,21 @@ const ListingApolloHooks = () => {
     });
   };
 
+  const [editListingFile, { error: updateListingFileError }] =
+    useMutation(EDIT_LISTING_FILE);
+  apolloHookErrorHandler("editListingFileError", updateListingFileError, true);
+  const handleEditListingFile = (id: string, file: File | undefined) => {
+    editListingFile({
+      variables: {
+        id,
+        file,
+      },
+    });
+  };
+
   return {
     handleEditListing,
+    handleEditListingFile,
   };
 };
 

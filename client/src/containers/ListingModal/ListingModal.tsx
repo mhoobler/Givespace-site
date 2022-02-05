@@ -10,29 +10,21 @@ type Props = {
 };
 
 const ListingModal: React.FC<Props> = ({ listing, isEditing, handleClose }) => {
-  const { handleEditListing } = useListingApolloHooks();
+  const { handleEditListing, handleEditListingFile } = useListingApolloHooks();
 
   if (!listing) return null;
 
-  // const handleFileSubmtit = (file: File | undefined, objectKey: string) => {
-  //   editListingFile({
-  //     variables: {
-  //       id: listing!.id,
-  //       file,
-  //     },
-  //   });
-  // };
   console.log("listing: ", listing);
   console.log();
 
   return (
     <Modal show={listing !== null} close={handleClose}>
-      {/* <FileInput
+      <FileInput
         isEditing={isEditing}
-        handleSubmit={handleFileSubmtit}
+        handleSubmit={(file, _) => handleEditListingFile(listing.id, file)}
         keyProp="image_url"
-        value={listing!.image_url || ""}
-      /> */}
+        value={listing.image_url || ""}
+      />
       <TextInput
         isEditing={isEditing}
         handleSubmit={(value, keyProp) =>
