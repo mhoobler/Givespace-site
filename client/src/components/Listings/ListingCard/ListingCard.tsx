@@ -32,6 +32,12 @@ const ListingCard: React.FC<Props> = ({
       <div className="card-body" onClick={handleSelect}>
         <h4>{listing.name}</h4>
         {/* TODO: DELETE THIS */}
+        <p>{listing.description}</p>
+        {listing.show_price && (
+          <h4>
+            <span className="price">${listing.price}</span>
+          </h4>
+        )}
         <img
           style={{ width: "100px" }}
           src={

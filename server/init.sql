@@ -118,31 +118,6 @@ INSERT INTO labels (
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'label3',
   3
-), (
-  '35b4a996-ab59-4dcd-9885-9a2a54d1608c',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label4',
-  4
-), (
-  '35b5a996-ab59-4dcd-9885-9a2a54d1608c',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label5',
-  5
-), (
-  '35b6a996-ab59-4dcd-9885-9a2a54d1608c',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label6',
-  6
-), ( 
-  '35b7a996-ab59-4dcd-9885-9a2a54d1608c',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label7',
-  7
-), (
-  '35b8a996-ab59-4dcd-9885-9a2a54d1608c',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'label8',
-  8
 );
 
 INSERT INTO listings (
@@ -165,14 +140,12 @@ INSERT INTO listings (
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item2',
   2
-), (
-  '263a378d-97d7-46fa-a5c2-83c99e4fa7b6',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'item3',
-  3
-), (
-  '264a378d-97d7-46fa-a5c2-83c99e4fa7b6',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'item4',
-  4
+);
+
+INSERT INTO links (
+  listing_id,
+  link_url
+) VALUES (
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  'link0'
 );
