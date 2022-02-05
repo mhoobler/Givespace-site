@@ -25,6 +25,7 @@ module.exports = {
     compress: true,
     historyApiFallback: true,
     open: ["http://localhost:4000"],
+    static: false,
   },
   module: {
     rules: [

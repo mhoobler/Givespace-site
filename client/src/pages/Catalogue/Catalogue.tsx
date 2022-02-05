@@ -155,7 +155,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion
+      setMarkedForDeletion,
     );
   };
 
@@ -243,7 +243,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion
+      setMarkedForDeletion,
     );
   };
 
