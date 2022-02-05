@@ -25,7 +25,7 @@ const HeaderImage: React.FC<Props> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
 
-  const fileRef = useRef(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleModal = () => setShowModal((prev) => !prev);
@@ -54,25 +54,34 @@ const HeaderImage: React.FC<Props> = ({
     if (!fileRef.current) {
       throw new Error("Could not find fileRef for HeaderImage");
     }
+    if (!canvasRef.current) {
+      throw new Error("Could not find cavasRef for HeaderImage");
+    }
 
     const { files } = fileRef.current;
-    if (!files[0]) {
+    if (!files || !files[0]) {
       throw new Error("No file selected");
     }
 
+    // *** Good for testing ***
     //const c: any = canvasRef.current;
     //const test21 = document.getElementById("test21") as HTMLImageElement;
     //test21.src = c.getDataURL();
     //console.log(test21.src);
 
-    console.log(
-      (canvasRef.current as any).getCroppedImage((blob: any) => {
-        handleSubmit(new File([blob], "apple2.jpeg"), keyProp);
-      }),
+    // toBlob(callback, MIME type, quality)
+    const toBlob = (canvasRef.current as any).getCroppedImage();
+    toBlob(
+      (blob: BlobPart | null) => {
+        // file name
+        const filename = files[0].name.split(".")[0] + Date.now();
+        if (blob) {
+          handleSubmit(new File([blob], filename), keyProp);
+        }
+      },
+      "image/jpg", // file type
+      0.9, // image quality
     );
-    console.log(files[0]);
-
-    //handleSubmit(file, keyProp);
   };
 
   return (

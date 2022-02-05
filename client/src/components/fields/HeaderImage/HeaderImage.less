@@ -1,32 +1,35 @@
-@height: 12rem;
+@hxs: auto;
+@hmd: 154px;
+@hlg: 198px;
+@hxl: 240px;
 
 .header-image-container {
   width: 100%;
-  height: @height;
 
   .toggle-wrapper {
     width: 100%;
-    height: @height;
+    height: @hxs;
     position: relative;
     z-index: 1;
 
-    >*{
+
+    .toggle-input {
       position: absolute;
     }
-
     .image-wrapper {
       width: 100%;
+      height: 100%;
       z-index: 1;
+      overflow: hidden;
 
       &.toggle-input {
         filter: brightness(0.65);
+        position: static;
       }
 
       img {
         width: 100%;
-        height: @height;
-        /*TODO: This will almost certainly need to NOT be "fill" */
-        object-fit: fill;
+        object-fit: contain;
       }
     }
   }
@@ -39,5 +42,42 @@
     .icon-btn:hover {
       cursor: pointer;
     }
+  }
+}
+
+@media screen {
+  // sm
+  @media (min-width: 576px) {
+  }
+
+  // md
+  @media (min-width: 768px) {
+    .header-image-container {
+      .toggle-wrapper {
+        height: @hmd;
+      }
+    }
+  }
+
+  // lg
+  @media (min-width: 992px) {
+    .header-image-container {
+      .toggle-wrapper {
+        height: @hlg;
+      }
+    }
+  }
+
+  // xl
+  @media (min-width: 1200px) {
+    .header-image-container {
+      .toggle-wrapper {
+        height: @hxl;
+      }
+    }
+  }
+
+  // xxl
+  @media (min-width: 1400px) {
   }
 }
