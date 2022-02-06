@@ -128,3 +128,21 @@ export const DELETE_LISTING = gql`
     }
   }
 `;
+
+export const EDIT_LISTING = gql`
+  ${LISTING_FIELDS}
+  mutation EditListing($key: String!, $value: String!, $id: ID!) {
+    editListing(key: $key, value: $value, id: $id) {
+      ...AllListingFields
+    }
+  }
+`;
+
+export const EDIT_LISTING_FILE = gql`
+  ${LISTING_FIELDS}
+  mutation EditListingFile($file: Upload!, $id: ID!) {
+    editListingFile(id: $id, file: $file) {
+      ...AllListingFields
+    }
+  }
+`;

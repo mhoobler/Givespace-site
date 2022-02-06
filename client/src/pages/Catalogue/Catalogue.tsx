@@ -11,11 +11,11 @@ import {
   CatalogueHeader,
   CatalogueItems,
   CatalogueToolbar,
+  ListingModal,
 } from "../../containers";
 import { cache } from "../../graphql/clientConfig";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { dummyLabel, dummyListing } from "../../utils/references";
-import ListingModal from "./ListingModal";
 import { useMarkedForDeletion, useRemoveMFD } from "../../state/store";
 import { UndoNotification } from "../../components";
 
@@ -280,6 +280,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
         handleDeleteListing={handleDeleteListing}
       />
       <ListingModal
+        isEditing={isEditing}
         listing={selectedListing}
         handleClose={handleListingModalClose}
       />

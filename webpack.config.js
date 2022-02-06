@@ -26,6 +26,7 @@ module.exports = {
     historyApiFallback: true,
     open: ["http://localhost:4000"],
   },
+  devtool: "eval-source-map",
   module: {
     rules: [
       {
