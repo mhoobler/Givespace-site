@@ -42,9 +42,11 @@ CREATE TABLE listings (
 CREATE TABLE links (
   id UUID DEFAULT uuid_generate_v4(),
   listing_id UUID NOT NULL,
-  link_url TEXT NOT NULL,
-  created TIMESTAMP,
-  updated TIMESTAMP,
+  url TEXT NOT NULL,
+  icon_url TEXT,
+  title TEXT,
+  created TIMESTAMP DEFAULT NOW(),
+  updated TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id),
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
 );
@@ -144,8 +146,25 @@ INSERT INTO listings (
 
 INSERT INTO links (
   listing_id,
-  link_url
+  url
 ) VALUES (
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
   'link0'
+), (
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  'link1'
 );
+
+INSERT INTO listing_labels (
+  label_id,
+  listing_id
+) VALUES (
+  'd5a998be-205c-4a5e-8f41-05f808cdc9e1',
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be'
+), (
+  '51692a78-c744-4f8e-a2c5-d4a422fc657d',
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be'
+), (
+  '51692a78-c744-4f8e-a2c5-d4a422fc657d',
+  '261a378d-97d7-46fa-a5c2-83c99e4fa7b6'
+)

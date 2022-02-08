@@ -5,8 +5,8 @@ type Catalogue {
   user_id: String!
   title: String!
   description: String!
-  labels: [Label]!
-  listings: [Listing]!
+  labels: [Label!]
+  listings: [Listing!]
   created: Date!
   updated: Date!
   views: Int!
@@ -39,6 +39,24 @@ type Listing {
   ordering: Float!
   show_price: Boolean!
   price: Float
+  links: [Link!]
+  labels: [ListingLabel!]
   created: Date!
   updated: Date!
+}
+
+type Link {
+  id: ID!
+  listing_id: String!
+  url: String!
+  icon_url: String
+  title: String
+  created: Date!
+  updated: Date!
+}
+
+type ListingLabel {
+  id: ID!
+  listing_id: String!
+  label: Label!
 }

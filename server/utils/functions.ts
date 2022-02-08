@@ -8,6 +8,7 @@ import db from "../db";
 import { pubsub } from "../gql/index";
 import { UserInputError } from "apollo-server-express";
 import { deleteFromGC } from "./googleCloud";
+import { fullCatalogueQuery } from "./sqlQueries";
 
 export const verifyToken = (token: string): Boolean => {
   try {
@@ -66,15 +67,7 @@ export const getFullCatalogues = async (
   key?: string
 ): Promise<Catalogue[]> => {
   const fullCatalogues: QueryResult<Catalogue> = await db.query(
-    `SELECT 
-      c.*,
-      json_agg(DISTINCT la.*) as labels,
-      json_agg(DISTINCT li.*) as listings
-    FROM catalogues c 
-    LEFT JOIN labels la ON c.id = la.catalogue_id
-    LEFT JOIN listings li ON c.id = li.catalogue_id
-    WHERE c.${key || "id"} = $1 GROUP BY c.id;`,
-    [keyValue]
+    fullCatalogueQuery(`WHERE c.${key || "id"} = '${keyValue}'`)
   );
   notExist("Catalogue", fullCatalogues.rows[0]);
 
