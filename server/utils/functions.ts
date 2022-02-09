@@ -85,8 +85,8 @@ export const publishCatalogue = async (
   return fullCatalogue;
 };
 
-export const notExist = (whatText: string, res: any): void => {
-  if (!res) {
+export const notExist = (whatText: string, obj: any): void => {
+  if (!obj) {
     throw new UserInputError(`${whatText} does not exist`);
   }
 };

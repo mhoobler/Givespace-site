@@ -66,7 +66,6 @@ export type Link = {
   id: string;
   listing_id: string;
   url: string;
-  icon_url: string | null;
   title: string | null;
   created: Date;
   updated: Date;

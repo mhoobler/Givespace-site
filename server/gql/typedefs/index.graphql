@@ -21,7 +21,8 @@ type Mutation {
   editListing(id: ID!, key: String!, value: String!): Listing!
   editListingFile(id: ID!, file: Upload!): Listing!
   reorderListing(id: ID!, ordering: Float!): Listing!
-  # updateCatalogue(id: ID!, title: String!): Catalogue!
+
+  createLink(listing_id: ID!, url: String!): Link!
 }
 
 type Subscription {

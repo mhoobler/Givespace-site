@@ -49,7 +49,6 @@ type Link {
   id: ID!
   listing_id: String!
   url: String!
-  icon_url: String
   title: String
   created: Date!
   updated: Date!

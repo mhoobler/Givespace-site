@@ -43,7 +43,6 @@ CREATE TABLE links (
   id UUID DEFAULT uuid_generate_v4(),
   listing_id UUID NOT NULL,
   url TEXT NOT NULL,
-  icon_url TEXT,
   title TEXT,
   created TIMESTAMP DEFAULT NOW(),
   updated TIMESTAMP DEFAULT NOW(),

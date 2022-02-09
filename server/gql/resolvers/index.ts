@@ -3,11 +3,13 @@ import labelResolvers from "./label";
 import listingResolvers from "./listing";
 import utilResolvers from "./util";
 import { GraphQLUpload } from "graphql-upload";
+import linkResolvers from "./link";
 
 const resolversAggregate = [
   catalogueResolvers,
   labelResolvers,
   listingResolvers,
+  linkResolvers,
   utilResolvers,
 ];
 let resolvers = {
