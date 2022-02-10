@@ -18,7 +18,7 @@ const listingResolvers = {
   Mutation: {
     createListing: async (
       _: null,
-      { catalogue_id, name }: { catalogue_id: string; name: string }
+      { catalogue_id, name }: { catalogue_id: string; name: string },
     ): Promise<Listing> => {
       const fullCatalogue: Catalogue = (
         await getFullCatalogues(catalogue_id)
@@ -28,7 +28,7 @@ const listingResolvers = {
 
       const newListingRes: QueryResult<Listing> = await db.query(
         "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
+        [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1],
       );
       const newListing: Listing = newListingRes.rows[0];
 
@@ -39,7 +39,7 @@ const listingResolvers = {
 
         const currentListingRes: QueryResult<Listing> = await db.query(
           "SELECT * FROM listings WHERE id = $1",
-          [newListing.id]
+          [newListing.id],
         );
         const currentListing: Listing = currentListingRes.rows[0];
 
@@ -50,7 +50,7 @@ const listingResolvers = {
             currentListing.image_url || features.image_url,
             currentListing.price || features.price,
             newListing.id,
-          ]
+          ],
         );
         const updatedListing: Listing = updateListingRes.rows[0];
         notExist("Listing", updatedListing);
@@ -63,11 +63,11 @@ const listingResolvers = {
     },
     deleteListing: async (
       _: null,
-      { id }: { id: string }
+      { id }: { id: string },
     ): Promise<Listing> => {
       const deletedListingRes: QueryResult<Listing> = await db.query(
         "DELETE FROM listings WHERE id = $1 RETURNING *",
-        [id]
+        [id],
       );
       const deletedListing: Listing = deletedListingRes.rows[0];
       notExist("Listing", deletedListing);
@@ -78,11 +78,16 @@ const listingResolvers = {
     },
     editListing: async (
       _,
-      { key, value, id }: { key: string; value: string; id: string }
+      { key, value, id }: { key: string; value: string; id: string },
     ): Promise<Listing> => {
+      let v: any = value;
+      console.log(key, value, id);
+      if (key === "show_price") {
+        v = value === "true";
+      }
       const editedListingRaw: QueryResult<Listing> = await db.query(
-        `UPDATE listings SET ${key} = $1 WHERE id = $2 RETURNING *`,
-        [value, id]
+        `UPDATE listings SET $1 = $2 WHERE id = $3 RETURNING *`,
+        [key, v, id],
       );
 
       notExist("Listing", editedListingRaw.rows[0]);
@@ -94,7 +99,7 @@ const listingResolvers = {
     editListingFile: async (_, { id, file }: { id: string; file: any }) => {
       let preResult: QueryResult<Listing> = await db.query(
         "SELECT * FROM listings WHERE id = $1",
-        [id]
+        [id],
       );
 
       notExist("Listing", preResult.rows[0]);
@@ -109,7 +114,7 @@ const listingResolvers = {
 
       const updatedListingRes: QueryResult<Listing> = await db.query(
         `UPDATE listings SET image_url = $1 WHERE id = $2 RETURNING *`,
-        [url, id]
+        [url, id],
       );
 
       publishCatalogue(updatedListingRes.rows[0].catalogue_id);
@@ -118,11 +123,11 @@ const listingResolvers = {
     },
     reorderListing: async (
       _: null,
-      { id, ordering }: { id: string; ordering: number }
+      { id, ordering }: { id: string; ordering: number },
     ): Promise<Listing> => {
       const updatedListingRes: QueryResult<Listing> = await db.query(
         "UPDATE listings SET ordering = $1 WHERE id = $2 RETURNING *",
-        [ordering, id]
+        [ordering, id],
       );
       const updatedListing: Listing = updatedListingRes.rows[0];
       notExist("Listing", updatedListing);

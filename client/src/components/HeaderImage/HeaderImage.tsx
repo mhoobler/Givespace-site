@@ -1,8 +1,8 @@
 import React, { useState, useRef, ChangeEvent } from "react";
 
-import ToggleEdit from "../../ToggleEdit/ToggleEdit";
-import Modal from "../../Modal/Modal";
-import { acceptedImageFiles } from "../../../utils/references";
+import ToggleEdit from "../ToggleEdit/ToggleEdit";
+import Modal from "../Modal/Modal";
+import { acceptedImageFiles } from "../../utils/references";
 
 import canvasHelper from "./canvasHelper";
 

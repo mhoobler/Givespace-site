@@ -3,7 +3,7 @@ import ToggleEdit from "../../ToggleEdit/ToggleEdit";
 
 type Props = {
   isEditing: boolean;
-  handleSubmit: (file: File | undefined, objectKey: string) => any;
+  handleSubmit: GenericFileEdit;
   value: string;
   keyProp: string;
   className?: string;

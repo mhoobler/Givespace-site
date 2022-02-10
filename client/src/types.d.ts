@@ -1,3 +1,6 @@
+type GenericEdit = (value: string, keyProp: string) => void;
+type GenericFileEdit = (value: File | undefined, keyProp: string) => void;
+
 type Context = {
   authorization?: string | null;
   authToken?: string | null;

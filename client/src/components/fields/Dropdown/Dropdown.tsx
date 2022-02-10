@@ -7,7 +7,7 @@ import { useFieldEditing } from "../../../state/store";
 
 type DropdownProps = {
   className?: string;
-  handleSubmit: CatalogueHook.editCatalogue;
+  handleSubmit: GenericEdit;
   keyProp: string;
   value: string;
 };
