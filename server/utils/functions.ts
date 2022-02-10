@@ -8,6 +8,7 @@ import db from "../db";
 import { pubsub } from "../gql/index";
 import { UserInputError } from "apollo-server-express";
 import { deleteFromGC } from "./googleCloud";
+import { fullCatalogueQuery } from "./sqlQueries";
 
 export const verifyToken = (token: string): Boolean => {
   try {
@@ -66,15 +67,7 @@ export const getFullCatalogues = async (
   key?: string
 ): Promise<Catalogue[]> => {
   const fullCatalogues: QueryResult<Catalogue> = await db.query(
-    `SELECT 
-      c.*,
-      json_agg(DISTINCT la.*) as labels,
-      json_agg(DISTINCT li.*) as listings
-    FROM catalogues c 
-    LEFT JOIN labels la ON c.id = la.catalogue_id
-    LEFT JOIN listings li ON c.id = li.catalogue_id
-    WHERE c.${key || "id"} = $1 GROUP BY c.id;`,
-    [keyValue]
+    fullCatalogueQuery(`WHERE c.${key || "id"} = '${keyValue}'`)
   );
   notExist("Catalogue", fullCatalogues.rows[0]);
 
@@ -92,8 +85,8 @@ export const publishCatalogue = async (
   return fullCatalogue;
 };
 
-export const notExist = (whatText: string, res: any): void => {
-  if (!res) {
+export const notExist = (whatText: string, obj: any): void => {
+  if (!obj) {
     throw new UserInputError(`${whatText} does not exist`);
   }
 };
@@ -130,4 +123,15 @@ export const deleteFileIfNotUsed = async (url) => {
     }
   }
   return false;
+};
+
+export const listingIdToCatalogueId = async (
+  listing_id: string
+): Promise<string> => {
+  const listingRes: QueryResult<{ catalogue_id: string }> = await db.query(
+    `SELECT catalogue_id FROM listings WHERE id = $1`,
+    [listing_id]
+  );
+  notExist("Listing", listingRes.rows[0]);
+  return listingRes.rows[0].catalogue_id;
 };

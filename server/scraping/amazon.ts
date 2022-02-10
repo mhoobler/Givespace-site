@@ -1,8 +1,8 @@
-import { AmazonScrapedFeatures } from "../types";
 import fetch from "node-fetch";
 import cheerio from "cheerio";
+import { AmazonScrapedFeatures } from "types";
 
-const scrapeItemFeatures = async (
+const scrapeListingByName = async (
   name: string
 ): Promise<AmazonScrapedFeatures> => {
   const formattedItem = encodeURIComponent(name).replace(/%20/g, "+");
@@ -38,4 +38,50 @@ const scrapeItemFeatures = async (
   return features;
 };
 
-export default scrapeItemFeatures;
+const scrapeListingByUrl = async (
+  url: string
+): Promise<AmazonScrapedFeatures> => {
+  // fetch the item name, price, and image url from an amazon link
+  const amazon_res = await fetch(url);
+  const html = await amazon_res.text();
+  const $ = cheerio.load(html);
+  const image = $("#imgTagWrapperId img").attr("src");
+  const name = $("#productTitle").text().replace(/\s\s+/g, " ").trim();
+  // get rid of name whitespace
+  // get the price from an amazon item from the items page
+
+  let price;
+  const priceRaw = $("#corePrice_desktop div table tbody span.apexPriceToPay")
+    .eq(0)
+    .text();
+
+  price = parseFloat(priceRaw.split("$")[1]);
+  if (!price) {
+    const newPriceRaw = $(".a-price-whole").eq(0).text();
+    price = parseFloat(newPriceRaw);
+  }
+
+  return {
+    image_url: image,
+    item_url: url,
+    name,
+    price: price ? price : 0,
+  };
+};
+
+const scrapeListing = async (text: string): Promise<AmazonScrapedFeatures> => {
+  let features;
+  if (text.slice(0, 8) === "https://") {
+    features = await scrapeListingByUrl(text);
+  } else {
+    features = await scrapeListingByName(text);
+  }
+  if (features.name.length > 70) {
+    const newName = features.name.slice(0, 70).split(" ");
+    newName.pop();
+    features.name = newName.join(" ") + "...";
+  }
+  return features;
+};
+
+export default scrapeListing;

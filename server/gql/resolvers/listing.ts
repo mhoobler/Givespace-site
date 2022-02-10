@@ -24,12 +24,23 @@ const listingResolvers = {
         await getFullCatalogues(catalogue_id)
       )[0];
 
+      const isUrl = name.slice(0, 8) === "https://";
+
       notExist("Catalogue", fullCatalogue);
 
-      const newListingRes: QueryResult<Listing> = await db.query(
-        "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1],
-      );
+      let newListingRes: QueryResult<Listing>;
+      if (isUrl) {
+        newListingRes = await db.query(
+          "INSERT INTO listings (catalogue_id, ordering) VALUES ($1, $2) RETURNING *",
+          [catalogue_id, maxOrdering(fullCatalogue.listings) + 1]
+        );
+      } else {
+        newListingRes = await db.query(
+          "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
+          [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
+        );
+      }
+
       const newListing: Listing = newListingRes.rows[0];
 
       publishCatalogue(catalogue_id);
