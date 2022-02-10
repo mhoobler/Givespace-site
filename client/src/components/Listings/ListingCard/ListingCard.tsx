@@ -5,22 +5,22 @@ import "./ListingCard.less";
 type Props = {
   isEditing: boolean;
   listing: Listing;
-  handleSelectListing: (listing: Listing) => void;
-  handleDeleteListing: (id: string) => void;
+  selectListing: (listing: Listing) => void;
+  deleteListing: (id: string) => void;
 };
 
 const ListingCard: React.FC<Props> = ({
   isEditing,
   listing,
-  handleSelectListing,
-  handleDeleteListing,
+  selectListing,
+  deleteListing,
 }) => {
   const handleDelete = () => {
-    handleDeleteListing(listing.id);
+    deleteListing(listing.id);
   };
 
   const handleSelect = () => {
-    handleSelectListing(listing);
+    selectListing(listing);
   };
 
   return (

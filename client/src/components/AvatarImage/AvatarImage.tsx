@@ -1,22 +1,21 @@
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 
 import ToggleEdit from "../../ToggleEdit/ToggleEdit";
 import Modal from "../../Modal/Modal";
 import { acceptedImageFiles } from "../../../utils/references";
 
 import canvasHelper from "./canvasHelper";
-
-import "./HeaderImage.less";
+import "./AvatarImage.less";
 
 type Props = {
   isEditing: boolean;
-  handleSubmit: (file: any, objectKey: string) => any;
+  handleSubmit: CatalogueHook.editCatalogueFile;
   value: string;
   keyProp: string;
   className?: string;
 };
 
-const HeaderImage: React.FC<Props> = ({
+const AvatarImage: React.FC<Props> = ({
   isEditing,
   handleSubmit,
   keyProp,
@@ -24,7 +23,6 @@ const HeaderImage: React.FC<Props> = ({
   className,
 }) => {
   const [showModal, setShowModal] = useState(false);
-
   const fileRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -52,7 +50,7 @@ const HeaderImage: React.FC<Props> = ({
 
   const handleClickSubmit = () => {
     if (!fileRef.current) {
-      throw new Error("Could not find fileRef for HeaderImage");
+      throw new Error("Could not find fileRef for AvatarImage");
     }
     if (!canvasRef.current) {
       throw new Error("Could not find cavasRef for HeaderImage");
@@ -65,13 +63,14 @@ const HeaderImage: React.FC<Props> = ({
 
     // *** Good for testing ***
     //const c: any = canvasRef.current;
-    //const test21 = document.getElementById("test21") as HTMLImageElement;
-    //test21.src = c.getDataURL();
-    //console.log(test21.src);
+    //const display = document.getElementById("avatar-image-display") as HTMLImageElement;
+    //const input = document.getElementById("avatar-image-input") as HTMLImageElement;
+    //display.src = c.getDataURL();
+    //input.src = c.getDataURL();
+    //console.log(display.src);
 
-    // toBlob(callback, MIME type, quality)
-    const toBlob = (canvasRef.current as any).getCroppedImage();
-    toBlob(
+    (canvasRef.current as any).getCroppedImage(
+      // toBlob(callback, MIME type, quality)
       (blob: BlobPart | null) => {
         // file name
         const filename = files[0].name.split(".")[0] + Date.now();
@@ -85,10 +84,10 @@ const HeaderImage: React.FC<Props> = ({
   };
 
   return (
-    <>
-      <ToggleEdit className="header-image-container" isEditing={isEditing}>
+    <div>
+      <ToggleEdit className="avatar-image-container" isEditing={isEditing}>
         {/* open modal, display image */}
-        {/* TODO: Replace Icons */}
+        {/* TODO: Replace Icon */}
         <div className="toggle-wrapper">
           <div
             onClick={handleModal}
@@ -97,16 +96,16 @@ const HeaderImage: React.FC<Props> = ({
             <div className="icon-btn">Click This</div>
           </div>
           <div className={`toggle-input image-wrapper`}>
-            <img id="test21" src={value} alt="" />
+            <img id="avatar-image-display" src={value} alt="" />
           </div>
           <div className={`toggle-display image-wrapper`}>
-            <img id="test21" src={value} alt="" />
+            <img id="avatar-image-input" src={value} alt="" />
           </div>
         </div>
       </ToggleEdit>
       {/* file selection, image cropping, submit */}
       <Modal show={showModal} close={handleModal}>
-        <Modal.Header close={handleModal}>Edit Header Image</Modal.Header>
+        <Modal.Header close={handleModal}>Edit Avatar Image</Modal.Header>
         <Modal.Body>
           {/* TODO: Should probably replace with a React Component */}
           <canvas ref={canvasRef} width="200px" height="200px" />
@@ -124,8 +123,8 @@ const HeaderImage: React.FC<Props> = ({
           </button>
         </Modal.Footer>
       </Modal>
-    </>
+    </div>
   );
 };
 
-export default HeaderImage;
+export default AvatarImage;

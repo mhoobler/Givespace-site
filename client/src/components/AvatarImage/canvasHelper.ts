@@ -1,5 +1,5 @@
 const MAX_H = window.innerHeight * 0.6;
-const MAX_W = window.innerWidth * 0.8;
+const MAX_W = window.innerWidth * 0.6;
 
 type BorderKeys = "top" | "right" | "bottom" | "left" | "rect";
 
@@ -30,12 +30,25 @@ const getPath = (borders: any) => {
   rectPath.rect(left, top, right - left, bottom - top);
   rectPath.closePath();
 
+  const arcPath = new Path2D();
+  // get origin
+  const [x1, y1] = [left, top];
+  // get difference
+  const [dx, dy] = [right - left, bottom - top];
+  // get center point of corners
+  const [cx, cy] = [x1 + dx / 2, y1 + dy / 2];
+  // get radius
+  const r = cx - x1;
+  // construct circle path
+  arcPath.arc(cx, cy, r, 0, 2 * Math.PI);
+
   return {
     top: topPath,
     left: leftPath,
     right: rightPath,
     bottom: bottomPath,
     rect: rectPath,
+    arc: arcPath,
   };
 };
 
@@ -65,17 +78,21 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
     canvas.width = width * ratio;
 
     // Cropped result aspect ratio: width / height = aspect
-    const aspect = 6;
-    // Borders (note: We use mutations & HeaderImage has a 6:1 aspect)
-    //TODO: Should check what happens when loading image with >6:1 aspect
+    const aspect = 1;
+    // Need shorter length or we potentially break check[border] functions
+    let shorterLength =
+      canvas.width > canvas.height ? canvas.height : canvas.width;
+    // Borders (note: We use mutations & AvatarImage has a 1:1 aspect)
     let borders = {
       top: 0,
       left: 0,
-      right: canvas.width,
-      bottom: canvas.width / aspect,
+      right: shorterLength,
+      bottom: shorterLength,
     };
     console.log(borders);
     // Check functions to help keep borders within bounds
+    // note: be wary of borders spawning out-of-bounds, check will always return false
+    //       and move/scale functions won't work properly
     const check = {
       top: (y: number) => !(borders.top + y < 0),
       left: (x: number) => !(borders.left + x < 0),
@@ -181,6 +198,11 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
         ctx.rect(0, borders.bottom, canvas.width, canvas.height);
         ctx.fill();
 
+        // Draw arc (circle)
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.lineWidth = 1;
+        ctx.stroke(paths.arc);
+
         // Draw Borders
         ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
         ctx.lineWidth = 4;
@@ -265,7 +287,11 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
     redraw();
 
     // Process images
-    (canvas as any).getCroppedImage = (cb: any) => {
+    (canvas as any).getCroppedImage = (
+      cb: BlobCallback,
+      fileType: string,
+      quality: number,
+    ) => {
       const { top, left, bottom, right } = borders;
       redraw(false);
       canvas.height = evt.path[0].height;
@@ -288,7 +314,7 @@ export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
       }
 
       ctx2.putImageData(imageData, 0, 0);
-      return canvas2.toBlob;
+      return canvas2.toBlob(cb, fileType, quality);
     };
 
     // *** Good for testing *** (returned dataURL works nicely with img.src)
