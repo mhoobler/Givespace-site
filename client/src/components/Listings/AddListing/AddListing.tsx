@@ -3,17 +3,18 @@ import React, { useRef } from "react";
 import "./AddListing.less";
 
 type Props = {
-  handleAddListing: (name: string) => void;
+  createListing: ListingHook.createListing;
 };
 
-const AddListing: React.FC<Props> = ({ handleAddListing }) => {
+const AddListing: React.FC<Props> = ({ createListing }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
     if (inputRef.current) {
       const target = inputRef.current;
 
-      handleAddListing(target.value);
+      //TODO: TODO: TODO: this needs catalogue id
+      createListing(target.value, "");
       target.value = "";
     }
   };

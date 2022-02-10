@@ -6,7 +6,7 @@ import "./CalendarInput.less";
 type Props = {
   value: string | undefined | null | Date;
   keyProp: string;
-  handleDateInput: (ISOString: string, objectKey: string) => void;
+  handleDateInput: CatalogueHook.editCatalogue;
 };
 
 const CalendarInput: React.FC<Props> = ({

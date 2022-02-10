@@ -10,7 +10,7 @@ import "./HeaderImage.less";
 
 type Props = {
   isEditing: boolean;
-  handleSubmit: (file: any, objectKey: string) => any;
+  handleSubmit: CatalogueHook.editCatalogueFile;
   value: string;
   keyProp: string;
   className?: string;
@@ -25,7 +25,7 @@ const HeaderImage: React.FC<Props> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
 
-  const fileRef = useRef(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleModal = () => setShowModal((prev) => !prev);
@@ -54,13 +54,35 @@ const HeaderImage: React.FC<Props> = ({
     if (!fileRef.current) {
       throw new Error("Could not find fileRef for HeaderImage");
     }
+    if (!canvasRef.current) {
+      throw new Error("Could not find cavasRef for HeaderImage");
+    }
 
     const { files } = fileRef.current;
-    if (!files[0]) {
+    if (!files || !files[0]) {
       throw new Error("No file selected");
     }
 
-    //handleSubmit(file, keyProp);
+    // *** Good for testing ***
+    //const c: any = canvasRef.current;
+    //const display = document.getElementById("header-image-display") as HTMLImageElement;
+    //const input = document.getElementById("header-image-input") as HTMLImageElement;
+    //display.src = c.getDataURL();
+    //input.src = c.getDataURL();
+    //console.log(display.src);
+
+    (canvasRef.current as any).getCroppedImage(
+      // BlobCallback
+      (blob: BlobPart | null) => {
+        // file name
+        const filename = files[0].name.split(".")[0] + Date.now();
+        if (blob) {
+          handleSubmit(new File([blob], filename), keyProp);
+        }
+      },
+      "image/jpg", // file type
+      0.9, // image quality
+    );
   };
 
   return (
@@ -76,10 +98,10 @@ const HeaderImage: React.FC<Props> = ({
             <div className="icon-btn">Click This</div>
           </div>
           <div className={`toggle-input image-wrapper`}>
-            <img src={value} alt="" />
+            <img id="header-image-display" src={value} alt="" />
           </div>
           <div className={`toggle-display image-wrapper`}>
-            <img src={value} alt="" />
+            <img id="header-image-input" src={value} alt="" />
           </div>
         </div>
       </ToggleEdit>
