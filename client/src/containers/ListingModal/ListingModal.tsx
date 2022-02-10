@@ -12,8 +12,7 @@ type Props = {
 };
 
 const ListingModal: React.FC<Props> = ({ listing, isEditing, handleClose }) => {
-  const { editListing, editShowPrice, editListingFile } =
-    useListingApolloHooks();
+  const { editListing, editBoolean, editListingFile } = useListingApolloHooks();
 
   if (!listing) return null;
   console.log("ListingModal", listing);
@@ -57,7 +56,7 @@ const ListingModal: React.FC<Props> = ({ listing, isEditing, handleClose }) => {
         value={listing.show_price}
         label="Show price"
         keyProp="show_price"
-        onChange={editShowPrice(listing.id)}
+        onChange={editBoolean(listing.id)}
       />
 
       <Modal.Header close={handleClose}>{listing && listing.name}</Modal.Header>

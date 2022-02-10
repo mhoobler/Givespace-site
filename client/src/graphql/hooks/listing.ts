@@ -75,7 +75,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
       });
     };
 
-  const editShowPrice: ListingHook.editShowPrice =
+  const editBoolean: ListingHook.editShowPrice =
     (id: string) => async (value: Boolean, keyProp: string) => {
       updateCatalogueCache(`Listing:${id}`, keyProp, value);
       editListingMutation({
@@ -126,7 +126,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
   return {
     createListing,
     editListing,
-    editShowPrice,
+    editBoolean,
     editListingFile,
     deleteListing,
   };

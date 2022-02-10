@@ -32,12 +32,12 @@ const listingResolvers = {
       if (isUrl) {
         newListingRes = await db.query(
           "INSERT INTO listings (catalogue_id, ordering) VALUES ($1, $2) RETURNING *",
-          [catalogue_id, maxOrdering(fullCatalogue.listings) + 1]
+          [catalogue_id, maxOrdering(fullCatalogue.listings) + 1],
         );
       } else {
         newListingRes = await db.query(
           "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-          [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
+          [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1],
         );
       }
 
@@ -91,14 +91,9 @@ const listingResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string },
     ): Promise<Listing> => {
-      let v: any = value;
-      console.log(key, value, id);
-      if (key === "show_price") {
-        v = value === "true";
-      }
       const editedListingRaw: QueryResult<Listing> = await db.query(
-        `UPDATE listings SET $1 = $2 WHERE id = $3 RETURNING *`,
-        [key, v, id],
+        `UPDATE listings SET ${key} = $1 WHERE id = $2 RETURNING *`,
+        [value, id],
       );
 
       notExist("Listing", editedListingRaw.rows[0]);
