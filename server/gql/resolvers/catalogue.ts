@@ -13,6 +13,7 @@ import db from "../../db";
 import { QueryResult } from "pg";
 import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
 import { UserInputError } from "apollo-server-express";
+import { fullCatalogueQuery } from "../../utils/sqlQueries";
 
 const catalogueResolvers = {
   Query: {
@@ -20,10 +21,6 @@ const catalogueResolvers = {
       _: null,
       args: { id: string; edit_id: string }
     ): Promise<Catalogue[]> => {
-      if (!args.id && !args.edit_id) {
-        throw new UserInputError("No id or edit_id provided");
-      }
-
       let catalogues: Catalogue[];
 
       if (args.id) {
@@ -31,16 +28,7 @@ const catalogueResolvers = {
       } else if (args.edit_id) {
         catalogues = await getFullCatalogues(args.edit_id, "edit_id");
       } else {
-        const res = await db.query(
-          `SELECT 
-            c.*,
-            json_agg(DISTINCT la.*) as labels,
-            json_agg(DISTINCT li.*) as listings
-          FROM catalogues c 
-          LEFT JOIN labels la ON c.id = la.catalogue_id
-          LEFT JOIN listings li ON c.id = li.catalogue_id
-          GROUP BY c.id;`
-        );
+        const res = await db.query(fullCatalogueQuery());
         catalogues = res.rows;
       }
 

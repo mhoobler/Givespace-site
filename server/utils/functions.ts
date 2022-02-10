@@ -8,6 +8,7 @@ import db from "../db";
 import { pubsub } from "../gql/index";
 import { UserInputError } from "apollo-server-express";
 import { deleteFromGC } from "./googleCloud";
+import { fullCatalogueQuery } from "./sqlQueries";
 
 export const verifyToken = (token: string): Boolean => {
   try {
@@ -30,22 +31,32 @@ export const handleFile = async (
   try {
     const { createReadStream, filename, mimetype, encoding } = await file;
     const pathToFile = path.join(__dirname, "../images/", filename);
+    console.log("pathToFile", pathToFile);
 
     const stream = createReadStream();
     await new Promise((resolve, reject) =>
       stream
         .on("error", (error) => {
+          console.log("!38", error);
           fs.promises.unlink(pathToFile);
           reject(error);
         })
         .pipe(fs.createWriteStream(pathToFile))
-        .on("error", (error) => reject(error))
-        .on("finish", () => resolve("done"))
+        .on("error", (error) => {
+          console.log("!44", error);
+          fs.promises.unlink(pathToFile);
+          reject(error);
+        })
+        .on("finish", () => {
+          console.log("!49 Solved");
+          resolve("done");
+        })
     );
     const callbackReturn = await callback(filename, pathToFile);
     await fs.promises.unlink(pathToFile);
 
     return callbackReturn;
+    // return "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Bonnet_macaque_%28Macaca_radiata%29_Photograph_By_Shantanu_Kuveskar.jpg/220px-Bonnet_macaque_%28Macaca_radiata%29_Photograph_By_Shantanu_Kuveskar.jpg";
   } catch {
     throw new UserInputError("File upload failed");
   }
@@ -56,15 +67,7 @@ export const getFullCatalogues = async (
   key?: string
 ): Promise<Catalogue[]> => {
   const fullCatalogues: QueryResult<Catalogue> = await db.query(
-    `SELECT 
-      c.*,
-      json_agg(DISTINCT la.*) as labels,
-      json_agg(DISTINCT li.*) as listings
-    FROM catalogues c 
-    LEFT JOIN labels la ON c.id = la.catalogue_id
-    LEFT JOIN listings li ON c.id = li.catalogue_id
-    WHERE c.${key || "id"} = $1 GROUP BY c.id;`,
-    [keyValue]
+    fullCatalogueQuery(`WHERE c.${key || "id"} = '${keyValue}'`)
   );
   notExist("Catalogue", fullCatalogues.rows[0]);
 
@@ -82,8 +85,8 @@ export const publishCatalogue = async (
   return fullCatalogue;
 };
 
-export const notExist = (whatText: string, res: any): void => {
-  if (!res) {
+export const notExist = (whatText: string, obj: any): void => {
+  if (!obj) {
     throw new UserInputError(`${whatText} does not exist`);
   }
 };
@@ -120,4 +123,15 @@ export const deleteFileIfNotUsed = async (url) => {
     }
   }
   return false;
+};
+
+export const listingIdToCatalogueId = async (
+  listing_id: string
+): Promise<string> => {
+  const listingRes: QueryResult<{ catalogue_id: string }> = await db.query(
+    `SELECT catalogue_id FROM listings WHERE id = $1`,
+    [listing_id]
+  );
+  notExist("Listing", listingRes.rows[0]);
+  return listingRes.rows[0].catalogue_id;
 };

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFieldEditing } from "../../../state/store";
 import ToggleEdit from "../../ToggleEdit/ToggleEdit";
-import "./TextInput.less";
 
 type Props = {
   isEditing: boolean;
@@ -13,7 +12,7 @@ type Props = {
   className?: string;
 };
 
-const TextInput = ({
+const TextareaInput = ({
   isEditing,
   handleSubmit,
   value,
@@ -22,39 +21,45 @@ const TextInput = ({
   placeholder,
   className,
 }: Props) => {
+  const textarea = useRef();
   const [isValid, setIsValid] = useState(true);
   const [text, setText] = useState(value);
   const { setFieldEditing } = useFieldEditing();
-
   useEffect(() => {
     setText(value);
   }, [value]);
 
   const handleBlur = (evt: React.SyntheticEvent<HTMLInputElement>) => {
-    const currentlyIsValid = !validator || validator(text);
+    const currentlyIsValid = !validator || validator(evt.currentTarget.value);
     setIsValid(currentlyIsValid);
+    const { value } = evt.currentTarget;
     if (currentlyIsValid) {
       setFieldEditing(null);
-      handleSubmit(text, keyProp);
+      handleSubmit(value, keyProp);
     }
   };
-
-  const handleFocus = (evt: React.SyntheticEvent<HTMLInputElement>) => {
+  const handleFocus = () => {
     setFieldEditing(keyProp);
   };
+  useEffect(() => {
+    // @ts-ignore
+    textarea.current.addEventListener("focus", handleFocus);
+    // @ts-ignore
+    textarea.current.addEventListener("blur", handleBlur);
+  }, [textarea]);
 
   return (
     <ToggleEdit isEditing={isEditing}>
-      <input
+      <textarea
+        // @ts-ignore
+        ref={textarea}
+        autoFocus={false}
         className={`toggle-input standard-text-input ${
           isValid ? "" : "invalid_input"
         } ${className || ""}`}
-        type="text"
         onChange={(e) => setText(e.target.value)}
-        onFocus={handleFocus}
         name={keyProp}
         value={text}
-        onBlur={handleBlur}
         placeholder={placeholder || ""}
       />
       <div
@@ -66,4 +71,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default TextareaInput;
