@@ -124,3 +124,14 @@ export const deleteFileIfNotUsed = async (url) => {
   }
   return false;
 };
+
+export const listingIdToCatalogueId = async (
+  listing_id: string
+): Promise<string> => {
+  const listingRes: QueryResult<{ catalogue_id: string }> = await db.query(
+    `SELECT catalogue_id FROM listings WHERE id = $1`,
+    [listing_id]
+  );
+  notExist("Listing", listingRes.rows[0]);
+  return listingRes.rows[0].catalogue_id;
+};

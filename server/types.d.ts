@@ -71,6 +71,12 @@ export type Link = {
   updated: Date;
 };
 
+export type BasicListingLabel = {
+  id: string;
+  listing_id: string;
+  label_id: string;
+};
+
 export type ListingLabel = {
   id: string;
   listing_id: string;

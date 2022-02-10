@@ -1,13 +1,12 @@
 import db from "../../db";
 import { QueryResult } from "pg";
-import { Catalogue, Label, Link, Listing } from "../../types";
+import { Link, Listing } from "../../types";
 import {
-  getFullCatalogues,
-  maxOrdering,
+  listingIdToCatalogueId,
   notExist,
   publishCatalogue,
 } from "../../utils/functions";
-import { getMetaItems } from "../../scraping/utils";
+import { urlValidation } from "../../utils/validation";
 
 const linkResolvers = {
   Query: {},
@@ -16,6 +15,8 @@ const linkResolvers = {
       _: null,
       { listing_id, url }: { listing_id: string; url: string }
     ) => {
+      urlValidation(url);
+
       const getListing: QueryResult<Listing> = await db.query(
         `SELECT catalogue_id FROM listings WHERE id = $1`,
         [listing_id]
@@ -34,35 +35,40 @@ const linkResolvers = {
 
       return newLink;
     },
-    // deleteLabel: async (_: null, { id }: { id: string }): Promise<Label> => {
-    //   const deletedLabelRes: QueryResult<Label> = await db.query(
-    //     "DELETE FROM labels WHERE id = $1 RETURNING *",
-    //     [id]
-    //   );
-    //   const deletedLabel: Label = deletedLabelRes.rows[0];
+    deleteLink: async (_: null, { id }: { id: string }): Promise<Link> => {
+      const deletedLinkRes: QueryResult<Link> = await db.query(
+        "DELETE FROM links WHERE id = $1 RETURNING *",
+        [id]
+      );
+      const deletedLink: Link = deletedLinkRes.rows[0];
+      notExist("Link", deletedLink);
 
-    //   notExist("Label", deletedLabel);
+      listingIdToCatalogueId(deletedLinkRes.rows[0].listing_id).then(
+        (catalogue_id) => publishCatalogue(catalogue_id)
+      );
 
-    //   publishCatalogue(deletedLabel.catalogue_id);
+      return deletedLink;
+    },
+    editLink: async (
+      _,
+      { key, value, id }: { key: string; value: string; id: string }
+    ): Promise<Link> => {
+      if (key === "url") {
+        urlValidation(value);
+      }
 
-    //   return deletedLabel;
-    // },
-    // reorderLabel: async (
-    //   _: null,
-    //   { id, ordering }: { id: string; ordering: number }
-    // ): Promise<Label> => {
-    //   const updatedLabelRes: QueryResult<Label> = await db.query(
-    //     "UPDATE labels SET ordering = $1 WHERE id = $2 RETURNING *",
-    //     [ordering, id]
-    //   );
-    //   const updatedLabel: Label = updatedLabelRes.rows[0];
+      const editedLinkRaw: QueryResult<Link> = await db.query(
+        `UPDATE links SET ${key} = $1 WHERE id = $2 RETURNING *`,
+        [value, id]
+      );
+      notExist("Link", editedLinkRaw.rows[0]);
 
-    //   notExist("Label", updatedLabel);
+      listingIdToCatalogueId(editedLinkRaw.rows[0].listing_id).then(
+        (catalogue_id) => publishCatalogue(catalogue_id)
+      );
 
-    //   publishCatalogue(updatedLabelRes.rows[0].catalogue_id);
-
-    //   return updatedLabel;
-    // },
+      return editedLinkRaw.rows[0];
+    },
   },
   Subscription: {},
 };

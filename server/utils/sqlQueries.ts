@@ -70,3 +70,24 @@ export const fullCatalogueQuery = (whereString?: string | null) => {
   FROM catalogues c ${whereString || ""};
   `;
 };
+
+export const fullListingLabelQuery = (whereString?: string | null) => {
+  return `
+  SELECT lila.id,
+    lila.listing_id,
+    -- label fields
+    json_build_object(
+      'id', la.id,
+      'catalogue_id', la.catalogue_id,
+      'name',la.name,
+      'link_url',la.link_url,
+      'ordering',la.ordering,
+      'is_private',la.is_private,
+      'created',la.created,
+      'updated',la.updated
+    ) AS label
+  FROM listing_labels lila
+  LEFT JOIN labels la ON lila.label_id = la.id
+  ${whereString || ""};
+  `;
+};

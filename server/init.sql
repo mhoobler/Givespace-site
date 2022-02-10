@@ -144,26 +144,33 @@ INSERT INTO listings (
 );
 
 INSERT INTO links (
+  id,
   listing_id,
   url
 ) VALUES (
+  'a1fdae29-9a83-46f0-b0e8-302e05408c83',
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
   'link0'
 ), (
+  '59dece83-1a85-4576-8a53-cf9bc17c9acd',
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
   'link1'
 );
 
 INSERT INTO listing_labels (
+  id,
   label_id,
   listing_id
 ) VALUES (
+  '33ca33d3-8fd6-49ee-8821-de2cc9cc5ba8',
   'd5a998be-205c-4a5e-8f41-05f808cdc9e1',
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be'
 ), (
+  'e70da965-6260-4b72-a736-e5f9b9246ccf',
   '51692a78-c744-4f8e-a2c5-d4a422fc657d',
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be'
 ), (
+  '103498aa-7c47-4c7c-ac10-7c01a4dfc3ce',
   '51692a78-c744-4f8e-a2c5-d4a422fc657d',
   '261a378d-97d7-46fa-a5c2-83c99e4fa7b6'
 )

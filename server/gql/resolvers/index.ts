@@ -4,12 +4,14 @@ import listingResolvers from "./listing";
 import utilResolvers from "./util";
 import { GraphQLUpload } from "graphql-upload";
 import linkResolvers from "./link";
+import listingLabelResolvers from "./listingLabel";
 
 const resolversAggregate = [
   catalogueResolvers,
   labelResolvers,
   listingResolvers,
   linkResolvers,
+  listingLabelResolvers,
   utilResolvers,
 ];
 let resolvers = {
