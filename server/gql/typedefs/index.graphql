@@ -21,7 +21,13 @@ type Mutation {
   editListing(id: ID!, key: String!, value: String!): Listing!
   editListingFile(id: ID!, file: Upload!): Listing!
   reorderListing(id: ID!, ordering: Float!): Listing!
-  # updateCatalogue(id: ID!, title: String!): Catalogue!
+
+  createLink(listing_id: ID!, url: String!): Link!
+  deleteLink(id: ID!): Link!
+  editLink(id: ID!, key: String!, value: String!): Link!
+
+  createListingLabel(listing_id: ID!, label_id: ID!): ListingLabel!
+  deleteListingLabel(id: ID!): ListingLabel!
 }
 
 type Subscription {
