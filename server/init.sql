@@ -144,12 +144,15 @@ INSERT INTO listings (
 );
 
 INSERT INTO links (
+  id,
   listing_id,
   url
 ) VALUES (
+  'a1fdae29-9a83-46f0-b0e8-302e05408c83',
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
   'link0'
 ), (
+  '59dece83-1a85-4576-8a53-cf9bc17c9acd',
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
   'link1'
 );

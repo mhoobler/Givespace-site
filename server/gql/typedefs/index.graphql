@@ -23,6 +23,8 @@ type Mutation {
   reorderListing(id: ID!, ordering: Float!): Listing!
 
   createLink(listing_id: ID!, url: String!): Link!
+  deleteLink(id: ID!): Link!
+  editLink(id: ID!, key: String!, value: String!): Link!
 }
 
 type Subscription {
