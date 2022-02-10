@@ -1,17 +1,8 @@
 import db from "../../db";
 import { QueryResult } from "pg";
+import { BasicListingLabel, Listing, ListingLabel } from "../../types";
 import {
-  BasicListingLabel,
-  Catalogue,
-  Label,
-  Link,
-  Listing,
-  ListingLabel,
-} from "../../types";
-import {
-  getFullCatalogues,
   listingIdToCatalogueId,
-  maxOrdering,
   notExist,
   publishCatalogue,
 } from "../../utils/functions";

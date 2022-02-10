@@ -1,14 +1,11 @@
 import db from "../../db";
 import { QueryResult } from "pg";
-import { Catalogue, Label, Link, Listing } from "../../types";
+import { Link, Listing } from "../../types";
 import {
-  getFullCatalogues,
   listingIdToCatalogueId,
-  maxOrdering,
   notExist,
   publishCatalogue,
 } from "../../utils/functions";
-import { getMetaItems } from "../../scraping/utils";
 import { urlValidation } from "../../utils/validation";
 
 const linkResolvers = {
