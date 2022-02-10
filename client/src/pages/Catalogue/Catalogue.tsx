@@ -197,30 +197,30 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   const handleAddListing = (name: string) => {
     console.log("handleAddListing", name);
-    cache.modify({
-      id: `Catalogue:${catalogue.id}`,
-      fields: {
-        listings(existing) {
-          if (existing && !existing[0]) {
-            return [
-              {
-                ...dummyListing,
-                name: "doll",
-                ordering: 0,
-              },
-            ];
-          }
-          return [
-            ...existing,
-            {
-              ...dummyListing,
-              name: "doll",
-              ordering: maxOrdering(existing) + 1,
-            },
-          ];
-        },
-      },
-    });
+    // cache.modify({
+    //   id: `Catalogue:${catalogue.id}`,
+    //   fields: {
+    //     listings(existing) {
+    //       if (existing && !existing[0]) {
+    //         return [
+    //           {
+    //             ...dummyListing,
+    //             name: "doll",
+    //             ordering: 0,
+    //           },
+    //         ];
+    //       }
+    //       return [
+    //         ...existing,
+    //         {
+    //           ...dummyListing,
+    //           name: "doll",
+    //           ordering: maxOrdering(existing) + 1,
+    //         },
+    //       ];
+    //     },
+    //   },
+    // });
     createListing({
       variables: {
         name,
