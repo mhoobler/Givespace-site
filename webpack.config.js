@@ -20,12 +20,13 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js"],
   },
   devServer: {
-    static: "./",
+    static: "./client",
     port: 3000,
     compress: true,
     historyApiFallback: true,
     open: ["http://localhost:4000"],
   },
+  devtool: "eval-source-map",
   module: {
     rules: [
       {

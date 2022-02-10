@@ -26,14 +26,43 @@ export const LABEL_FIELDS = gql`
   }
 `;
 
+export const LINK_FIELDS = gql`
+  fragment AllLinkFields on Link {
+    id
+    listing_id
+    url
+    title
+    created
+    updated
+  }
+`;
+
+export const LISTING_LABEL_FIELDS = gql`
+  ${LABEL_FIELDS}
+  fragment AllListingLabelFields on ListingLabel {
+    id
+    listing_id
+    label {
+      ...AllLabelFields
+    }
+  }
+`;
+
 export const LISTING_FIELDS = gql`
+  ${LISTING_LABEL_FIELDS}
+  ${LINK_FIELDS}
   fragment AllListingFields on Listing {
     id
     catalogue_id
     name
     link_url
     image_url
-    description
+    labels {
+      ...AllListingLabelFields
+    }
+    links {
+      ...AllLinkFields
+    }
     ordering
     show_price
     price
