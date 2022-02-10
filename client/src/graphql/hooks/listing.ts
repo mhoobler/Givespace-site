@@ -63,30 +63,43 @@ const ListingApolloHooks: ListingHook.FC = () => {
     useMutation(EDIT_LISTING);
   apolloHookErrorHandler("editListing", editListingError);
 
-  const editListing = (id: string, value: string | boolean, key: string) => {
-    updateCatalogueCache(`Listing:${id}`, key, value);
+  const editListing: ListingHook.editListing =
+    (id: string) => (value: string, keyProp: string) => {
+      updateCatalogueCache(`Listing:${id}`, keyProp, value);
+      editListingMutation({
+        variables: {
+          value,
+          id,
+          keyProp,
+        },
+      });
+    };
 
-    if (typeof value === "boolean") value = value.toString();
-    editListingMutation({
-      variables: {
-        value,
-        id,
-        key,
-      },
-    });
-  };
+  const editShowPrice: ListingHook.editShowPrice =
+    (id: string) => async (value: Boolean, keyProp: string) => {
+      updateCatalogueCache(`Listing:${id}`, keyProp, value);
+      editListingMutation({
+        variables: {
+          value: value.toString(),
+          id,
+          key: keyProp,
+        },
+      });
+    };
 
   const [editListingFileMutation, { error: updateListingFileError }] =
     useMutation(EDIT_LISTING_FILE);
   apolloHookErrorHandler("editListingFileError", updateListingFileError, true);
-  const editListingFile = (id: string, file: File | undefined) => {
-    editListingFileMutation({
-      variables: {
-        id,
-        file,
-      },
-    });
-  };
+
+  const editListingFile: ListingHook.editListingFile =
+    (id: string) => (file: File | undefined) => {
+      editListingFileMutation({
+        variables: {
+          id,
+          file,
+        },
+      });
+    };
 
   // DELETE
   const [deleteListingMutation, { error: deleteListingError }] =
@@ -113,6 +126,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
   return {
     createListing,
     editListing,
+    editShowPrice,
     editListingFile,
     deleteListing,
   };

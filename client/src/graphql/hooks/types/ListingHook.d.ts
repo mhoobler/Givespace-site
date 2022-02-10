@@ -1,11 +1,12 @@
 declare namespace ListingHook {
   export type createListing = (name: string, catalogue_id: string) => void;
-  export type editListing = (
+
+  export type editListing = (id: string) => GenericEdit;
+  export type editShowPrice = (
     id: string,
-    value: string | boolean,
-    key: string,
-  ) => void;
-  export type editListingFile = (id: string, file: File | undefined) => void;
+  ) => (value: boolean, keyProp: string) => void;
+  export type editListingFile = (id: string) => GenericFileEdit;
+
   export type deleteListing = (id: string) => void;
 
   export type base = {

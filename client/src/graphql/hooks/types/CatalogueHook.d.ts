@@ -3,12 +3,9 @@ type Props = {
 };
 
 declare namespace CatalogueHook {
-  export type editCatalogue = (text: string, objectKey: string) => void;
+  export type editCatalogue = GenericEdit;
 
-  export type editCatalogueFile = (
-    file: File | undefeind,
-    objectKey: string,
-  ) => void;
+  export type editCatalogueFile = GenericFileEdit;
 
   export type base = {
     incrementCatalogueViews: any;

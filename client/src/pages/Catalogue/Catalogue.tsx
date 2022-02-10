@@ -25,14 +25,10 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   const [isEditing, setIsEditing] = useState(true);
 
   // All ApolloHooks are moved to custom hook for organization
-  const {
-    incrementCatalogueViews,
-    updateCatalogue,
-    catalogueSubscription,
-    updateCatalogueFiles,
-  } = useCatalogueApolloHooks({
-    id: corresponding_id,
-  });
+  const { incrementCatalogueViews, catalogueSubscription } =
+    useCatalogueApolloHooks({
+      id: corresponding_id,
+    });
 
   // TODO: Need to make sure this only happens once per visit
   // (will currently trigger on each rerender)
@@ -61,40 +57,13 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
 
   let editable = is_edit_id || current_user_id === catalogue.user_id;
 
-  //const handleFileInput = (file: File | undefined, objectKey: string) => {
-  //  if (file) {
-  //    updateCatalogueFiles({
-  //      variables: {
-  //        id: catalogue.id,
-  //        key: objectKey,
-  //        file,
-  //      },
-  //    });
-  //  }
-  //};
-
-  //const handleDDSubmit = (value: string, objectKey: string) => {
-  //  updateCatalogueCache(`Catalogue:${catalogue.id}`, objectKey, value);
-  //  updateCatalogue({
-  //    variables: {
-  //      id: catalogue.id,
-  //      key: objectKey,
-  //      value,
-  //    },
-  //  });
-  //};
-
-  //const handleDateInput = (ISOString: string, objectKey: string) => {
-  //  handleTextInput(ISOString, objectKey);
-  //};
-
-  // labels
+  // TODO: should sort this in the backend
   const sortedLabels =
     catalogue.labels && catalogue.labels[0]
       ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
       : [];
 
-  // listings
+  // TODO: Should sort this in the backend
   const sortedListings =
     catalogue.listings && catalogue.listings[0]
       ? [...catalogue.listings].sort((a, b) => a.ordering - b.ordering)
