@@ -1,10 +1,10 @@
 import fetch from "node-fetch";
 import cheerio from "cheerio";
-import { AmazonScrapedFeatures } from "types";
+import { ScrapedFeatures } from "types";
 
-const scrapeListingByName = async (
+export const scrapeListingByName = async (
   name: string
-): Promise<AmazonScrapedFeatures> => {
+): Promise<ScrapedFeatures> => {
   const formattedItem = encodeURIComponent(name).replace(/%20/g, "+");
   const URL = `https://www.amazon.com/s?k=${formattedItem}&ref=nb_sb_noss_2`;
   const amazon_res = await fetch(URL);
@@ -31,6 +31,7 @@ const scrapeListingByName = async (
         item_url: itemURL,
         name: itemName,
         price: price ? price : 0,
+        description: null,
       };
     }
   });
@@ -38,9 +39,9 @@ const scrapeListingByName = async (
   return features;
 };
 
-const scrapeListingByUrl = async (
+export const scrapeListingByUrl = async (
   url: string
-): Promise<AmazonScrapedFeatures> => {
+): Promise<ScrapedFeatures> => {
   // fetch the item name, price, and image url from an amazon link
   const amazon_res = await fetch(url);
   const html = await amazon_res.text();
@@ -66,22 +67,6 @@ const scrapeListingByUrl = async (
     item_url: url,
     name,
     price: price ? price : 0,
+    description: null,
   };
 };
-
-const scrapeListing = async (text: string): Promise<AmazonScrapedFeatures> => {
-  let features;
-  if (text.slice(0, 8) === "https://") {
-    features = await scrapeListingByUrl(text);
-  } else {
-    features = await scrapeListingByName(text);
-  }
-  if (features.name.length > 70) {
-    const newName = features.name.slice(0, 70).split(" ");
-    newName.pop();
-    features.name = newName.join(" ") + "...";
-  }
-  return features;
-};
-
-export default scrapeListing;
