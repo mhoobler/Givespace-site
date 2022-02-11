@@ -135,3 +135,9 @@ export const listingIdToCatalogueId = async (
   notExist("Listing", listingRes.rows[0]);
   return listingRes.rows[0].catalogue_id;
 };
+
+export const isUrl = (text: string): Boolean => {
+  if (text.slice(0, 8) === "https://" || text.slice(0, 7) === "http://")
+    return true;
+  return false;
+};

@@ -1,11 +1,12 @@
 import { ScrapedFeatures } from "types";
+import { isUrl } from "../utils/functions";
 import { scrapeListingByName, scrapeListingByUrl } from "./amazon";
 import { generalScraper } from "./general";
 
 const scrapeListing = async (text: string): Promise<ScrapedFeatures> => {
   let features;
   try {
-    if (text.slice(0, 8) === "https://") {
+    if (isUrl(text)) {
       if (text.includes(".amazon.co")) {
         features = await scrapeListingByUrl(text);
       } else {
@@ -14,7 +15,7 @@ const scrapeListing = async (text: string): Promise<ScrapedFeatures> => {
     } else {
       features = await scrapeListingByName(text);
     }
-    if (features.name.length > 70) {
+    if (features.name.length === 70) {
       const newName = features.name.slice(0, 70).split(" ");
       newName.pop();
       features.name = newName.join(" ") + "...";
@@ -29,6 +30,7 @@ const scrapeListing = async (text: string): Promise<ScrapedFeatures> => {
       description: null,
     };
   }
+  console.log("features", features);
   return features;
 };
 

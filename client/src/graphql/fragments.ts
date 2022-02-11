@@ -66,6 +66,7 @@ export const LISTING_FIELDS = gql`
     ordering
     show_price
     price
+    description
     created
     updated
   }
