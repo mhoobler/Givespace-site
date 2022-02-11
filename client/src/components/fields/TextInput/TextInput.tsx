@@ -5,7 +5,7 @@ import "./TextInput.less";
 
 type Props = {
   isEditing: boolean;
-  handleSubmit: (value: string, objectKey: string) => void;
+  handleSubmit: GenericEdit;
   value: string;
   keyProp: string;
   validator?: (value: string) => boolean;

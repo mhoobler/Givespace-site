@@ -1,3 +1,6 @@
+type GenericEdit = (value: string, keyProp: string) => void;
+type GenericFileEdit = (value: File | undefined, keyProp: string) => void;
+
 type Context = {
   authorization?: string | null;
   authToken?: string | null;
@@ -46,7 +49,7 @@ interface Label {
 interface Listing {
   id: string;
   catalogue_id: string;
-  name: string;
+  name: string | null;
   link_url: string | null;
   image_url: string | null;
   description: string | null;

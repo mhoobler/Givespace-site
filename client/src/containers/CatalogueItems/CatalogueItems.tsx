@@ -6,43 +6,44 @@ import {
   ListingCardsContainer,
   AddListing,
 } from "../../components";
+import useListingApolloHooks from "../../graphql/hooks/listing";
+import useLabelApolloHooks from "../../graphql/hooks/label";
+import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 
 import "./CatalogueItems.less";
 
 type Props = {
-  addLabel: (name: string) => void;
-  deleteLabel: (id: string) => void;
-  reorderLabel: (id: string, ordering: number) => void;
   isEditing: boolean;
+  catalogue_id: string;
   labels: Label[];
   listings: Listing[];
-  handleAddListing: (name: string) => void;
   handleSelectListing: (listing: Listing) => void;
-  handleDeleteListing: (id: string) => void;
 };
 
 const CatalogueItems: React.FC<Props> = ({
   labels,
+  catalogue_id,
   listings,
-  addLabel,
-  deleteLabel,
-  reorderLabel,
   isEditing,
-  handleAddListing,
   handleSelectListing,
-  handleDeleteListing,
 }) => {
+  const { createListing, editListing, editListingFile, deleteListing } =
+    useListingApolloHooks();
+  const { createLabel, deleteLabel, reorderLabel } = useLabelApolloHooks({
+    catalogue_id,
+  });
+
   return (
     <div className="row catalogue-items-container">
       {/* add item, sort */}
       <div className="row">
-        <AddListing handleAddListing={handleAddListing} />
+        <AddListing createListing={createListing} />
         <div className="col-md-6 col-sm-12">Sort</div>
       </div>
       {/* labels */}
       <div className="col-12">
         <LabelContainer
-          addLabel={addLabel}
+          createLabel={createLabel}
           reorderLabel={reorderLabel}
           isEditing={isEditing}
         >
@@ -63,8 +64,8 @@ const CatalogueItems: React.FC<Props> = ({
             key={e.id}
             listing={e}
             isEditing={isEditing}
-            handleSelectListing={handleSelectListing}
-            handleDeleteListing={handleDeleteListing}
+            selectListing={handleSelectListing}
+            deleteListing={deleteListing}
           />
         ))}
       </ListingCardsContainer>

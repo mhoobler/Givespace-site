@@ -6,6 +6,7 @@ import {
   AvatarImage,
   CalendarInput,
 } from "../../components";
+import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 import { statusOptions } from "../../utils/references";
 
 import "./CatalogueHeader.less";
@@ -13,29 +14,25 @@ import "./CatalogueHeader.less";
 type Props = {
   isEditing: any;
   catalogue: CatalogueType;
-  handleTextInput: (t: string, objectKey: string) => void;
-  handleFileInput: (f: File | undefined, objectKey: string) => void;
-  handleDDSubmit: (t: string, objectKey: string) => void;
-  handleDateInput: (ISOString: string, objectKey: string) => void;
   toggleEdit: () => void;
 };
 
 const CatalogueHeader: React.FC<Props> = ({
   isEditing,
   catalogue,
-  handleTextInput,
-  handleFileInput,
-  handleDDSubmit,
-  handleDateInput,
   toggleEdit,
 }) => {
+  const { editCatalogue, editCatalogueFile } = useCatalogueApolloHooks({
+    id: catalogue.id,
+  });
+
   return (
     <div className="catalogue-header-container">
       {/* header image hero*/}
       <div className="header-image-wrapper">
         <HeaderImage
           isEditing={isEditing}
-          handleSubmit={handleFileInput}
+          handleSubmit={editCatalogueFile}
           keyProp={"header_image_url"}
           value={catalogue.header_image_url || ""}
         />
@@ -48,7 +45,7 @@ const CatalogueHeader: React.FC<Props> = ({
             <div className="d-flex avatar-image-wrapper">
               <AvatarImage
                 isEditing={isEditing}
-                handleSubmit={handleFileInput}
+                handleSubmit={editCatalogueFile}
                 keyProp={"profile_picture_url"}
                 value={catalogue.profile_picture_url || ""}
               />
@@ -56,13 +53,13 @@ const CatalogueHeader: React.FC<Props> = ({
             <div className="d-flex flex-column author-title-wrapper">
               <TextInput
                 isEditing={isEditing}
-                handleSubmit={handleTextInput}
+                handleSubmit={editCatalogue}
                 keyProp="author"
                 value={catalogue.author || ""}
               />
               <TextInput
                 isEditing={isEditing}
-                handleSubmit={handleTextInput}
+                handleSubmit={editCatalogue}
                 keyProp="title"
                 value={catalogue.title}
                 className="fs-2"
@@ -77,7 +74,7 @@ const CatalogueHeader: React.FC<Props> = ({
               <CalendarInput
                 value={catalogue.event_date}
                 keyProp="event_date"
-                handleDateInput={handleDateInput}
+                handleDateInput={editCatalogue}
               />
             </div>
           </div>
@@ -85,7 +82,7 @@ const CatalogueHeader: React.FC<Props> = ({
           <div>
             <TextInput
               isEditing={isEditing}
-              handleSubmit={handleTextInput}
+              handleSubmit={editCatalogue}
               keyProp="description"
               value={catalogue.description || ""}
             />
@@ -105,7 +102,7 @@ const CatalogueHeader: React.FC<Props> = ({
           <div className="d-flex justify-content-end">
             <Dropdown
               value={catalogue.status}
-              handleSubmit={handleDDSubmit}
+              handleSubmit={editCatalogue}
               keyProp="status"
               className={isEditing ? "hidden" : ""}
             >

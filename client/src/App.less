@@ -1,14 +1,11 @@
-
 .app {
   background-color: #dfdfdf;
   min-height: 100vh;
 }
 
 .page-wrapper {
-  margin: 0 0;
-}
-
-.page-padding {
+  width: 100%;
+  margin: 0 auto;
 }
 
 .f-center {
@@ -22,21 +19,31 @@
 
 @media screen {
   // sm
-  @media (min-width: 576px) {}
+  @media (min-width: 576px) {
+    .page-wrapper {
+      width: 576px;
+    }
+  }
 
   // md
   @media (min-width: 768px) {
+    .page-wrapper {
+      width: 768px;
+    }
   }
 
   // lg
   @media (min-width: 992px) {
     .page-wrapper {
-      margin: 0 6.625rem;
+      width: 992px;
     }
   }
 
   // xl
   @media (min-width: 1200px) {
+    .page-wrapper {
+      width: 1200px;
+    }
   }
 
   // xxl

@@ -1,6 +1,6 @@
 import db from "../../db";
 import { QueryResult } from "pg";
-import { AmazonScrapedFeatures, Catalogue, Label, Listing } from "../../types";
+import { ScrapedFeatures, Catalogue, Label, Listing } from "../../types";
 import {
   deleteFileIfNotUsed,
   getFullCatalogues,
@@ -10,7 +10,7 @@ import {
   publishCatalogue,
 } from "../../utils/functions";
 import { pubsub } from "../index";
-import scrapeItemFeatures from "../../scraping/amazon";
+import scrapeItemFeatures from "../../scraping/init";
 import { uploadToGC } from "../../utils/googleCloud";
 
 const listingResolvers = {
@@ -24,18 +24,29 @@ const listingResolvers = {
         await getFullCatalogues(catalogue_id)
       )[0];
 
+      const isUrl = name.slice(0, 8) === "https://";
+
       notExist("Catalogue", fullCatalogue);
 
-      const newListingRes: QueryResult<Listing> = await db.query(
-        "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
-      );
+      let newListingRes: QueryResult<Listing>;
+      if (isUrl) {
+        newListingRes = await db.query(
+          "INSERT INTO listings (catalogue_id, ordering) VALUES ($1, $2) RETURNING *",
+          [catalogue_id, maxOrdering(fullCatalogue.listings) + 1]
+        );
+      } else {
+        newListingRes = await db.query(
+          "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
+          [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
+        );
+      }
+
       const newListing: Listing = newListingRes.rows[0];
 
       publishCatalogue(catalogue_id);
 
       const scrapeData = async () => {
-        const features: AmazonScrapedFeatures = await scrapeItemFeatures(name);
+        const features: ScrapedFeatures = await scrapeItemFeatures(name);
 
         const currentListingRes: QueryResult<Listing> = await db.query(
           "SELECT * FROM listings WHERE id = $1",
@@ -44,11 +55,13 @@ const listingResolvers = {
         const currentListing: Listing = currentListingRes.rows[0];
 
         const updateListingRes: QueryResult<Listing> = await db.query(
-          "UPDATE listings SET image_url = $1, price = $2 WHERE id = $3 RETURNING *",
+          "UPDATE listings SET image_url = $1, price = $2, name = $3, description = $4 WHERE id = $5 RETURNING *",
           [
             // if none of the following exist yet replace with scrape data
             currentListing.image_url || features.image_url,
             currentListing.price || features.price,
+            currentListing.name || features.name,
+            currentListing.description || features.description,
             newListing.id,
           ]
         );

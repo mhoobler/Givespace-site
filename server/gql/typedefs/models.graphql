@@ -32,7 +32,7 @@ type Label {
 type Listing {
   id: ID!
   catalogue_id: String!
-  name: String!
+  name: String
   link_url: String
   image_url: String
   description: String

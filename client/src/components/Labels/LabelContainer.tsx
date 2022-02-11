@@ -4,13 +4,13 @@ import DragAndDrop from "../DragAndDrop/DragAndDrop";
 import "./LabelContainer.less";
 
 type Props = {
-  addLabel: (name: string) => void;
+  createLabel: (name: string) => void;
   isEditing: boolean;
   reorderLabel: (id: string, ordering: number) => void;
 };
 
 const LabelContainer: React.FC<Props> = ({
-  addLabel,
+  createLabel,
   isEditing,
   reorderLabel,
   children,
@@ -28,7 +28,7 @@ const LabelContainer: React.FC<Props> = ({
     }
     if (isAdding) {
       if (inputRef.current.value !== "") {
-        addLabel(inputRef.current.value);
+        createLabel(inputRef.current.value);
       }
 
       inputRef.current.value = "";

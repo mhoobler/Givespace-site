@@ -49,7 +49,7 @@ export type Label = {
 export type Listing = {
   id: string;
   catalogue_id: string;
-  name: string;
+  name: string | null;
   link_url: string | null;
   image_url: string | null;
   description: string | null;
@@ -87,9 +87,10 @@ export enum SubscriptionLabels {
   CATALOGUE_EDITED = "CATALOGUE_EDITED",
 }
 
-export type AmazonScrapedFeatures = {
+export type ScrapedFeatures = {
   image_url: string;
   item_url: string;
+  description: string;
   name: string;
   price: number;
 };
