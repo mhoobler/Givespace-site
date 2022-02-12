@@ -4,6 +4,7 @@ import {
   ALL_CATALOGUE_FIELDS,
   CATALOGUE_LIST_ITEM_FIELDS,
   LISTING_FIELDS,
+  LISTING_LABEL_FIELDS,
 } from "./fragments";
 
 export const GET_JWT = gql`
@@ -66,6 +67,7 @@ export const UPDATE_CATALOGUE = gql`
   }
 `;
 
+// TODO: rethink inputs to (id: ID)
 export const LIVE_CATALOGUE = gql`
   ${ALL_CATALOGUE_FIELDS}
   subscription LiveCatalogue($id: ID, $edit_id: String) {
@@ -143,6 +145,23 @@ export const EDIT_LISTING_FILE = gql`
   mutation EditListingFile($file: Upload!, $id: ID!) {
     editListingFile(id: $id, file: $file) {
       ...AllListingFields
+    }
+  }
+`;
+
+export const ADD_LISTING_LABEL = gql`
+  ${LISTING_LABEL_FIELDS}
+  mutation CreateListingLabel($listing_id: ID!, $label_id: ID!) {
+    createListingLabel(listing_id: $listing_id, label_id: $label_id) {
+      ...AllListingLabelFields
+    }
+  }
+`;
+export const REMOVE_LISTING_LABEL = gql`
+  ${LISTING_LABEL_FIELDS}
+  mutation DeleteListingLabel($id: ID!) {
+    deleteListingLabel(id: $id) {
+      ...AllListingLabelFields
     }
   }
 `;

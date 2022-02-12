@@ -15,7 +15,11 @@ import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 
 const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   // Get Id from params and localStorage, especially for CatalogueApolloHooks
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [selectedListingId, setSelectedListingId] = useState<string | null>(
+    null
+  );
+
+  console.log("selectedListingId", selectedListingId);
 
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
@@ -70,12 +74,16 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       : [];
 
   const handleListingModalClose = () => {
-    setSelectedListing(null);
+    setSelectedListingId(null);
   };
 
-  const handleSelectListing = (listing: Listing) => {
-    setSelectedListing(listing);
+  const handleSelectListing = (listingId: string) => {
+    setSelectedListingId(listingId);
   };
+
+  const selectedListing = selectedListingId
+    ? catalogue.listings.find((li: Listing) => li.id === selectedListingId)!
+    : null;
 
   return (
     <div className="page-wrapper">
@@ -95,6 +103,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       />
       <ListingModal
         isEditing={isEditing}
+        labels={sortedLabels}
         listing={selectedListing}
         handleClose={handleListingModalClose}
       />

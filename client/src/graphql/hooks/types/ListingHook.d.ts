@@ -9,12 +9,18 @@ declare namespace ListingHook {
 
   export type deleteListing = (id: string) => void;
 
+  export type addListingLabel = (listing_id: string, label_id: string) => void;
+
+  export type removeListingLabel = (id: string) => void;
+
   export type base = {
     createListing: ListingHook.createListing;
     editListing: ListingHook.editListing;
     editBoolean: ListingHook.editBoolean;
     editListingFile: ListingHook.editListingFile;
     deleteListing: ListingHook.deleteListing;
+    addListingLabel: ListingHook.addListingLabel;
+    removeListingLabel: ListingHook.removeListingLabel;
   };
 
   export type FC = () => ListingHook.base;

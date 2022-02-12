@@ -1,9 +1,11 @@
 import { useMutation } from "@apollo/client";
 import {
+  ADD_LISTING_LABEL,
   CREATE_LISTING,
   DELETE_LISTING,
   EDIT_LISTING,
   EDIT_LISTING_FILE,
+  REMOVE_LISTING_LABEL,
 } from "../../graphql/schemas";
 import {
   handleDeletion,
@@ -124,12 +126,75 @@ const ListingApolloHooks: ListingHook.FC = () => {
     );
   };
 
+  const [addListingLabelMutation, { error: addListingLabelError }] =
+    useMutation(ADD_LISTING_LABEL);
+  apolloHookErrorHandler("addListingLabelError", deleteListingError);
+  const addListingLabel = (listing_id: string, label_id: string) => {
+    setTimeout(() => {
+      // cache.modify({
+      //   id: `Listing:${listing_id}`,
+      //   fields: {
+      //     labels(existing) {
+      //       if (existing) {
+
+      //       }
+      //     }
+      //   }
+      // })
+      // cache.modify({
+      //   id: `Listing:${listing_id}`,
+      //   fields: {
+      //     listings(existing) {
+      //       if (existing && !existing[0]) {
+      //         return [
+      //           {
+      //             ...dummyListing,
+      //             name: "doll",
+      //             ordering: 0,
+      //           },
+      //         ];
+      //       }
+      //       return [
+      //         ...existing,
+      //         {
+      //           ...dummyListing,
+      //           name: "doll",
+      //           ordering: maxOrdering(existing) + 1,
+      //         },
+      //       ];
+      //     },
+      //   },
+      // });
+      addListingLabelMutation({
+        variables: {
+          listing_id,
+          label_id,
+        },
+      });
+    }, 1000);
+  };
+
+  const [removeListingLabelMutation, { error: removeListingLabelError }] =
+    useMutation(REMOVE_LISTING_LABEL);
+  apolloHookErrorHandler("removeListingLabelError", deleteListingError);
+  const removeListingLabel = (id: string) => {
+    setTimeout(() => {
+      removeListingLabelMutation({
+        variables: {
+          id,
+        },
+      });
+    }, 1000);
+  };
+
   return {
     createListing,
     editListing,
     editBoolean,
     editListingFile,
     deleteListing,
+    addListingLabel,
+    removeListingLabel,
   };
 };
 

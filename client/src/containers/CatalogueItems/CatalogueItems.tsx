@@ -18,7 +18,7 @@ type Props = {
   catalogue_id: string;
   labels: Label[];
   listings: Listing[];
-  handleSelectListing: (listing: Listing) => void;
+  handleSelectListing: (listingId: string) => void;
 };
 
 const CatalogueItems: React.FC<Props> = ({
