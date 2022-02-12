@@ -3,6 +3,18 @@ const MAX_W = window.innerWidth * 0.8;
 
 type BorderKeys = "top" | "right" | "bottom" | "left" | "rect";
 
+type Options = {
+  ratio: number;
+  canvas: HTMLCanvasElement;
+  img: HTMLImageElement;
+  slider: HTMLInputElement;
+};
+
+let imagePos = {
+  x: 0,
+  y: 0,
+};
+
 // Get paths object
 const getPath = (borders: any) => {
   const { top, left, right, bottom } = borders;
@@ -39,7 +51,7 @@ const getPath = (borders: any) => {
   };
 };
 
-export default (canvas: HTMLCanvasElement, img: HTMLImageElement) =>
+export default ({ canvas, img, ratio, slider }: Options) =>
   (evt: any) => {
     // Assign context and body (we use body to style the cursor)
     const ctx = canvas.getContext("2d");
