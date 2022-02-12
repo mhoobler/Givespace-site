@@ -5,10 +5,11 @@ import {
   ListingCard,
   ListingCardsContainer,
   AddListing,
+  DragAndDrop,
+  Draggable,
 } from "../../components";
 import useListingApolloHooks from "../../graphql/hooks/listing";
 import useLabelApolloHooks from "../../graphql/hooks/label";
-import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 
 import "./CatalogueItems.less";
 
@@ -42,20 +43,20 @@ const CatalogueItems: React.FC<Props> = ({
       </div>
       {/* labels */}
       <div className="col-12">
-        <LabelContainer
-          createLabel={createLabel}
-          reorderLabel={reorderLabel}
-          isEditing={isEditing}
-        >
-          {labels.map((e: Label) => (
-            <Label
-              key={e.id}
-              className={`label ${isEditing ? "can-delete" : ""}`}
-              label={e}
-              isEditing={isEditing}
-              deleteLabel={deleteLabel}
-            />
-          ))}
+        <LabelContainer createLabel={createLabel} isEditing={isEditing}>
+          <DragAndDrop handleReorder={reorderLabel}>
+            {labels.map((e: Label) => (
+              <Draggable key={e.id} refData={e}>
+                <Label
+                  key={e.id}
+                  className={`label ${isEditing ? "can-delete" : ""}`}
+                  label={e}
+                  isEditing={isEditing}
+                  deleteLabel={deleteLabel}
+                />
+              </Draggable>
+            ))}
+          </DragAndDrop>
         </LabelContainer>
       </div>
       <ListingCardsContainer>
