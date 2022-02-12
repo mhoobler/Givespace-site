@@ -17,10 +17,10 @@ type elmRefs = {
 };
 
 type Props = {
-  reorderLabel: (id: string, ordering: number) => void;
+  handleReorder: (id: string, ordering: number) => void;
 };
 
-const DragAndDrop: React.FC<Props> = ({ reorderLabel, children }) => {
+const DragAndDrop: React.FC<Props> = ({ handleReorder, children }) => {
   const elementsRef = useRef<elmRefs>({});
 
   const captureRef = (elm: HTMLDivElement, data: any) => {
@@ -29,7 +29,7 @@ const DragAndDrop: React.FC<Props> = ({ reorderLabel, children }) => {
       const ref = (elementsRef.current[id] = {
         elm,
         data,
-        mousedown: getMouseDown(id, elementsRef.current, reorderLabel),
+        mousedown: getMouseDown(id, elementsRef.current, handleReorder),
       });
       ref.elm.onmousedown = ref.mousedown;
     }

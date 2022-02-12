@@ -6,13 +6,11 @@ import "./LabelContainer.less";
 type Props = {
   createLabel: (name: string) => void;
   isEditing: boolean;
-  reorderLabel: (id: string, ordering: number) => void;
 };
 
 const LabelContainer: React.FC<Props> = ({
   createLabel,
   isEditing,
-  reorderLabel,
   children,
 }) => {
   const [isAdding, setIsAdding] = useState(false);
@@ -40,21 +38,17 @@ const LabelContainer: React.FC<Props> = ({
   };
 
   return (
-    <DragAndDrop reorderLabel={reorderLabel}>
-      <div className="labels-container" ref={containerRef}>
-        {children}
-        {isEditing && (
-          <div
-            className={`f-center add-label-group ${isAdding ? "adding" : ""}`}
-          >
-            <input ref={inputRef} className="add-label-input" type="text" />
-            <button className="add-label-button" onClick={handleAddLabel}>
-              +
-            </button>
-          </div>
-        )}
-      </div>
-    </DragAndDrop>
+    <div className="labels-container" ref={containerRef}>
+      {children}
+      {isEditing && (
+        <div className={`f-center add-label-group ${isAdding ? "adding" : ""}`}>
+          <input ref={inputRef} className="add-label-input" type="text" />
+          <button className="add-label-button" onClick={handleAddLabel}>
+            +
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 
