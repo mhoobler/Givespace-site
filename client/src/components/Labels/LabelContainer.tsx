@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import DragAndDrop from "../DragAndDrop/DragAndDrop";
 
 import "./LabelContainer.less";
 

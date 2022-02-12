@@ -10,7 +10,6 @@ import {
 } from "../../components";
 import useListingApolloHooks from "../../graphql/hooks/listing";
 import useLabelApolloHooks from "../../graphql/hooks/label";
-import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 
 import "./CatalogueItems.less";
 
