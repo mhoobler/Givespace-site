@@ -37,7 +37,7 @@ const CatalogueItems: React.FC<Props> = ({
     <div className="row catalogue-items-container">
       {/* add item, sort */}
       <div className="row">
-        <AddListing createListing={createListing} />
+        <AddListing handleSubmit={createListing(catalogue_id)} />
         <div className="col-md-6 col-sm-12">Sort</div>
       </div>
       {/* labels */}

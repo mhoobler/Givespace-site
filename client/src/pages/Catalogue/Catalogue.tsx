@@ -36,7 +36,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     // delay gives time for the subscription to get set up
     setTimeout(() => {
       incrementCatalogueViews();
-    }, 1);
+    }, 10);
   }, []);
   if (!catalogueSubscription.data) {
     return <div>Loading...</div>;

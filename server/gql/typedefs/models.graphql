@@ -1,14 +1,10 @@
 type Catalogue {
   id: ID!
   edit_id: String!
-  status: String!
   user_id: String!
+  status: String!
   title: String!
   description: String!
-  labels: [Label!]
-  listings: [Listing!]
-  created: Date!
-  updated: Date!
   views: Int!
   header_image_url: String
   header_color: String!
@@ -16,6 +12,10 @@ type Catalogue {
   profile_picture_url: String
   event_date: Date
   location: String
+  created: Date!
+  updated: Date!
+  labels: [Label!]
+  listings: [Listing!]
 }
 
 type Label {
@@ -39,10 +39,10 @@ type Listing {
   ordering: Float!
   show_price: Boolean!
   price: Float
-  links: [Link!]
-  labels: [ListingLabel!]
   created: Date!
   updated: Date!
+  links: [Link!]
+  labels: [ListingLabel!]
 }
 
 type Link {

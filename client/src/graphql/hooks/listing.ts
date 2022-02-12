@@ -24,36 +24,37 @@ const ListingApolloHooks: ListingHook.FC = () => {
     useMutation(CREATE_LISTING);
   apolloHookErrorHandler("createListingError", createListingError);
 
-  const createListing = (name: string, catalogue_id: string) => {
-    console.log("handleAddListing", name);
-    cache.modify({
-      id: `Catalogue:${catalogue_id}`,
-      fields: {
-        listings(existing) {
-          if (existing && !existing[0]) {
-            return [
-              {
-                ...dummyListing,
-                name: "doll",
-                ordering: 0,
-              },
-            ];
-          }
-          return [
-            ...existing,
-            {
-              ...dummyListing,
-              name: "doll",
-              ordering: maxOrdering(existing) + 1,
-            },
-          ];
-        },
-      },
-    });
+  const createListing = (catalogue_id: string) => (name: string) => {
+    console.log("handleAddListing", catalogue_id);
+    // // TODO: resolve cache issues
+    // cache.modify({
+    //   id: `Catalogue:${catalogue_id}`,
+    //   fields: {
+    //     listings(existing) {
+    //       if (existing && !existing[0]) {
+    //         return [
+    //           {
+    //             ...dummyListing,
+    //             name: "doll",
+    //             ordering: 0,
+    //           },
+    //         ];
+    //       }
+    //       return [
+    //         ...existing,
+    //         {
+    //           ...dummyListing,
+    //           name: "doll",
+    //           ordering: maxOrdering(existing) + 1,
+    //         },
+    //       ];
+    //     },
+    //   },
+    // });
     createListingMutation({
       variables: {
         name,
-        catalogue_id: catalogue_id,
+        catalogue_id,
       },
     });
   };
@@ -70,7 +71,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
         variables: {
           value,
           id,
-          keyProp,
+          key: keyProp,
         },
       });
     };
@@ -119,7 +120,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion,
+      setMarkedForDeletion
     );
   };
 

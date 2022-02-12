@@ -57,18 +57,18 @@ export const LISTING_FIELDS = gql`
     name
     link_url
     image_url
+    description
+    ordering
+    show_price
+    price
+    created
+    updated
     labels {
       ...AllListingLabelFields
     }
     links {
       ...AllLinkFields
     }
-    ordering
-    show_price
-    price
-    description
-    created
-    updated
   }
 `;
 
@@ -82,8 +82,6 @@ export const ALL_CATALOGUE_FIELDS = gql`
     status
     title
     description
-    created
-    updated
     views
     header_image_url
     header_color
@@ -91,6 +89,8 @@ export const ALL_CATALOGUE_FIELDS = gql`
     profile_picture_url
     event_date
     location
+    created
+    updated
     labels {
       ...AllLabelFields
     }
