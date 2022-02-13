@@ -183,3 +183,11 @@ export const REMOVE_LINK = gql`
     }
   }
 `;
+export const EDIT_LINK = gql`
+  ${LINK_FIELDS}
+  mutation EditLink($key: String!, $value: String!, $id: ID!) {
+    editLink(key: $key, value: $value, id: $id) {
+      ...AllLinkFields
+    }
+  }
+`;

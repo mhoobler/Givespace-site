@@ -4,6 +4,7 @@ import {
   ADD_LISTING_LABEL,
   CREATE_LISTING,
   DELETE_LISTING,
+  EDIT_LINK,
   EDIT_LISTING,
   EDIT_LISTING_FILE,
   REMOVE_LINK,
@@ -164,7 +165,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const [removeListingLabelMutation, { error: removeListingLabelError }] =
     useMutation(REMOVE_LISTING_LABEL);
-  apolloHookErrorHandler("removeListingLabelError", deleteListingError);
+  apolloHookErrorHandler("removeListingLabelError", deleteListingError, true);
   const removeListingLabel = (id: string) => {
     handleDeletion(id, "ListingLabel", () =>
       removeListingLabelMutation({
@@ -198,7 +199,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const [removeLinkMutation, { error: removeLinkError }] =
     useMutation(REMOVE_LINK);
-  apolloHookErrorHandler("removeLinkError", removeLinkError);
+  apolloHookErrorHandler("removeLinkError", removeLinkError, true);
   const removeLink = (id: string) => {
     handleDeletion(id, "Link", () =>
       removeLinkMutation({
@@ -207,6 +208,19 @@ const ListingApolloHooks: ListingHook.FC = () => {
         },
       })
     );
+  };
+
+  const [editLinkMutation, { error: editLinkError }] = useMutation(EDIT_LINK);
+  apolloHookErrorHandler("removeLinkError", removeLinkError);
+  const editLink = (id: string, value: string, key: string) => {
+    updateCatalogueCache(`Link:${id}`, key, value);
+    editLinkMutation({
+      variables: {
+        id,
+        key,
+        value,
+      },
+    });
   };
 
   return {
@@ -219,6 +233,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
     removeListingLabel,
     addLink,
     removeLink,
+    editLink,
   };
 };
 

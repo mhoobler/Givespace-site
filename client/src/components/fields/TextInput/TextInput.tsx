@@ -13,6 +13,7 @@ type Props = {
   className?: string;
 };
 
+// TODO: update keyProp and setFieldEditing
 const TextInput = ({
   isEditing,
   handleSubmit,

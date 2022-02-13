@@ -31,6 +31,7 @@ interface CatalogueType extends CatalogueStub {
   profile_picture_url: string | null;
   event_date: string | null;
   location: string | null;
+  // TODO: labels and listings can be null
   labels: Label[];
   listings: Listing[];
 }

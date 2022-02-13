@@ -17,6 +17,8 @@ declare namespace ListingHook {
 
   export type removeLink = (id: string) => void;
 
+  export type editLink = (id: string, value: string, key: string) => void;
+
   export type base = {
     createListing: ListingHook.createListing;
     editListing: ListingHook.editListing;
@@ -27,6 +29,7 @@ declare namespace ListingHook {
     removeListingLabel: ListingHook.removeListingLabel;
     addLink: ListingHook.addLink;
     removeLink: ListingHook.removeLink;
+    editLink: ListingHook.editLink;
   };
 
   export type FC = () => ListingHook.base;

@@ -109,3 +109,9 @@ export const randomNumbers = (length: number): string => {
   }
   return numbers.join("");
 };
+
+export const isUrl = (value: string): boolean => {
+  if (value.slice(0, 8) === "https://" || value.slice(0, 7) === "http://")
+    return true;
+  return false;
+};
