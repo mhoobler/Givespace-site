@@ -19,8 +19,6 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
     null
   );
 
-  console.log("selectedListingId", selectedListingId);
-
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   if (!corresponding_id) throw new Error("no id on params");
@@ -84,6 +82,8 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   const selectedListing = selectedListingId
     ? catalogue.listings.find((li: Listing) => li.id === selectedListingId)!
     : null;
+
+  console.log("catalogue", catalogue);
 
   return (
     <div className="page-wrapper">

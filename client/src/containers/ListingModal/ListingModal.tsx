@@ -32,17 +32,15 @@ const ListingModal: React.FC<Props> = ({
   const labelsToShow: Label[] | null = isEditing
     ? labels
     : listing.labels && listing.labels.map((l) => l.label);
-  const handleListingClick = (labelId: string) => {
+  const handleListingClick = (label: Label) => {
     // if labelId is in listing.labels.id, remove it
     const listingLabelWithId: ListingLabel | undefined = listing.labels?.find(
-      (l: ListingLabel) => l.label.id === labelId
+      (l: ListingLabel) => l.label.id === label.id
     );
     if (listingLabelWithId) {
-      console.log("removing label");
       removeListingLabel(listingLabelWithId.id);
     } else {
-      console.log("adding label");
-      addListingLabel(listing.id, labelId);
+      addListingLabel(listing.id, label);
     }
   };
 
@@ -60,7 +58,7 @@ const ListingModal: React.FC<Props> = ({
                 )
               )
             }
-            onClick={() => handleListingClick(label.id)}
+            onClick={() => handleListingClick(label)}
             isEditing={isEditing}
           />
         ))}

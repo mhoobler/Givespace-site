@@ -13,8 +13,8 @@ import {
   updateCatalogueCache,
   apolloHookErrorHandler,
 } from "../../utils/functions";
-import { cache } from "../clientConfig";
-import { dummyListing } from "../../utils/references";
+import client, { cache } from "../clientConfig";
+import { dummyListing, dummyListingLabel } from "../../utils/references";
 import { useMarkedForDeletion, useRemoveMFD } from "../../state/store";
 
 const ListingApolloHooks: ListingHook.FC = () => {
@@ -28,31 +28,38 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const createListing = (catalogue_id: string) => (name: string) => {
     console.log("handleAddListing", catalogue_id);
-    // // TODO: resolve cache issues
-    // cache.modify({
-    //   id: `Catalogue:${catalogue_id}`,
-    //   fields: {
-    //     listings(existing) {
-    //       if (existing && !existing[0]) {
-    //         return [
-    //           {
-    //             ...dummyListing,
-    //             name: "doll",
-    //             ordering: 0,
-    //           },
-    //         ];
-    //       }
-    //       return [
-    //         ...existing,
-    //         {
-    //           ...dummyListing,
-    //           name: "doll",
-    //           ordering: maxOrdering(existing) + 1,
-    //         },
-    //       ];
-    //     },
-    //   },
-    // });
+    // TODO: when item is fetched alladditional listings get removed
+    cache.modify({
+      id: `Catalogue:${catalogue_id}`,
+      fields: {
+        listings(existing) {
+          console.log("existing", existing);
+          if (existing) {
+            console.log("newListing", [
+              ...existing,
+              {
+                ...dummyListing(catalogue_id),
+                ordering: maxOrdering(existing) + 1,
+              },
+            ]);
+            return [
+              ...existing,
+              {
+                ...dummyListing(catalogue_id),
+                ordering: maxOrdering(existing) + 1,
+              },
+            ];
+          }
+          console.log("post existing", existing);
+          return [
+            {
+              ...dummyListing(catalogue_id),
+              ordering: 0,
+            },
+          ];
+        },
+      },
+    });
     createListingMutation({
       variables: {
         name,
@@ -129,62 +136,37 @@ const ListingApolloHooks: ListingHook.FC = () => {
   const [addListingLabelMutation, { error: addListingLabelError }] =
     useMutation(ADD_LISTING_LABEL);
   apolloHookErrorHandler("addListingLabelError", deleteListingError);
-  const addListingLabel = (listing_id: string, label_id: string) => {
-    setTimeout(() => {
-      // cache.modify({
-      //   id: `Listing:${listing_id}`,
-      //   fields: {
-      //     labels(existing) {
-      //       if (existing) {
-
-      //       }
-      //     }
-      //   }
-      // })
-      // cache.modify({
-      //   id: `Listing:${listing_id}`,
-      //   fields: {
-      //     listings(existing) {
-      //       if (existing && !existing[0]) {
-      //         return [
-      //           {
-      //             ...dummyListing,
-      //             name: "doll",
-      //             ordering: 0,
-      //           },
-      //         ];
-      //       }
-      //       return [
-      //         ...existing,
-      //         {
-      //           ...dummyListing,
-      //           name: "doll",
-      //           ordering: maxOrdering(existing) + 1,
-      //         },
-      //       ];
-      //     },
-      //   },
-      // });
-      addListingLabelMutation({
-        variables: {
-          listing_id,
-          label_id,
+  const addListingLabel = (listing_id: string, label: Label) => {
+    const dummyListingLabelToUse = dummyListingLabel(label);
+    cache.modify({
+      id: `Listing:${listing_id}`,
+      fields: {
+        labels(existing) {
+          if (!existing) [dummyListingLabelToUse];
+          return [...existing, dummyListingLabelToUse];
         },
-      });
-    }, 1000);
+      },
+    });
+
+    addListingLabelMutation({
+      variables: {
+        listing_id: listing_id,
+        label_id: label.id,
+      },
+    });
   };
 
   const [removeListingLabelMutation, { error: removeListingLabelError }] =
     useMutation(REMOVE_LISTING_LABEL);
   apolloHookErrorHandler("removeListingLabelError", deleteListingError);
   const removeListingLabel = (id: string) => {
-    setTimeout(() => {
+    handleDeletion(id, "ListingLabel", () =>
       removeListingLabelMutation({
         variables: {
           id,
         },
-      });
-    }, 1000);
+      })
+    );
   };
 
   return {

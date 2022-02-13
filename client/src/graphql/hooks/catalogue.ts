@@ -22,7 +22,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     INCREMENT_CATALOGUE_VIEWS,
     {
       variables: { id },
-    },
+    }
   );
   apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
 
@@ -34,27 +34,28 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     // being written over
     onSubscriptionData: ({ client, subscriptionData }) => {
       const { data } = subscriptionData;
-      console.log(data);
       if (data && data.liveCatalogue) {
         const catalogue = data.liveCatalogue;
+
+        // if fieldEditing block the relevant update
         if (fieldEditing) delete catalogue[fieldEditing];
+
         client.writeFragment({
           id: `Catalogue:${catalogue.id}`,
           fragment: ALL_CATALOGUE_FIELDS,
           fragmentName: "AllCatalogueFields",
-          variables: { id },
           data: catalogue,
         });
         // prevents labels from being shown if MFD
         const labelsMFD = catalogue.labels.filter((label: Label) =>
-          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === label.id),
+          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === label.id)
         );
         labelsMFD.forEach((label: Label) => {
           handleCacheDeletion(`Label:${label.id}`);
         });
-        // prevents labels from being shown if MFD
+        // prevents listings from being shown if MFD
         const listingsMFD = catalogue.listings.filter((listing: Listing) =>
-          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === listing.id),
+          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === listing.id)
         );
         listingsMFD.forEach((listing: Listing) => {
           handleCacheDeletion(`Listing:${listing.id}`);

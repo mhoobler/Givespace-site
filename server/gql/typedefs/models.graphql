@@ -20,7 +20,7 @@ type Catalogue {
 
 type Label {
   id: ID!
-  catalogue_id: String!
+  catalogue_id: ID!
   name: String!
   link_url: String
   ordering: Float!
@@ -31,7 +31,7 @@ type Label {
 
 type Listing {
   id: ID!
-  catalogue_id: String!
+  catalogue_id: ID!
   name: String
   link_url: String
   image_url: String
@@ -47,7 +47,7 @@ type Listing {
 
 type Link {
   id: ID!
-  listing_id: String!
+  listing_id: ID!
   url: String!
   title: String
   created: Date!
@@ -56,6 +56,6 @@ type Link {
 
 type ListingLabel {
   id: ID!
-  listing_id: String!
+  listing_id: ID!
   label: Label!
 }

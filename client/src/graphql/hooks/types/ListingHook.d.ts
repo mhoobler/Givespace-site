@@ -9,7 +9,7 @@ declare namespace ListingHook {
 
   export type deleteListing = (id: string) => void;
 
-  export type addListingLabel = (listing_id: string, label_id: string) => void;
+  export type addListingLabel = (listing_id: string, label: Label) => void;
 
   export type removeListingLabel = (id: string) => void;
 
