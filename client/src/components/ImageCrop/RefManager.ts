@@ -4,35 +4,35 @@ type Options = {
   bound_w: number;
   shape: "arc" | "rect";
 };
+class RefManager {
+  protected CTX?: CanvasRenderingContext2D;
+  protected CANVAS?: HTMLCanvasElement;
+  protected RANGE?: HTMLInputElement;
+  protected BOUNDING_SCALE?: number;
+  protected FRAME?: any;
+  protected ORIGINAL_WIDTH?: number;
+  protected ORIGINAL_HEIGHT?: number;
+  protected ZOOM?: number;
 
-export default class HTMLCanvasCropElement implements IHTMLCanvasCropElement {
-  private CTX?: CanvasRenderingContext2D | null;
-  private CANVAS?: HTMLCanvasElement;
-  private RANGE?: HTMLInputElement;
-  private BOUNDING_SCALE?: number;
-  private FRAME?: any;
-  private ORIGINAL_WIDTH?: number;
-  private ORIGINAL_HEIGHT?: number;
-  private ZOOM?: number;
+  protected aspect: number;
+  protected image: HTMLImageElement;
+  protected inX: number;
+  protected inY: number;
+  protected sx: number;
+  protected sy: number;
+  protected bound_w: number;
+  protected bound_h: number;
+  protected shape: string;
 
-  private aspect: number;
-  private image: HTMLImageElement;
-  private inX: number;
-  private inY: number;
-  private sx: number;
-  private sy: number;
-  private bound_w: number;
-  private bound_h: number;
-  private shape: string;
-
-  private check: {
+  protected check: {
     top: (y: number) => boolean;
     left: (x: number) => boolean;
     right: (x: number) => boolean;
     bottom: (y: number) => boolean;
   };
-
   constructor({ aspect, bound_w, bound_h, shape }: Options) {
+    // super({ aspect, bound_w, bound_h, shape });
+    // Getting "Namespace is not defined" error
     this.aspect = aspect;
     this.image = new Image();
     this.image.onload = (evt) => this.loadImage.call(this, evt);
@@ -68,8 +68,13 @@ export default class HTMLCanvasCropElement implements IHTMLCanvasCropElement {
 
   set canvas(elm: HTMLCanvasElement) {
     this.CANVAS = elm;
-    this.CTX = elm.getContext("2d");
-    this.CANVAS.onmousedown = (evt) => this.handleMouseDown(evt);
+    const ctx = elm.getContext("2d");
+    if (ctx) {
+      this.CTX = ctx;
+      this.CANVAS.onmousedown = (evt) => this.handleMouseDown(evt);
+    } else {
+      throw new Error("No context generated");
+    }
   }
 
   get canvas() {
@@ -319,7 +324,7 @@ export default class HTMLCanvasCropElement implements IHTMLCanvasCropElement {
     }
   }
 
-  private loadImage(evt: any) {
+  loadImage(evt: any) {
     const { height, width } = evt.path[0];
     this.originalWidth = width;
     this.originalHeight = height;
@@ -445,3 +450,5 @@ export default class HTMLCanvasCropElement implements IHTMLCanvasCropElement {
     return canvas2.toDataURL("image/jpeg");
   }
 }
+
+export default RefManager;

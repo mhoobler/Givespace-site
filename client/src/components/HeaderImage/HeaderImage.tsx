@@ -6,13 +6,10 @@ import React, {
   useEffect,
 } from "react";
 
-import ToggleEdit from "../ToggleEdit/ToggleEdit";
-import Modal from "../Modal/Modal";
+import { ImageCrop, Modal, ToggleEdit } from "..";
 import { acceptedImageFiles } from "../../utils/references";
 
-import HTMLCanvasCropElement from "../ImageCrop/canvasUtils";
 import "./HeaderImage.less";
-import { ImageCrop } from "..";
 
 type Props = {
   isEditing: boolean;
@@ -31,8 +28,8 @@ const HeaderImage: React.FC<Props> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const cropRef = createRef<HTMLCanvasCropElement>();
-  (cropRef as any).current = new HTMLCanvasCropElement({
+  const cropRef = createRef<ImageCrop.RefManager>();
+  (cropRef as any).current = new ImageCrop.RefManager({
     aspect: 6,
     bound_h: 0.6,
     bound_w: 0.8,
@@ -41,9 +38,8 @@ const HeaderImage: React.FC<Props> = ({
 
   useEffect(() => {
     return () => {
-      if (cropRef.current && cropRef.current.frame) {
-        cropRef.current!.clear();
-        (cropRef as any).current = null;
+      if (cropRef.current) {
+        cropRef.current.clear();
       }
     };
   }, [handleSubmit, isEditing, showModal]);
@@ -58,12 +54,15 @@ const HeaderImage: React.FC<Props> = ({
     if (!evt.target.files) {
       throw new Error("No files property on event target");
     }
+    if (!cropRef.current) {
+      throw new Error("No cropRef");
+    }
 
     const file = evt.target.files[0];
     if (!acceptedImageFiles.includes(file.type)) {
       throw new Error("Invalid file type");
     }
-    cropRef.current!.loadFile(file);
+    cropRef.current.loadFile(file);
   };
 
   const handleClickSubmit = () => {

@@ -1,11 +1,11 @@
 import React from "react";
-import HTMLCanvasCropElement from "./canvasUtils";
+import RefManager from "./RefManager";
 
-type Props2 = React.PropsWithChildren<{
+type Props = React.PropsWithChildren<{
   testProp: string;
 }>;
 
-const ImageCrop = React.forwardRef<HTMLCanvasCropElement, Props2>(
+const ImageCrop = React.forwardRef<ImageCrop.RefManager, Props>(
   (_props, ref) => {
     const handleRefs = (parent: HTMLDivElement | null) => {
       if (parent) {
@@ -16,7 +16,6 @@ const ImageCrop = React.forwardRef<HTMLCanvasCropElement, Props2>(
           (ref as any).current.canvas = canvas;
           (ref as any).current.range = range;
         }
-        console.log(ref);
       }
     };
 
@@ -29,4 +28,4 @@ const ImageCrop = React.forwardRef<HTMLCanvasCropElement, Props2>(
   },
 );
 
-export default ImageCrop;
+export default Object.assign(ImageCrop, { RefManager });
