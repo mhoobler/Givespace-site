@@ -34,7 +34,7 @@ export const scrapeListingByName = async (
         item_url: itemURL,
         name: itemName,
         image_url: img,
-        price,
+        price: price || null,
         description: null,
       };
       break;

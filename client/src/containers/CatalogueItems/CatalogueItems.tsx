@@ -28,8 +28,7 @@ const CatalogueItems: React.FC<Props> = ({
   isEditing,
   handleSelectListing,
 }) => {
-  const { createListing, editListing, editListingFile, deleteListing } =
-    useListingApolloHooks();
+  const { createListing, deleteListing } = useListingApolloHooks();
   const { createLabel, deleteLabel, reorderLabel } = useLabelApolloHooks({
     catalogue_id: catalogue.id,
   });

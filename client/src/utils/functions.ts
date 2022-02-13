@@ -64,7 +64,7 @@ export const handleDeletion = (
     const deleteTimeout = setTimeout(() => {
       deletionMutation();
       setRemoveMFD({ id: cacheId, isUndo: false });
-    }, 1000);
+    }, 5000);
 
     let fragment: DocumentNode;
     let fragmentName: string;

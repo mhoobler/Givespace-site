@@ -17,9 +17,13 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
   const { addLink, removeLink } = useListingApolloHooks();
 
   const handleSubmit = () => {
-    if (isUrl(linkInputRef.current!.value)) {
+    if (!linkInputRef.current) {
+      console.log("no input");
+      return;
+    }
+    if (isUrl(linkInputRef.current.value)) {
       setIsValid(true);
-      addLink(listing.id, linkInputRef.current!.value);
+      addLink(listing.id, linkInputRef.current.value);
       linkInputRef.current!.value = "";
     } else {
       setIsValid(false);

@@ -1,7 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import {
   handleDeletion,
-  maxOrdering,
   updateCatalogueCache,
   apolloHookErrorHandler,
 } from "../../utils/functions";

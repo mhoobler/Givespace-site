@@ -16,7 +16,7 @@ import {
   updateCatalogueCache,
   apolloHookErrorHandler,
 } from "../../utils/functions";
-import client, { cache } from "../clientConfig";
+import { cache } from "../clientConfig";
 import {
   dummyLink,
   dummyListing,
@@ -34,21 +34,12 @@ const ListingApolloHooks: ListingHook.FC = () => {
   apolloHookErrorHandler("createListingError", createListingError);
 
   const createListing = (catalogue_id: string) => (name: string) => {
-    console.log("handleAddListing", catalogue_id);
     // TODO: when item is fetched alladditional listings get removed
     cache.modify({
       id: `Catalogue:${catalogue_id}`,
       fields: {
         listings(existing) {
-          console.log("existing", existing);
           if (existing) {
-            console.log("newListing", [
-              ...existing,
-              {
-                ...dummyListing(catalogue_id),
-                ordering: maxOrdering(existing) + 1,
-              },
-            ]);
             return [
               ...existing,
               {
@@ -57,7 +48,6 @@ const ListingApolloHooks: ListingHook.FC = () => {
               },
             ];
           }
-          console.log("post existing", existing);
           return [
             {
               ...dummyListing(catalogue_id),
@@ -142,14 +132,14 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const [addListingLabelMutation, { error: addListingLabelError }] =
     useMutation(ADD_LISTING_LABEL);
-  apolloHookErrorHandler("addListingLabelError", deleteListingError);
+  apolloHookErrorHandler("addListingLabelError", addListingLabelError);
   const addListingLabel = (listing_id: string, label: Label) => {
     const dummyListingLabelToUse = dummyListingLabel(label);
     cache.modify({
       id: `Listing:${listing_id}`,
       fields: {
         labels(existing) {
-          if (!existing) [dummyListingLabelToUse];
+          if (!existing) return [dummyListingLabelToUse];
           return [...existing, dummyListingLabelToUse];
         },
       },
@@ -165,7 +155,11 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const [removeListingLabelMutation, { error: removeListingLabelError }] =
     useMutation(REMOVE_LISTING_LABEL);
-  apolloHookErrorHandler("removeListingLabelError", deleteListingError, true);
+  apolloHookErrorHandler(
+    "removeListingLabelError",
+    removeListingLabelError,
+    true
+  );
   const removeListingLabel = (id: string) => {
     handleDeletion(id, "ListingLabel", () =>
       removeListingLabelMutation({
@@ -184,7 +178,8 @@ const ListingApolloHooks: ListingHook.FC = () => {
       id: `Listing:${listing_id}`,
       fields: {
         links(existing) {
-          if (!existing) [dummyLinkToUse];
+          console.log("existing", existing);
+          if (!existing) return [dummyLinkToUse];
           return [...existing, dummyLinkToUse];
         },
       },

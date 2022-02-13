@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import Modal from "../Modal/Modal";
 import useListingApolloHooks from "../../graphql/hooks/listing";
 import { isUrl } from "../../utils/functions";
@@ -22,7 +22,6 @@ const EditLinkModal: React.FC<Props> = ({ link, handleClose }) => {
       console.warn("Key error");
       return;
     }
-    console.log("submitting", text, key, link.id);
     editLink(link.id, text, key);
   };
 
