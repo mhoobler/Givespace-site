@@ -38,8 +38,8 @@ export default class HTMLCanvasCropElement implements IHTMLCanvasCropElement {
     this.image.onload = (evt) => this.loadImage.call(this, evt);
     this.inX = 0;
     this.inY = 0;
-    this.sx = 200;
-    this.sy = 200;
+    this.sx = 0;
+    this.sy = 0;
     this.frame = null;
     this.bound_h = window.innerHeight * bound_h;
     this.bound_w = window.innerWidth * bound_w;
@@ -145,8 +145,25 @@ export default class HTMLCanvasCropElement implements IHTMLCanvasCropElement {
 
   set zoom(n: number) {
     this.ZOOM = n + 1;
-    this.sx = 200 + (this.originalWidth - this.originalWidth / this.ZOOM) / 2;
-    this.sy = 200 + (this.originalHeight - this.originalHeight / this.ZOOM) / 2;
+    // move this  stuff somewhere else
+    let [px, py] = [0, 0];
+    if (this.shape === "arc") {
+      px = 0;
+      py = 0;
+    }
+    if (this.shape === "rect") {
+      if (this.aspect > 1) {
+        py =
+          ((this.originalHeight - this.originalHeight / this.aspect) / 2) *
+          (1 / this.ZOOM);
+      } else {
+        px =
+          ((this.originalWidth - this.originalWidth * this.aspect) / 2) *
+          (1 / this.ZOOM);
+      }
+    }
+    this.sx = px + (this.originalWidth - this.originalWidth / this.ZOOM) / 2;
+    this.sy = py + (this.originalHeight - this.originalHeight / this.ZOOM) / 2;
     if (!this.check.top(0)) {
       this.inY = -this.sy;
     }
@@ -314,6 +331,7 @@ export default class HTMLCanvasCropElement implements IHTMLCanvasCropElement {
     }
     this.canvas.height = height * this.boundingScale;
     this.canvas.width = width * this.boundingScale;
+    this.zoom = 0;
 
     this.render();
   }
