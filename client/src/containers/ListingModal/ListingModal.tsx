@@ -3,6 +3,7 @@ import React from "react";
 import { FileInput, Label, Modal, TextInput } from "../../components";
 import Checkbox from "../../components/fields/Checkbox/Checkbox";
 import TextareaInput from "../../components/fields/TextreaInput/TextareaInput";
+import ListingLabelContainer from "../../components/Labels/ListingLabelContainer";
 import useListingApolloHooks from "../../graphql/hooks/listing";
 
 type Props = {
@@ -18,51 +19,18 @@ const ListingModal: React.FC<Props> = ({
   isEditing,
   handleClose,
 }) => {
-  const {
-    editListing,
-    editBoolean,
-    editListingFile,
-    addListingLabel,
-    removeListingLabel,
-  } = useListingApolloHooks();
+  const { editListing, editBoolean, editListingFile } = useListingApolloHooks();
 
   if (!listing) return null;
   // console.log("ListingModal", listing);
 
-  const labelsToShow: Label[] | null = isEditing
-    ? labels
-    : listing.labels && listing.labels.map((l) => l.label);
-  const handleListingClick = (label: Label) => {
-    // if labelId is in listing.labels.id, remove it
-    const listingLabelWithId: ListingLabel | undefined = listing.labels?.find(
-      (l: ListingLabel) => l.label.id === label.id
-    );
-    if (listingLabelWithId) {
-      removeListingLabel(listingLabelWithId.id);
-    } else {
-      addListingLabel(listing.id, label);
-    }
-  };
-
   return (
     <Modal show={listing !== null} close={handleClose}>
-      <div>
-        {labelsToShow?.map((label) => (
-          <Label
-            key={label.id}
-            label={label}
-            faint={
-              !Boolean(
-                listing.labels?.find(
-                  (l: ListingLabel) => l.label.id === label.id
-                )
-              )
-            }
-            onClick={() => handleListingClick(label)}
-            isEditing={isEditing}
-          />
-        ))}
-      </div>
+      <ListingLabelContainer
+        labels={labels}
+        listing={listing}
+        isEditing={isEditing}
+      />
       <FileInput
         isEditing={isEditing}
         handleSubmit={editListingFile(listing.id)}
