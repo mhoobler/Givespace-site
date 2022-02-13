@@ -1,23 +1,13 @@
-class HTMLCanavasCropElement2 extends HTMLCanvasElement {
-  ctx: CanvasRenderingContext2D | null;
-  canvas: CanvasElement | null;
-  range: HTMLInputElement | null;
+declare interface IHTMLCanvasCropElement {
+  // Getters setters
+  range: HTMLInputElement;
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+  boundingScale: number;
+  frame: DOMHighResTimeStamp;
 
-  loadImage: (
-    canvas: HTMLCanavasCropElement,
-    img: HTMLImageElement,
-  ) => HTMLCanavasCropElement;
+  render: () => void;
+  loadFile: (file: File) => void;
 
-  getCroppedImage: (
-    cb: BlobCallback,
-    fileType: string,
-    quality: number,
-  ) => void;
-
-  getDataUrl: () => string;
+  //loadImage: (evt: any) => void;
 }
-
-declare type ImageCropRef = {
-  canvas: HTMLCanavasCropElement | null;
-  range: HTMLInputElement | null;
-};

@@ -21,9 +21,9 @@ const ImageCrop = React.forwardRef<HTMLCanvasCropElement, Props2>(
     };
 
     return (
-      <div ref={(elm) => handleRefs(elm)}>
+      <div className="d-flex flex-column" ref={(elm) => handleRefs(elm)}>
         <canvas></canvas>
-        <input type="range" defaultValue={0} max={50} step={0.1} />
+        <input type="range" defaultValue={0} max={1} step={0.005} />
       </div>
     );
   },
