@@ -15,7 +15,7 @@ import "./CatalogueItems.less";
 
 type Props = {
   isEditing: boolean;
-  catalogue_id: string;
+  catalogue: CatalogueType;
   labels: Label[];
   listings: Listing[];
   handleSelectListing: (listingId: string) => void;
@@ -23,7 +23,7 @@ type Props = {
 
 const CatalogueItems: React.FC<Props> = ({
   labels,
-  catalogue_id,
+  catalogue,
   listings,
   isEditing,
   handleSelectListing,
@@ -31,14 +31,14 @@ const CatalogueItems: React.FC<Props> = ({
   const { createListing, editListing, editListingFile, deleteListing } =
     useListingApolloHooks();
   const { createLabel, deleteLabel, reorderLabel } = useLabelApolloHooks({
-    catalogue_id,
+    catalogue_id: catalogue.id,
   });
 
   return (
     <div className="row catalogue-items-container">
       {/* add item, sort */}
       <div className="row">
-        <AddListing handleSubmit={createListing(catalogue_id)} />
+        <AddListing handleSubmit={createListing(catalogue.id)} />
         <div className="col-md-6 col-sm-12">Sort</div>
       </div>
       {/* labels */}
@@ -52,7 +52,7 @@ const CatalogueItems: React.FC<Props> = ({
                   className={`label ${isEditing ? "can-delete" : ""}`}
                   label={e}
                   isEditing={isEditing}
-                  deleteLabel={deleteLabel}
+                  deleteLabel={(id) => deleteLabel(id, catalogue)}
                 />
               </Draggable>
             ))}

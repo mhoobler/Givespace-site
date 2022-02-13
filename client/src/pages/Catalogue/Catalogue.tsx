@@ -93,7 +93,7 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       />
       <UndoNotification />
       <CatalogueItems
-        catalogue_id={catalogue.id}
+        catalogue={catalogue}
         isEditing={isEditing}
         labels={sortedLabels}
         listings={sortedListings}

@@ -211,7 +211,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
   };
 
   const [editLinkMutation, { error: editLinkError }] = useMutation(EDIT_LINK);
-  apolloHookErrorHandler("removeLinkError", removeLinkError);
+  apolloHookErrorHandler("editLinkError", editLinkError);
   const editLink = (id: string, value: string, key: string) => {
     updateCatalogueCache(`Link:${id}`, key, value);
     editLinkMutation({

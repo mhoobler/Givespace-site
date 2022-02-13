@@ -83,3 +83,17 @@ interface ListingLabel {
   listing_id: string;
   label: Label;
 }
+
+type MarkedForDeletion = {
+  id: string;
+  text: string;
+  timeout: any;
+  data: any;
+  fragment: DocumentNode;
+  fragmentName: string;
+};
+
+type RemoveMFD = {
+  id: string;
+  isUndo: boolean;
+} | null;
