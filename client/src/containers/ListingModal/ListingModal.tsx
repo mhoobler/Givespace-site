@@ -4,6 +4,7 @@ import { FileInput, Label, Modal, TextInput } from "../../components";
 import Checkbox from "../../components/fields/Checkbox/Checkbox";
 import TextareaInput from "../../components/fields/TextreaInput/TextareaInput";
 import ListingLabelContainer from "../../components/Labels/ListingLabelContainer";
+import LinksContainer from "../../components/Links/LinksContainer";
 import useListingApolloHooks from "../../graphql/hooks/listing";
 
 type Props = {
@@ -26,6 +27,7 @@ const ListingModal: React.FC<Props> = ({
 
   return (
     <Modal show={listing !== null} close={handleClose}>
+      <LinksContainer listing={listing} isEditing={isEditing} />
       <ListingLabelContainer
         labels={labels}
         listing={listing}

@@ -5,6 +5,7 @@ import {
   CATALOGUE_LIST_ITEM_FIELDS,
   LISTING_FIELDS,
   LISTING_LABEL_FIELDS,
+  LINK_FIELDS,
 } from "./fragments";
 
 export const GET_JWT = gql`
@@ -162,6 +163,23 @@ export const REMOVE_LISTING_LABEL = gql`
   mutation DeleteListingLabel($id: ID!) {
     deleteListingLabel(id: $id) {
       ...AllListingLabelFields
+    }
+  }
+`;
+
+export const ADD_LINK = gql`
+  ${LINK_FIELDS}
+  mutation CreateLink($listing_id: ID!, $url: String!) {
+    createLink(listing_id: $listing_id, url: $url) {
+      ...AllLinkFields
+    }
+  }
+`;
+export const REMOVE_LINK = gql`
+  ${LINK_FIELDS}
+  mutation DeleteLink($id: ID!) {
+    deleteLink(id: $id) {
+      ...AllLinkFields
     }
   }
 `;
