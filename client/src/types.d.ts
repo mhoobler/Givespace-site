@@ -31,8 +31,9 @@ interface CatalogueType extends CatalogueStub {
   profile_picture_url: string | null;
   event_date: string | null;
   location: string | null;
-  labels: Label[];
-  listings: Listing[];
+  // TODO: labels and listings can be null
+  labels: Label[] | null;
+  listings: Listing[] | null;
 }
 
 interface Label {
@@ -56,6 +57,43 @@ interface Listing {
   ordering: number;
   show_price: Boolean;
   price: number | null;
+  links: Link[] | null;
+  labels: ListingLabel[] | null;
   created: Date;
   updated: Date;
 }
+
+interface Link {
+  id: string;
+  listing_id: string;
+  url: string;
+  title: string | null;
+  created: Date;
+  updated: Date;
+}
+
+interface BasicListingLabel {
+  id: string;
+  listing_id: string;
+  label_id: string;
+}
+
+interface ListingLabel {
+  id: string;
+  listing_id: string;
+  label: Label;
+}
+
+type MarkedForDeletion = {
+  id: string;
+  text: string;
+  timeout: any;
+  data: any;
+  fragment: DocumentNode;
+  fragmentName: string;
+};
+
+type RemoveMFD = {
+  id: string;
+  isUndo: boolean;
+} | null;

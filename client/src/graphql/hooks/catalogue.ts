@@ -9,10 +9,7 @@ import {
   UPDATE_CATALOGUE_FILES,
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
-import {
-  apolloHookErrorHandler,
-  handleCacheDeletion,
-} from "../../utils/functions";
+import { apolloHookErrorHandler } from "../../utils/functions";
 
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();
@@ -22,7 +19,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     INCREMENT_CATALOGUE_VIEWS,
     {
       variables: { id },
-    },
+    }
   );
   apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
 
@@ -34,30 +31,59 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     // being written over
     onSubscriptionData: ({ client, subscriptionData }) => {
       const { data } = subscriptionData;
-      console.log(data);
       if (data && data.liveCatalogue) {
         const catalogue = data.liveCatalogue;
+
+        // catalogue cleaning
+        // if fieldEditing block the relevant update
         if (fieldEditing) delete catalogue[fieldEditing];
+        // prevents labels from being shown if MFD
+        const labelsMFD: Label[] | null = catalogue.labels
+          ? catalogue.labels.filter((label: Label) =>
+              markedForDeletion.find((mfd) => mfd.id.split(":")[1] === label.id)
+            )
+          : null;
+        console.log("labelsMFD", labelsMFD);
+        if (labelsMFD) {
+          const labelsMFDIds: string[] = labelsMFD.map(
+            (label: Label) => label.id
+          );
+          let newLabels: Label[] | null = catalogue.labels
+            ? catalogue.labels.filter(
+                (label: Label) => !labelsMFDIds.includes(label.id)
+              )
+            : [];
+          if (newLabels && newLabels.length === 0) newLabels = null;
+          catalogue.labels = newLabels;
+        }
+        // prevents listings from being shown if MFD
+        const listingsMFD: Listing[] | null = catalogue.listings
+          ? catalogue.listings.filter((listing: Listing) =>
+              markedForDeletion.find(
+                (mfd) => mfd.id.split(":")[1] === listing.id
+              )
+            )
+          : null;
+        if (listingsMFD) {
+          const listingsMFDIds: string[] = listingsMFD.map(
+            (listing: Listing) => listing.id
+          );
+          let newListings: Listing[] | null = catalogue.listings
+            ? catalogue.listings.filter(
+                (listing: Listing) => !listingsMFDIds.includes(listing.id)
+              )
+            : [];
+          if (newListings && newListings.length === 0) newListings = null;
+          catalogue.listings = newListings;
+        }
+
+        console.log("catalogueSubscription", catalogue);
+
         client.writeFragment({
           id: `Catalogue:${catalogue.id}`,
           fragment: ALL_CATALOGUE_FIELDS,
           fragmentName: "AllCatalogueFields",
-          variables: { id },
           data: catalogue,
-        });
-        // prevents labels from being shown if MFD
-        const labelsMFD = catalogue.labels.filter((label: Label) =>
-          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === label.id),
-        );
-        labelsMFD.forEach((label: Label) => {
-          handleCacheDeletion(`Label:${label.id}`);
-        });
-        // prevents labels from being shown if MFD
-        const listingsMFD = catalogue.listings.filter((listing: Listing) =>
-          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === listing.id),
-        );
-        listingsMFD.forEach((listing: Listing) => {
-          handleCacheDeletion(`Listing:${listing.id}`);
         });
       }
     },

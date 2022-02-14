@@ -1,7 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import {
   handleDeletion,
-  maxOrdering,
   updateCatalogueCache,
   apolloHookErrorHandler,
 } from "../../utils/functions";
@@ -23,10 +22,8 @@ const useLabelApolloHooks: LabelHook.FC = ({ catalogue_id }) => {
     cache.modify({
       id: `Catalogue:${catalogue_id}`,
       fields: {
-        labels(existing) {
-          if (existing && !existing[0]) {
-            return [{ ...dummyLabel, name, ordering: existing.length }];
-          }
+        labels(existing): Label[] {
+          if (!existing) return [{ ...dummyLabel, name }];
           return [
             ...existing,
             { ...dummyLabel, name, ordering: existing.length },
@@ -45,7 +42,24 @@ const useLabelApolloHooks: LabelHook.FC = ({ catalogue_id }) => {
   const [deleteLabelMutation, { error: deleteLabelError }] =
     useMutation(DELETE_LABEL);
   apolloHookErrorHandler("deleteLabelError", deleteLabelError, true);
-  const deleteLabel = (id: string) => {
+  const deleteLabel = (id: string, catalogue: CatalogueType) => {
+    // TODO: make sure the cache gets repopulated when undo (maybe with an "on undo" callback)
+    // get all of the listinglabels that have the label.id the same as id
+    const relatedListingLabels: string[] = [];
+    catalogue.listings?.forEach((li: Listing) => {
+      if (li.labels) {
+        li.labels.forEach((la: ListingLabel) => {
+          if (la.label.id === id) {
+            relatedListingLabels.push(la.id);
+          }
+        });
+      }
+    });
+    // delete all related listinglabels
+    for (let listingLabelId of relatedListingLabels) {
+      handleDeletion(listingLabelId, "ListingLabel", () => {});
+    }
+
     handleDeletion(
       id,
       "Label",
@@ -57,7 +71,7 @@ const useLabelApolloHooks: LabelHook.FC = ({ catalogue_id }) => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion,
+      setMarkedForDeletion
     );
   };
 

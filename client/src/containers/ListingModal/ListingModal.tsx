@@ -1,24 +1,38 @@
 import React from "react";
 
-import { FileInput, Modal, TextInput } from "../../components";
+import { FileInput, Label, Modal, TextInput } from "../../components";
 import Checkbox from "../../components/fields/Checkbox/Checkbox";
 import TextareaInput from "../../components/fields/TextreaInput/TextareaInput";
+import ListingLabelContainer from "../../components/Labels/ListingLabelContainer";
+import LinksContainer from "../../components/Links/LinksContainer";
 import useListingApolloHooks from "../../graphql/hooks/listing";
 
 type Props = {
   listing: Listing | null;
+  labels: Label[] | null;
   isEditing: boolean;
   handleClose: () => void;
 };
 
-const ListingModal: React.FC<Props> = ({ listing, isEditing, handleClose }) => {
+const ListingModal: React.FC<Props> = ({
+  listing,
+  labels,
+  isEditing,
+  handleClose,
+}) => {
   const { editListing, editBoolean, editListingFile } = useListingApolloHooks();
 
   if (!listing) return null;
-  console.log("ListingModal", listing);
+  // console.log("ListingModal", listing);
 
   return (
     <Modal show={listing !== null} close={handleClose}>
+      <LinksContainer listing={listing} isEditing={isEditing} />
+      <ListingLabelContainer
+        labels={labels}
+        listing={listing}
+        isEditing={isEditing}
+      />
       <FileInput
         isEditing={isEditing}
         handleSubmit={editListingFile(listing.id)}

@@ -91,12 +91,14 @@ export const notExist = (whatText: string, obj: any): void => {
   }
 };
 
-export const maxOrdering = (list: any[]): number => {
-  if (!list[0]) return 0;
-  return list.reduce(
-    // @ts-ignore
-    (max, listing) => Math.max(max, listing.ordering),
-    list[0].ordering
+export const maxOrdering = (list: any[] | null): number => {
+  if (!list || (list && list.length === 0)) return 0;
+  return (
+    list.reduce(
+      // @ts-ignore
+      (max, listing) => Math.max(max, listing.ordering),
+      list[0].ordering
+    ) + 1
   );
 };
 
@@ -134,4 +136,10 @@ export const listingIdToCatalogueId = async (
   );
   notExist("Listing", listingRes.rows[0]);
   return listingRes.rows[0].catalogue_id;
+};
+
+export const isUrl = (text: string): Boolean => {
+  if (text.slice(0, 8) === "https://" || text.slice(0, 7) === "http://")
+    return true;
+  return false;
 };

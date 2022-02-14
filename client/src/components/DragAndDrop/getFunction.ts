@@ -13,10 +13,8 @@ const px = (int: number): string => int + "px";
 export const getMouseDown =
   (id: string, refs: refsMap, reorderLabel: any) => (downEvt: MouseEvent) => {
     const refsArr: ref[] = Object.values(refs).sort(
-      (a, b) => a.data.ordering - b.data.ordering,
+      (a, b) => a.data.ordering - b.data.ordering
     );
-    console.log(downEvt);
-    console.log(refsArr.map((e) => e.data.ordering));
 
     const currentTarget = refs[id].elm;
     const targetBoundingBox = currentTarget.getBoundingClientRect();

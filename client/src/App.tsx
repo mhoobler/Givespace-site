@@ -26,6 +26,7 @@ const App = () => {
         cache.writeFragment({
           id: currentMFD.id,
           fragment: currentMFD.fragment,
+          fragmentName: currentMFD.fragmentName,
           data: currentMFD.data,
         });
       } else {

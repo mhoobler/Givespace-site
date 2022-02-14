@@ -24,27 +24,25 @@ const ListingApolloHooks: ListingHook.FC = () => {
     useMutation(CREATE_LISTING);
   apolloHookErrorHandler("createListingError", createListingError);
 
-  const createListing = (name: string, catalogue_id: string) => {
-    console.log("handleAddListing", name);
+  const createListing = (catalogue_id: string) => (name: string) => {
+    // TODO: when item is fetched alladditional listings get removed
     cache.modify({
       id: `Catalogue:${catalogue_id}`,
       fields: {
         listings(existing) {
-          if (existing && !existing[0]) {
+          if (existing) {
             return [
+              ...existing,
               {
-                ...dummyListing,
-                name: "doll",
-                ordering: 0,
+                ...dummyListing(catalogue_id),
+                ordering: maxOrdering(existing) + 1,
               },
             ];
           }
           return [
-            ...existing,
             {
-              ...dummyListing,
-              name: "doll",
-              ordering: maxOrdering(existing) + 1,
+              ...dummyListing(catalogue_id),
+              ordering: 0,
             },
           ];
         },
@@ -53,7 +51,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
     createListingMutation({
       variables: {
         name,
-        catalogue_id: catalogue_id,
+        catalogue_id,
       },
     });
   };
@@ -119,7 +117,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion,
+      setMarkedForDeletion
     );
   };
 

@@ -5,7 +5,7 @@ import "./ListingCard.less";
 type Props = {
   isEditing: boolean;
   listing: Listing;
-  selectListing: (listing: Listing) => void;
+  selectListing: (listingId: string) => void;
   deleteListing: (id: string) => void;
 };
 
@@ -20,7 +20,7 @@ const ListingCard: React.FC<Props> = ({
   };
 
   const handleSelect = () => {
-    selectListing(listing);
+    selectListing(listing.id);
   };
 
   return (

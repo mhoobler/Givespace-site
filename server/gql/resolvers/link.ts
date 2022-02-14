@@ -24,7 +24,13 @@ const linkResolvers = {
       notExist("Listing", getListing.rows[0]);
       // get only the domain name
 
-      const title = url.split("/")[2].split(".")[1];
+      // cleaning up the url
+      const domain = url.split("/")[2];
+      let title: string[] | string = domain.split(".");
+      if (title[0] === "www") title.shift();
+      title.pop();
+      title = title.join(".");
+
       const newLinkRes: QueryResult<Link> = await db.query(
         "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
         [listing_id, url, title]
