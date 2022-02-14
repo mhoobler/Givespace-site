@@ -215,42 +215,42 @@ class RefManager {
     this.canvas.width = this.originalWidth;
     this.canvas.height = this.originalHeight;
     const { height, width } = this.canvas;
-    const { aspect } = this;
+    const { aspect, inX, inY, sx, sy, zoom } = this;
     this.ctx.drawImage(this.image, 0, 0, width, height);
 
-    const [cx, cy] = [width / 2, height / 2];
-
     if (this.aspect > 1) {
-      const [px, py] = [width, height / aspect];
-      return this.ctx.getImageData(this.inX, this.inY + (cy - py / 2), px, py);
+      const [px, py] = [width / zoom, height / aspect / zoom];
+      const [x1, y1] = [inX + sx, inY + sy];
+      console.log(x1, y1);
+      return this.ctx.getImageData(x1, y1, px, py);
     } else {
-      const [px, py] = [width * aspect, height];
-      return this.ctx.getImageData(cx - px / 2, 0, px, py);
+      const [px, py] = [(width * aspect) / zoom, height / zoom];
+      const [x1, y1] = [inX + sx, inY * sy];
+      return this.ctx.getImageData(x1, y1, px, py);
     }
   }
 
   drawArcOpacity() {
     const { height, width } = this.canvas;
     const [cx, cy] = [width / 2, height / 2];
+    const r = this.shortSide / 2 - 10;
     this.ctx.beginPath();
-    this.ctx.arc(cx, cy, this.shortSide / 2 - 10, 0, 2 * Math.PI);
+    this.ctx.arc(cx, cy, r, 0, 2 * Math.PI);
     this.ctx.rect(width, 0, -width, height);
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
     this.ctx.fill();
   }
 
   getArcImageData() {
-    const { originalWidth, originalHeight, aspect } = this;
+    this.canvas.width = this.originalWidth;
+    this.canvas.height = this.originalHeight;
+    const { height, width } = this.canvas;
+    const { zoom, shortSide, inX, inY, sx, sy } = this;
+    this.ctx.drawImage(this.image, 0, 0, width, height);
 
-    const [cx, cy] = [originalWidth / 2, originalHeight / 2];
+    const px = shortSide / zoom;
 
-    if (this.aspect > 1) {
-      const [px, py] = [originalWidth, originalHeight / aspect];
-      return this.ctx.getImageData(0, cy - py / 2, px, py);
-    } else {
-      const [px, py] = [originalWidth * aspect, originalHeight];
-      return this.ctx.getImageData(cx - px / 2, 0, px, py);
-    }
+    return this.ctx.getImageData(inX + sx, inY + sy, px, px);
   }
 
   render() {

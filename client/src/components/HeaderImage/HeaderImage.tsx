@@ -28,6 +28,7 @@ const HeaderImage: React.FC<Props> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  // ImageCrop: use `createRef` and assign `new ImageCrop.RefManager`
   const cropRef = createRef<ImageCrop.RefManager>();
   (cropRef as any).current = new ImageCrop.RefManager({
     aspect: 6,
@@ -36,6 +37,7 @@ const HeaderImage: React.FC<Props> = ({
     shape: "rect",
   });
 
+  // ImageCrop: this `useEffect` clears the canvas and the render loop
   useEffect(() => {
     return () => {
       if (cropRef.current) {
@@ -62,44 +64,42 @@ const HeaderImage: React.FC<Props> = ({
     if (!acceptedImageFiles.includes(file.type)) {
       throw new Error("Invalid file type");
     }
+    // ImageCrop: load a file
     cropRef.current.loadFile(file);
   };
 
   const handleClickSubmit = () => {
-    if (!fileRef.current) {
+    if (!fileRef.current)
       throw new Error("Could not find fileRef for HeaderImage");
-    }
-    if (!cropRef.current) {
+    if (!cropRef.current)
       throw new Error("Could not find cropRef for HeaderImage");
-    }
 
     const { files } = fileRef.current;
-    if (!files || !files[0]) {
-      throw new Error("No file selected");
-    }
+    if (!files || !files[0]) throw new Error("No file selected");
 
-    // *** Good for testing ***
-    const display = document.getElementById(
-      "header-image-display",
-    ) as HTMLImageElement;
-    const input = document.getElementById(
-      "header-image-input",
-    ) as HTMLImageElement;
-    display.src = cropRef.current.getDataURL();
-    input.src = cropRef.current.getDataURL();
+    // ImageCrop: Good for testing
+    //const display = document.getElementById(
+    //  "header-image-display",
+    //) as HTMLImageElement;
+    //const input = document.getElementById(
+    //  "header-image-input",
+    //) as HTMLImageElement;
+    //display.src = cropRef.current.getDataURL();
+    //input.src = cropRef.current.getDataURL();
 
-    //  (canvasRef.current as any).getCroppedImage(
-    //    // BlobCallback
-    //    (blob: BlobPart | null) => {
-    //      // file name
-    //      const filename = files[0].name.split(".")[0] + Date.now();
-    //      if (blob) {
-    //        handleSubmit(new File([blob], filename), keyProp);
-    //      }
-    //    },
-    //    "image/jpg", // file type
-    //    0.9, // image quality
-    //  );
+    // ImageCrop: Extract image data and package into file
+    cropRef.current.getImageBlob(
+      // BlobCallback
+      (blob: BlobPart | null) => {
+        // file name
+        const filename = files[0].name.split(".")[0] + Date.now();
+        if (blob) {
+          handleSubmit(new File([blob], filename), keyProp);
+        }
+      },
+      "image/jpg", // file type
+      0.9, // image quality
+    );
   };
 
   return (
@@ -126,8 +126,8 @@ const HeaderImage: React.FC<Props> = ({
       <Modal show={showModal} close={handleModal}>
         <Modal.Header close={handleModal}>Edit Header Image</Modal.Header>
         <Modal.Body>
-          {/* TODO: Should probably replace with a React Component */}
-          <ImageCrop ref={cropRef} testProp="test" />
+          {/* ImageCrop: pass ref to component */}
+          <ImageCrop ref={cropRef} />
           <input
             ref={fileRef}
             onChange={handleFileChange}

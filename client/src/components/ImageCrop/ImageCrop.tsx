@@ -1,9 +1,7 @@
 import React from "react";
 import RefManager from "./RefManager";
 
-type Props = React.PropsWithChildren<{
-  testProp: string;
-}>;
+type Props = {};
 
 const ImageCrop = React.forwardRef<ImageCrop.RefManager, Props>(
   (_props, ref) => {
