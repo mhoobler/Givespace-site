@@ -1,10 +1,13 @@
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, {
+  useState,
+  useRef,
+  ChangeEvent,
+  createRef,
+  useEffect,
+} from "react";
 
-import ToggleEdit from "../ToggleEdit/ToggleEdit";
-import Modal from "../Modal/Modal";
+import { ImageCrop, Modal, ToggleEdit } from "..";
 import { acceptedImageFiles } from "../../utils/references";
-
-import canvasHelper from "./canvasHelper";
 
 import "./HeaderImage.less";
 
@@ -24,54 +27,68 @@ const HeaderImage: React.FC<Props> = ({
   className,
 }) => {
   const [showModal, setShowModal] = useState(false);
-
   const fileRef = useRef<HTMLInputElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // ImageCrop: use `createRef` and assign `new ImageCrop.RefManager`
+  const cropRef = createRef<ImageCrop.RefManager>();
+  (cropRef as any).current = new ImageCrop.RefManager({
+    aspect: 6,
+    bound_h: 0.6,
+    bound_w: 0.8,
+    shape: "rect",
+  });
 
-  const handleModal = () => setShowModal((prev) => !prev);
+  // ImageCrop: this `useEffect` clears the canvas and the render loop
+  useEffect(() => {
+    return () => {
+      if (cropRef.current) {
+        cropRef.current.clear();
+      }
+    };
+  }, [handleSubmit, isEditing, showModal]);
+
+  const handleModal = () =>
+    setShowModal((prev) => {
+      (fileRef as any).current.value = "";
+      return !prev;
+    });
 
   const handleFileChange = (evt: ChangeEvent<HTMLInputElement>) => {
     if (!evt.target.files) {
       throw new Error("No files property on event target");
     }
-    if (!canvasRef.current) {
-      throw new Error("Could not find cavasRef for HeaderImage");
+    if (!cropRef.current) {
+      throw new Error("No cropRef");
     }
 
     const file = evt.target.files[0];
     if (!acceptedImageFiles.includes(file.type)) {
       throw new Error("Invalid file type");
     }
-
-    if (file) {
-      const img = new Image();
-      img.onload = canvasHelper(canvasRef.current, img);
-      img.src = URL.createObjectURL(file);
-    }
+    // ImageCrop: load a file
+    cropRef.current.loadFile(file);
   };
 
   const handleClickSubmit = () => {
-    if (!fileRef.current) {
+    if (!fileRef.current)
       throw new Error("Could not find fileRef for HeaderImage");
-    }
-    if (!canvasRef.current) {
-      throw new Error("Could not find cavasRef for HeaderImage");
-    }
+    if (!cropRef.current)
+      throw new Error("Could not find cropRef for HeaderImage");
 
     const { files } = fileRef.current;
-    if (!files || !files[0]) {
-      throw new Error("No file selected");
-    }
+    if (!files || !files[0]) throw new Error("No file selected");
 
-    // *** Good for testing ***
-    //const c: any = canvasRef.current;
-    //const display = document.getElementById("header-image-display") as HTMLImageElement;
-    //const input = document.getElementById("header-image-input") as HTMLImageElement;
-    //display.src = c.getDataURL();
-    //input.src = c.getDataURL();
-    //console.log(display.src);
+    // ImageCrop: Good for testing
+    //const display = document.getElementById(
+    //  "header-image-display",
+    //) as HTMLImageElement;
+    //const input = document.getElementById(
+    //  "header-image-input",
+    //) as HTMLImageElement;
+    //display.src = cropRef.current.getDataURL();
+    //input.src = cropRef.current.getDataURL();
 
-    (canvasRef.current as any).getCroppedImage(
+    // ImageCrop: Extract image data and package into file
+    cropRef.current.getImageBlob(
       // BlobCallback
       (blob: BlobPart | null) => {
         // file name
@@ -109,8 +126,8 @@ const HeaderImage: React.FC<Props> = ({
       <Modal show={showModal} close={handleModal}>
         <Modal.Header close={handleModal}>Edit Header Image</Modal.Header>
         <Modal.Body>
-          {/* TODO: Should probably replace with a React Component */}
-          <canvas ref={canvasRef} width="200px" height="200px" />
+          {/* ImageCrop: pass ref to component */}
+          <ImageCrop ref={cropRef} />
           <input
             ref={fileRef}
             onChange={handleFileChange}
