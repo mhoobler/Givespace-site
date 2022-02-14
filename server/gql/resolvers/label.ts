@@ -16,10 +16,10 @@ const labelResolvers = {
       _: null,
       { catalogue_id, name }: { catalogue_id: string; name: string }
     ) => {
-      const fullCatalogue: Catalogue = (
-        await getFullCatalogues(catalogue_id)
-      )[0];
-
+      let fullCatalogue: Catalogue[] | Catalogue = await getFullCatalogues(
+        catalogue_id
+      );
+      fullCatalogue = fullCatalogue[0];
       notExist("Catalogue", fullCatalogue);
 
       const newLabelRes: QueryResult<Label> = await db.query(

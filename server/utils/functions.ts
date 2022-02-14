@@ -91,12 +91,14 @@ export const notExist = (whatText: string, obj: any): void => {
   }
 };
 
-export const maxOrdering = (list: any[]): number => {
-  if (!list[0]) return 0;
-  return list.reduce(
-    // @ts-ignore
-    (max, listing) => Math.max(max, listing.ordering),
-    list[0].ordering
+export const maxOrdering = (list: any[] | null): number => {
+  if (!list || (list && list.length === 0)) return 0;
+  return (
+    list.reduce(
+      // @ts-ignore
+      (max, listing) => Math.max(max, listing.ordering),
+      list[0].ordering
+    ) + 1
   );
 };
 

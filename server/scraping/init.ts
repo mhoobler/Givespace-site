@@ -30,7 +30,6 @@ const scrapeListing = async (text: string): Promise<ScrapedFeatures> => {
       description: null,
     };
   }
-  console.log("features", features);
   return features;
 };
 
