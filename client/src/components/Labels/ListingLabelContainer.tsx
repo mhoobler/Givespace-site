@@ -1,5 +1,5 @@
 import React from "react";
-import useListingApolloHooks from "../../graphql/hooks/listing";
+import useListingLabelApolloHooks from "../../graphql/hooks/listingLabel";
 import Label from "./Label";
 
 import "./LabelContainer.less";
@@ -15,7 +15,7 @@ const ListingLabelContainer: React.FC<Props> = ({
   listing,
   isEditing,
 }) => {
-  const { addListingLabel, removeListingLabel } = useListingApolloHooks();
+  const { addListingLabel, removeListingLabel } = useListingLabelApolloHooks();
 
   const labelsToShow: Label[] | null = isEditing
     ? labels

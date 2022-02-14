@@ -9,10 +9,7 @@ import {
   UPDATE_CATALOGUE_FILES,
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
-import {
-  apolloHookErrorHandler,
-  handleCacheDeletion,
-} from "../../utils/functions";
+import { apolloHookErrorHandler } from "../../utils/functions";
 
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();

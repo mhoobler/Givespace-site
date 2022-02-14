@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import useListingApolloHooks from "../../graphql/hooks/listing";
+import useLinkApolloHooks from "../../graphql/hooks/link";
 import { isUrl } from "../../utils/functions";
 import EditLinkModal from "./EditLinkModal";
 
@@ -14,7 +14,7 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
   const linkInputRef = useRef<HTMLInputElement>(null);
   const [linkEditingId, setLinkEditingId] = useState<string | null>(null);
   const [isValid, setIsValid] = useState(true);
-  const { addLink, removeLink } = useListingApolloHooks();
+  const { addLink, removeLink } = useLinkApolloHooks();
 
   const handleSubmit = () => {
     if (!linkInputRef.current) {

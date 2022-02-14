@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "../Modal/Modal";
-import useListingApolloHooks from "../../graphql/hooks/listing";
+import useLinkApolloHooks from "../../graphql/hooks/link";
 import { isUrl } from "../../utils/functions";
 
 import "./LinksContainer.less";
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const EditLinkModal: React.FC<Props> = ({ link, handleClose }) => {
-  const { editLink } = useListingApolloHooks();
+  const { editLink } = useLinkApolloHooks();
 
   if (!link) return null;
 
