@@ -35,14 +35,21 @@ app.get("/", async (_req, res) => {
 
 app.get("/list/:id", async (req, res) => {
   const { id } = req.params;
+  // get the query strings from the url
+  const queryStrings = req.query;
   try {
     const query = await db.query(
-      `SELECT title FROM catalogues WHERE id = $1;`,
-      [id],
+      `SELECT title FROM catalogues WHERE ${
+        queryStrings.edit ? "edit_id" : "id"
+      } = $1;`,
+      [id]
     );
-    const { title } = query.rows[0];
-
-    res.status(200).render("list", { og_title: title });
+    if (!query.rows.length) {
+      res.status(200).render("list", { og_title: "Catalogue not found" });
+    } else {
+      const { title } = query.rows[0];
+      res.status(200).render("list", { og_title: title });
+    }
   } catch (err) {
     res.status(500);
   }

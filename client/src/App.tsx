@@ -47,10 +47,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/lists" element={<CatalogueSelect />} />
           <Route path="/list/:corresponding_id" element={<Catalogue />} />
-          <Route
-            path="/list/edit/:corresponding_id"
-            element={<Catalogue is_edit_id />}
-          />
         </Routes>
       </Router>
     </div>
