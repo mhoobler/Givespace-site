@@ -1,4 +1,6 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { cleanedPath } from "../../../utils/functions";
 
 import "./ListingCard.less";
 
@@ -15,11 +17,21 @@ const ListingCard: React.FC<Props> = ({
   selectListing,
   deleteListing,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const handleDelete = () => {
     deleteListing(listing.id);
   };
 
   const handleSelect = () => {
+    let urlToNavigate: string = cleanedPath(location.pathname);
+    // listing
+    urlToNavigate += `/${listing.id}`;
+    // add location.search if it exists
+    if (location.search) {
+      urlToNavigate += location.search;
+    }
+    navigate(urlToNavigate);
     selectListing(listing.id);
   };
 

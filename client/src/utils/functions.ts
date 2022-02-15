@@ -116,3 +116,13 @@ export const isUrl = (value: string): boolean => {
     return true;
   return false;
 };
+
+export const cleanedPath = (path: string): string => {
+  let reducedUrl: string;
+  if (location.pathname.endsWith("/")) {
+    reducedUrl = location.pathname.slice(0, -1);
+  } else {
+    reducedUrl = location.pathname;
+  }
+  return reducedUrl;
+};

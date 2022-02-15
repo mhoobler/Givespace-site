@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
   CatalogueHeader,
@@ -14,18 +14,28 @@ import { UndoNotification } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 import { useQuery } from "@apollo/client";
 import { GET_CATALOGUE } from "../../graphql/schemas";
+import { cleanedPath } from "../../utils/functions";
 
 const Catalogue: React.FC = () => {
   // get navigation params
+  const navigate = useNavigate();
+  const location = useLocation();
   const useQueryStrings = () => {
-    const { search } = useLocation();
-    return useMemo(() => new URLSearchParams(search), [search]);
+    return useMemo(
+      () => new URLSearchParams(location.search),
+      [location.search]
+    );
   };
   const queryStrings = useQueryStrings();
   const isEditId = Boolean(queryStrings.get("edit"));
 
+  let initialSelectedListingId: string | null = null;
+  let splitPath = cleanedPath(location.pathname).split("/");
+  if (splitPath.length > 3) {
+    initialSelectedListingId = splitPath[3];
+  }
   const [selectedListingId, setSelectedListingId] = useState<string | null>(
-    null
+    initialSelectedListingId
   );
 
   const current_user_id = localStorage.getItem("authorization");
@@ -87,6 +97,16 @@ const Catalogue: React.FC = () => {
       : [];
 
   const handleListingModalClose = () => {
+    let reducedUrl: string = cleanedPath(location.pathname);
+    const params = reducedUrl.split("/");
+    if (params.length > 3) {
+      params.pop();
+    }
+    reducedUrl = params.join("/");
+    if (location.search) {
+      reducedUrl += location.search;
+    }
+    navigate(reducedUrl);
     setSelectedListingId(null);
   };
 
@@ -98,8 +118,10 @@ const Catalogue: React.FC = () => {
     ? catalogue.listings!.find((li: Listing) => li.id === selectedListingId)!
     : null;
 
+  const changeUrl = () => {};
   return (
     <div className="page-wrapper">
+      <button onClick={changeUrl}>change url</button>
       <CatalogueToolbar editable={editable} />
       <CatalogueHeader
         isEditing={isEditing}

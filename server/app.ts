@@ -33,7 +33,9 @@ app.get("/", async (_req, res) => {
   res.status(200).render("index");
 });
 
-app.get("/list/:id", async (req, res) => {
+// create an app.get that accepts two different urls like /api/users and /api/posts
+
+app.get(["/list/:id/*", "/list/:id"], async (req, res) => {
   const { id } = req.params;
   // get the query strings from the url
   const queryStrings = req.query;
