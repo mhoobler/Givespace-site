@@ -150,6 +150,15 @@ export const EDIT_LISTING_FILE = gql`
   }
 `;
 
+export const UPDATE_LISTING_ORDER = gql`
+  ${LISTING_FIELDS}
+  mutation ReorderListing($id: ID!, $ordering: Float!) {
+    reorderListing(id: $id, ordering: $ordering) {
+      ...AllListingFields
+    }
+  }
+`;
+
 export const ADD_LISTING_LABEL = gql`
   ${LISTING_LABEL_FIELDS}
   mutation CreateListingLabel($listing_id: ID!, $label_id: ID!) {

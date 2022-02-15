@@ -1,9 +1,10 @@
-import { useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import {
   CREATE_LISTING,
   DELETE_LISTING,
   EDIT_LISTING,
   EDIT_LISTING_FILE,
+  UPDATE_LISTING_ORDER,
 } from "../../graphql/schemas";
 import {
   handleDeletion,
@@ -14,6 +15,7 @@ import {
 import { cache } from "../clientConfig";
 import { dummyListing } from "../../utils/references";
 import { useMarkedForDeletion, useRemoveMFD } from "../../state/store";
+import { LISTING_FIELDS } from "../fragments";
 
 const ListingApolloHooks: ListingHook.FC = () => {
   const { markedForDeletion, setMarkedForDeletion } = useMarkedForDeletion();
@@ -99,6 +101,72 @@ const ListingApolloHooks: ListingHook.FC = () => {
       });
     };
 
+  const [reorderListingMutation, { error: reorderListingError }] =
+    useMutation(UPDATE_LISTING_ORDER);
+  apolloHookErrorHandler("reorderListingError", reorderListingError);
+
+  const reorderListing =
+    (catalogue_id: string) => (id: string, ordering: number) => {
+      // Query this from cache
+      const READ_LABELS = gql`
+        ${LISTING_FIELDS}
+        query ReadListings($id: ID!) {
+          catalogues(id: $id) {
+            listings {
+              ...AllListingFields
+            }
+          }
+        }
+      `;
+
+      // Read cacheListings from cache then sortListings
+      const cacheListings = (
+        cache.readQuery({
+          query: READ_LABELS,
+          variables: { id: catalogue_id },
+        }) as any
+      ).catalogues[0].listings as Listing[];
+      const sortedListings =
+        cacheListings && cacheListings[0]
+          ? [...cacheListings].sort((a, b) => a.ordering - b.ordering)
+          : [];
+
+      // Helper variables to assist with array edges (explained below)
+      const len = sortedListings.length;
+      const targetIndex = sortedListings.findIndex((e: any) => e.id === id);
+      const targetListing = sortedListings[targetIndex];
+
+      if (!targetListing) {
+        throw new Error("Could not find listing with index: " + targetIndex);
+      }
+
+      const orderingListing = sortedListings[ordering]; // possible undefined
+
+      let newOrdering: number;
+
+      // If TRUE, this means user did not move Listing into new spot
+      if (orderingListing === targetListing) {
+        return;
+        // User moved Listing to end of ListingContainer
+      } else if (ordering === len) {
+        newOrdering = sortedListings[len - 1].ordering + 1;
+        // User moved Listing to start of ListingContainer
+      } else if (ordering === 0) {
+        newOrdering = sortedListings[0].ordering - 1;
+        // User moved Listing in between two other Listings
+      } else {
+        const nextOrdering = sortedListings[ordering].ordering;
+        const prevOrdering = sortedListings[ordering - 1].ordering;
+        newOrdering = (nextOrdering + prevOrdering) / 2;
+      }
+
+      // Update cache and fire Mutation
+      updateCatalogueCache(`Listing:${id}`, "ordering", newOrdering);
+      reorderListingMutation({
+        variables: { id, ordering: newOrdering },
+      });
+    };
+
   // DELETE
   const [deleteListingMutation, { error: deleteListingError }] =
     useMutation(DELETE_LISTING);
@@ -117,7 +185,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion
+      setMarkedForDeletion,
     );
   };
 
@@ -126,6 +194,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
     editListing,
     editBoolean,
     editListingFile,
+    reorderListing,
     deleteListing,
   };
 };

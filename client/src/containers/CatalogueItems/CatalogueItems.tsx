@@ -28,7 +28,8 @@ const CatalogueItems: React.FC<Props> = ({
   isEditing,
   handleSelectListing,
 }) => {
-  const { createListing, deleteListing } = useListingApolloHooks();
+  const { createListing, deleteListing, reorderListing } =
+    useListingApolloHooks();
   const { createLabel, deleteLabel, reorderLabel } = useLabelApolloHooks({
     catalogue_id: catalogue.id,
   });
@@ -59,15 +60,18 @@ const CatalogueItems: React.FC<Props> = ({
         </LabelContainer>
       </div>
       <ListingCardsContainer>
-        {listings.map((e: Listing) => (
-          <ListingCard
-            key={e.id}
-            listing={e}
-            isEditing={isEditing}
-            selectListing={handleSelectListing}
-            deleteListing={deleteListing}
-          />
-        ))}
+        <DragAndDrop handleReorder={reorderListing(catalogue.id)}>
+          {listings.map((e: Listing) => (
+            <Draggable key={e.id} refData={e}>
+              <ListingCard
+                listing={e}
+                isEditing={isEditing}
+                selectListing={handleSelectListing}
+                deleteListing={deleteListing}
+              />
+            </Draggable>
+          ))}
+        </DragAndDrop>
       </ListingCardsContainer>
     </div>
   );
