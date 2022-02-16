@@ -118,10 +118,8 @@ const Catalogue: React.FC = () => {
     ? catalogue.listings!.find((li: Listing) => li.id === selectedListingId)!
     : null;
 
-  const changeUrl = () => {};
   return (
     <div className="page-wrapper">
-      <button onClick={changeUrl}>change url</button>
       <CatalogueToolbar editable={editable} />
       <CatalogueHeader
         isEditing={isEditing}
