@@ -3,13 +3,14 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title><%= og_title %></title>
-    <meta name='description' content="<%= og_title %>" />
-    <meta property="og:title" content="<%= og_title %>" />
-    <meta property='og:site_name' content="Givespace" />
-    <meta property='og:image' content="https://via.placeholder.com/150" />
-    <meta name='author' content="<%= og_title %>" />
-    <meta name='theme-color' content='#c9042c' />
+    <title><%= title %></title>
+    <meta name="description" content="<%= title %>" />
+    <meta property="og:title" content="<%= title %>" />
+    <meta property="og:site_name" content="Givespace" />
+    <meta property="og:image" content="https://via.placeholder.com/150" />
+    <meta name="author" content="<%= title %>" />
+    <meta property="og:description" content="<%= description %>" />
+    <meta name="theme-color" content="#c9042c" />
   </head>
   <body>
     <div id="root"></div>
@@ -18,6 +19,6 @@
     <script src="http://localhost:3000/index.js"></script>
     <% } else { %>
     <script src="/index.js" charset="utf-8"></script>
-    <% }  %>
+    <% } %>
   </body>
 </html>

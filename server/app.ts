@@ -2,6 +2,9 @@ import express from "express";
 import * as path from "path";
 import { createServer } from "http";
 import db from "./db";
+import { fullCatalogueQuery } from "./utils/sqlQueries";
+import { QueryResult } from "pg";
+import { Catalogue } from "types";
 
 const app = express();
 
@@ -35,27 +38,53 @@ app.get("/", async (_req, res) => {
 
 // create an app.get that accepts two different urls like /api/users and /api/posts
 
-app.get(["/list/:id/*", "/list/:id"], async (req, res) => {
-  const { id } = req.params;
-  // get the query strings from the url
-  const queryStrings = req.query;
-  try {
-    const query = await db.query(
-      `SELECT title FROM catalogues WHERE ${
-        queryStrings.edit ? "edit_id" : "id"
-      } = $1;`,
-      [id]
-    );
-    if (!query.rows.length) {
-      res.status(200).render("list", { og_title: "Catalogue not found" });
-    } else {
-      const { title } = query.rows[0];
-      res.status(200).render("list", { og_title: title });
+app.get(
+  ["/list/:catalogue_id/:listing_id", "/list/:catalogue_id"],
+  async (req, res) => {
+    const params = req.params;
+    console.log("params", params);
+    // get the query strings from the url
+    const queryStrings = req.query;
+    try {
+      const query: QueryResult<Catalogue> = await db.query(
+        fullCatalogueQuery(
+          `WHERE ${queryStrings.edit ? "edit_id" : "id"} = '${
+            params.catalogue_id
+          }'`
+        )
+      );
+      console.log("query", query.rows);
+      if (!query.rows.length) {
+        res.status(200).render("list", { og_title: "Catalogue not found" });
+      } else {
+        const catalogue: Catalogue = query.rows[0];
+        if (!params.listing_id) {
+          res.status(200).render("list", {
+            title: catalogue.title,
+            description: `Catalogue "${catalogue.title}" contains ${catalogue.listings.length} listings`,
+          });
+        } else {
+          const listing = catalogue.listings.find(
+            (listing) => listing.id === params.listing_id
+          );
+          if (!listing) {
+            res.status(200).render("list", {
+              title: "Listing not found",
+              description: "Listing no longer exists",
+            });
+          } else {
+            res.status(200).render("list", {
+              title: listing.name,
+              description: `Listing "${listing.name}" in catalogue "${catalogue.title}"`,
+            });
+          }
+        }
+      }
+    } catch (err) {
+      res.status(500);
     }
-  } catch (err) {
-    res.status(500);
   }
-});
+);
 
 const httpServer = createServer(app);
 
