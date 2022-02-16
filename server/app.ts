@@ -42,7 +42,6 @@ app.get(
   ["/list/:catalogue_id/:listing_id", "/list/:catalogue_id"],
   async (req, res) => {
     const params = req.params;
-    console.log("params", params);
     // get the query strings from the url
     const queryStrings = req.query;
     try {
@@ -53,7 +52,6 @@ app.get(
           }'`
         )
       );
-      console.log("query", query.rows);
       if (!query.rows.length) {
         res.status(200).render("list", { og_title: "Catalogue not found" });
       } else {
