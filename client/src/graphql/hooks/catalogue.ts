@@ -1,8 +1,7 @@
-import { useMutation, useQuery, useSubscription } from "@apollo/client";
+import { useMutation, useSubscription } from "@apollo/client";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { updateCatalogueCache } from "../../utils/functions";
 import {
-  GET_CATALOGUE,
   LIVE_CATALOGUE,
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
@@ -89,11 +88,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
     return subscription;
   };
-  // catalogueSubscription.variables = {
-  //   id: "f470498b-71ff-470a-8c61-1fc4101449dd",
-  // };
 
-  // UPDATE
   const [
     editCatalogueMutation,
     { loading: _updateCatalogueLoading, error: updateCatalogueError },
