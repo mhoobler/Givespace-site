@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
   CatalogueHeader,
@@ -12,52 +12,77 @@ import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { UndoNotification } from "../../components";
 
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
+import { useQuery } from "@apollo/client";
+import { GET_CATALOGUE } from "../../graphql/schemas";
+import { cleanedPath } from "../../utils/functions";
 
-const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
-  // Get Id from params and localStorage, especially for CatalogueApolloHooks
+const Catalogue: React.FC = () => {
+  // get navigation params
+  const navigate = useNavigate();
+  const location = useLocation();
+  const useQueryStrings = () => {
+    return useMemo(
+      () => new URLSearchParams(location.search),
+      [location.search]
+    );
+  };
+  const queryStrings = useQueryStrings();
+  const isEditId = Boolean(queryStrings.get("edit"));
+
+  let initialSelectedListingId: string | null = null;
+  let splitPath = cleanedPath(location.pathname).split("/");
+  if (splitPath.length > 3) {
+    initialSelectedListingId = splitPath[3];
+  }
   const [selectedListingId, setSelectedListingId] = useState<string | null>(
-    null
+    initialSelectedListingId
   );
 
   const current_user_id = localStorage.getItem("authorization");
   const { corresponding_id } = useParams();
   if (!corresponding_id) throw new Error("no id on params");
-
-  // Inputs need to toggle from Editing to Display state
-  const [isEditing, setIsEditing] = useState(true);
+  const idVariable = { [isEditId ? "edit_id" : "id"]: corresponding_id };
 
   // All ApolloHooks are moved to custom hook for organization
-  const { incrementCatalogueViews, catalogueSubscription } =
+  const { incrementCatalogueViewsMuation, handleCatalogueSubscription } =
     useCatalogueApolloHooks({
       id: corresponding_id,
     });
+  // query below scouts the catalogue and populates the cache
+  // (that cache is how the catalogue is rendered)
+  const catalogueQuery = useQuery(GET_CATALOGUE, {
+    variables: { ...idVariable },
+  });
+  handleCatalogueSubscription(idVariable);
 
-  // TODO: Need to make sure this only happens once per visit
-  // (will currently trigger on each rerender)
+  // Inputs need to toggle from Editing to Display state
+  const [isEditing, setIsEditing] = useState(true);
   useEffect(() => {
-    // delay gives time for the subscription to get set up
-    setTimeout(() => {
-      incrementCatalogueViews();
-    }, 1000);
+    incrementCatalogueViewsMuation({
+      variables: { ...idVariable },
+    });
   }, []);
-  if (!catalogueSubscription.data) {
+
+  let catalogue: CatalogueType | null = null;
+  if (catalogueQuery.error) {
+    return <div>Catalogue not found</div>;
+  }
+  if (catalogueQuery.data && catalogueQuery.data.catalogues[0]) {
+    // The catalogue being used in the catalogue state
+    // will always be the cached catalogue as fetched
+    // by CATALOGUE_FRAGMENT
+    catalogue = cache.readFragment({
+      id: `Catalogue:${catalogueQuery.data.catalogues[0].id}`,
+      fragment: ALL_CATALOGUE_FIELDS,
+      fragmentName: "AllCatalogueFields",
+    });
+  }
+
+  if (!catalogue) {
     return <div>Loading...</div>;
   }
 
-  // The catalogue being used in the catalogue state
-  // will always be the cached catalogue as fetched
-  // by CATALOGUE_FRAGMENT
-  const catalogue: CatalogueType | null = cache.readFragment({
-    id: `Catalogue:${catalogueSubscription.data.liveCatalogue.id}`,
-    fragment: ALL_CATALOGUE_FIELDS,
-    fragmentName: "AllCatalogueFields",
-  });
-
-  if (!catalogue) {
-    return <h1>Catalogue not found</h1>;
-  }
-
-  let editable = is_edit_id || current_user_id === catalogue.user_id;
+  let editable = isEditId || current_user_id === catalogue.user_id;
 
   // TODO: should sort this in the backend
   const sortedLabels =
@@ -72,6 +97,16 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
       : [];
 
   const handleListingModalClose = () => {
+    let reducedUrl: string = cleanedPath(location.pathname);
+    const params = reducedUrl.split("/");
+    if (params.length > 3) {
+      params.pop();
+    }
+    reducedUrl = params.join("/");
+    if (location.search) {
+      reducedUrl += location.search;
+    }
+    navigate(reducedUrl);
     setSelectedListingId(null);
   };
 
@@ -80,11 +115,13 @@ const Catalogue: React.FC<{ is_edit_id?: boolean }> = ({ is_edit_id }) => {
   };
 
   const selectedListing = selectedListingId
-    ? catalogue.listings.find((li: Listing) => li.id === selectedListingId)!
+    ? catalogue.listings!.find((li: Listing) => li.id === selectedListingId)!
     : null;
 
+  const changeUrl = () => {};
   return (
     <div className="page-wrapper">
+      <button onClick={changeUrl}>change url</button>
       <CatalogueToolbar editable={editable} />
       <CatalogueHeader
         isEditing={isEditing}

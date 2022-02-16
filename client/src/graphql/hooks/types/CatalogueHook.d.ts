@@ -8,9 +8,8 @@ declare namespace CatalogueHook {
   export type editCatalogueFile = GenericFileEdit;
 
   export type base = {
-    incrementCatalogueViews: any;
-    catalogueSubscription: any;
-    catalogueQuery: any;
+    incrementCatalogueViewsMuation: any;
+    handleCatalogueSubscription: (idVariable: { [x: string]: string }) => any;
     editCatalogue: editCatalogue;
     editCatalogueFile: editCatalogueFile;
   };
