@@ -137,6 +137,7 @@ const Catalogue: React.FC = () => {
       <ListingModal
         isEditing={isEditing}
         labels={sortedLabels}
+        listingId={selectedListingId}
         listing={selectedListing}
         handleClose={handleListingModalClose}
       />

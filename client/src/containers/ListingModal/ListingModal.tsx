@@ -8,6 +8,7 @@ import LinksContainer from "../../components/Links/LinksContainer";
 import useListingApolloHooks from "../../graphql/hooks/listing";
 
 type Props = {
+  listingId: string | null;
   listing: Listing | null;
   labels: Label[] | null;
   isEditing: boolean;
@@ -15,14 +16,21 @@ type Props = {
 };
 
 const ListingModal: React.FC<Props> = ({
+  listingId,
   listing,
   labels,
   isEditing,
   handleClose,
 }) => {
   const { editListing, editBoolean, editListingFile } = useListingApolloHooks();
-
-  if (!listing) return null;
+  if (!listingId) return null;
+  if (!listing) {
+    return (
+      <Modal show={listing !== null} close={handleClose}>
+        <div className="modal-header">Listing no longer exists</div>
+      </Modal>
+    );
+  }
   // console.log("ListingModal", listing);
 
   return (
