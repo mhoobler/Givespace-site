@@ -9,7 +9,7 @@ import React, {
 import { ImageCrop, Modal, ToggleEdit } from "..";
 import { acceptedImageFiles } from "../../utils/references";
 
-import { Camera, Palette } from "../../assets";
+import { Camera } from "../../assets";
 
 import "./HeaderImage.less";
 
@@ -94,13 +94,14 @@ const HeaderImage: React.FC<Props> = ({
       // BlobCallback
       (blob: BlobPart | null) => {
         // file name
-        const filename = files[0].name.split(".")[0] + Date.now();
+        const splitFile = files[0].name.split(".");
+        const filename = splitFile[0] + Date.now() + "." + splitFile[1];
         if (blob) {
           handleSubmit(new File([blob], filename), keyProp);
         }
       },
       "image/jpg", // file type
-      0.9, // image quality
+      0.9 // image quality
     );
   };
 
@@ -110,15 +111,8 @@ const HeaderImage: React.FC<Props> = ({
         {/* open modal, display image */}
         {/* TODO: Replace Icons */}
         <div className="toggle-wrapper">
-          <div
-            onClick={handleModal}
-            className={`toggle-input icons-container f-center`}
-          >
-            <div className="icon-btn">
-              <img src={Palette} alt="" />
-            </div>
-
-            <div className="icon-btn">
+          <div className={`toggle-input icons-container f-center`}>
+            <div onClick={handleModal} className="icon-btn">
               <img src={Camera} alt="" />
             </div>
           </div>

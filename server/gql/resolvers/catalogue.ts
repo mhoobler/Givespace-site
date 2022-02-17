@@ -14,6 +14,8 @@ import { QueryResult } from "pg";
 import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
 import { UserInputError } from "apollo-server-express";
 import { fullCatalogueQuery } from "../../utils/sqlQueries";
+import ColorThief from "color-thief-jimp";
+import Jimp from "jimp";
 
 const catalogueResolvers = {
   Query: {
@@ -139,8 +141,39 @@ const catalogueResolvers = {
         // TODO: test and optimize so that it does not need the await
         await deleteFileIfNotUsed(preResult.rows[0][key]);
       }
+      const callback = async (
+        fileName: string,
+        path: string
+      ): Promise<string> => {
+        // get the extension from path
+        if (key === "header_image_url") {
+          const dominantColor: string | null = await new Promise(
+            (resolve, reject) => {
+              Jimp.read(path, (err, sourceImage) => {
+                if (err) {
+                  reject(null);
+                } else {
+                  const rgb = ColorThief.getColor(sourceImage);
+                  // transform rgb to hex
+                  const hex = `#${rgb[0].toString(16)}${rgb[1].toString(
+                    16
+                  )}${rgb[2].toString(16)}`;
+                  resolve(hex);
+                }
+              });
+            }
+          );
+          if (!dominantColor) throw new UserInputError("Could not get color");
+          await db.query(
+            `UPDATE catalogues SET header_color = $1 WHERE id = $2 RETURNING *`,
+            [dominantColor, id]
+          );
+        }
 
-      const url = await handleFile(file, uploadToGC);
+        const url: string = await uploadToGC(fileName, path);
+        return url;
+      };
+      const url = await handleFile(file, callback);
 
       const updatedCatalogueRes: QueryResult<Catalogue> = await db.query(
         `UPDATE catalogues SET ${key} = $1 WHERE id = $2 RETURNING *`,

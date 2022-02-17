@@ -14,6 +14,7 @@ export { default as LabelContainer } from "./Labels/LabelContainer";
 export { default as Label } from "./Labels/Label";
 export { default as TextInput } from "./fields/TextInput/TextInput";
 export { default as FileInput } from "./fields/FileInput/FileInput";
+export { default as ColorInput } from "./fields/Color/Color";
 export { default as Dropdown } from "./fields/Dropdown/Dropdown";
 export { default as CalendarInput } from "./fields/CalendarInput/CalendarInput";
 export { default as ListingCard } from "./Listings/ListingCard/ListingCard";
