@@ -31,24 +31,20 @@ export const handleFile = async (
   try {
     const { createReadStream, filename, mimetype, encoding } = await file;
     const pathToFile = path.join(__dirname, "../images/", filename);
-    console.log("pathToFile", pathToFile);
 
     const stream = createReadStream();
     await new Promise((resolve, reject) =>
       stream
         .on("error", (error) => {
-          console.log("!38", error);
           fs.promises.unlink(pathToFile);
           reject(error);
         })
         .pipe(fs.createWriteStream(pathToFile))
         .on("error", (error) => {
-          console.log("!44", error);
           fs.promises.unlink(pathToFile);
           reject(error);
         })
         .on("finish", () => {
-          console.log("!49 Solved");
           resolve("done");
         })
     );

@@ -94,7 +94,8 @@ const HeaderImage: React.FC<Props> = ({
       // BlobCallback
       (blob: BlobPart | null) => {
         // file name
-        const filename = files[0].name.split(".")[0] + Date.now();
+        const splitFile = files[0].name.split(".");
+        const filename = splitFile[0] + Date.now() + "." + splitFile[1];
         if (blob) {
           handleSubmit(new File([blob], filename), keyProp);
         }
