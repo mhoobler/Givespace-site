@@ -245,12 +245,14 @@ class RefManager {
     this.canvas.width = this.originalWidth;
     this.canvas.height = this.originalHeight;
     const { height, width } = this.canvas;
-    const { zoom, shortSide, inX, inY, sx, sy } = this;
-    this.ctx.drawImage(this.image, 0, 0, width, height);
+    const { zoom, shortSide, inX, inY } = this;
+    this.ctx.drawImage(this.image, -inX, -inY, width, height);
 
-    const px = shortSide / zoom;
+    const [cx, cy] = [width / 2, height / 2];
+    const px = (shortSide - 20) / zoom;
+    const px2 = px / 2;
 
-    return this.ctx.getImageData(inX + sx, inY + sy, px, px);
+    return this.ctx.getImageData(cx - px2, cy - px2, px, px);
   }
 
   render() {

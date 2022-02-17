@@ -90,31 +90,33 @@ const CatalogueHeader: React.FC<Props> = ({
         </div>
 
         {/* right half */}
-        <div className="d-flex flex-grow-1 flex-md-column flex-sm-row right-half">
-          {/* edit toggle, editor link, share link, public/private options */}
-          <div className="d-flex justify-content-end">
-            <button className="btn btn-primary" onClick={toggleEdit}>
-              Edit
-            </button>
-            <a className="btn btn-link">Copy Editor Link</a>
-            <a className="btn btn-link">Share</a>
-          </div>
-          <div className="d-flex justify-content-end">
-            <Dropdown
-              value={catalogue.status}
-              handleSubmit={editCatalogue}
-              keyProp="status"
-              className={isEditing ? "hidden" : ""}
-            >
-              <Dropdown.Toggle disable={!isEditing} />
-              <Dropdown.Menu>
-                {statusOptions.map((option) => (
-                  <Dropdown.Item key={option} value={option}>
-                    {option}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
+        <div className="right-half">
+          <div className="d-flex flex-grow-1 flex-md-column flex-sm-row right-half">
+            {/* edit toggle, editor link, share link, public/private options */}
+            <div className="d-flex justify-content-end">
+              <button className="btn btn-primary" onClick={toggleEdit}>
+                Edit
+              </button>
+              <a className="btn btn-link">Copy Editor Link</a>
+              <a className="btn btn-link">Share</a>
+            </div>
+            <div className="d-flex justify-content-end">
+              <Dropdown
+                value={catalogue.status}
+                handleSubmit={editCatalogue}
+                keyProp="status"
+                className={isEditing ? "hidden" : ""}
+              >
+                <Dropdown.Toggle disable={!isEditing} />
+                <Dropdown.Menu>
+                  {statusOptions.map((option) => (
+                    <Dropdown.Item key={option} value={option}>
+                      {option}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </div>
         </div>
       </div>

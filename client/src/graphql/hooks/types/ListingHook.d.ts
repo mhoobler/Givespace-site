@@ -3,9 +3,13 @@ declare namespace ListingHook {
 
   export type editListing = (id: string) => GenericEdit;
   export type editBoolean = (
-    id: string
+    id: string,
   ) => (value: boolean, keyProp: string) => void;
   export type editListingFile = (id: string) => GenericFileEdit;
+
+  export type reorderListing = (
+    id: string,
+  ) => (id: string, ordering: number) => void;
 
   export type deleteListing = (id: string) => void;
 
@@ -14,6 +18,7 @@ declare namespace ListingHook {
     editListing: ListingHook.editListing;
     editBoolean: ListingHook.editBoolean;
     editListingFile: ListingHook.editListingFile;
+    reorderListing: ListingHook.reorderListing;
     deleteListing: ListingHook.deleteListing;
   };
 
