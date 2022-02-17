@@ -1,6 +1,10 @@
 import React from "react";
 import RefManager from "./RefManager";
 
+import "./ImageCrop.less";
+
+import { ZoomIn, ZoomOut } from "../../assets";
+
 type Props = {};
 
 const ImageCrop = React.forwardRef<ImageCrop.RefManager, Props>(
@@ -18,9 +22,20 @@ const ImageCrop = React.forwardRef<ImageCrop.RefManager, Props>(
     };
 
     return (
-      <div className="d-flex flex-column" ref={(elm) => handleRefs(elm)}>
+      <div
+        className="d-flex flex-column image-crop"
+        ref={(elm) => handleRefs(elm)}
+      >
         <canvas></canvas>
-        <input type="range" defaultValue={0} max={1} step={0.005} />
+        <div className="zoom-container">
+          <div className="zoom-icon">
+            <img src={ZoomIn} />
+          </div>
+          <input type="range" defaultValue={0} max={1} step={0.005} />
+          <div className="zoom-icon">
+            <img src={ZoomOut} />
+          </div>
+        </div>
       </div>
     );
   },

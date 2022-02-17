@@ -1,7 +1,32 @@
+.listing-modal-container {
+
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .listing-separator {
+    display: none;
+    height: 100%;
+    background-color: #343434;
+    width: 3px;
+    margin: 8px;
+  }
+
+  .left-side {
+    width: 50%;
+  }
+
+  .right-side {
+    width: 50%;
+  }
+}
+
 .text_area_input {
   height: 100px;
   width: 100%;
 }
+
 @media screen {
   // sm
   @media (min-width: 576px) {
@@ -9,6 +34,15 @@
 
   // md
   @media (min-width: 768px) {
+    .listing-modal-container {
+      .modal-body {
+        flex-direction: row !important;
+      }
+
+      .listing-separator {
+        display: block;
+      }
+    }
   }
 
   // lg

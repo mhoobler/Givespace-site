@@ -13,7 +13,7 @@ const px = (int: number): string => int + "px";
 export const getMouseDown =
   (id: string, refs: refsMap, reorderLabel: any) => (downEvt: MouseEvent) => {
     const refsArr: ref[] = Object.values(refs).sort(
-      (a, b) => a.data.ordering - b.data.ordering
+      (a, b) => a.data.ordering - b.data.ordering,
     );
 
     const currentTarget = refs[id].elm;
@@ -43,6 +43,7 @@ export const getMouseDown =
       if (isValidDrop) {
         reorderLabel(id, dropIndex);
       }
+      currentTarget.style.opacity = "";
     };
 
     window.addEventListener("mouseup", MouseUp);
@@ -53,6 +54,7 @@ export const getMouseDown =
       append.style.height = px(targetBoundingBox.height);
       append.style.position = "fixed";
       append.style.cursor = "grabbing";
+      currentTarget.style.opacity = "0.6";
 
       if (append) {
         const y2 = targetBoundingBox.width / 2;
@@ -66,20 +68,28 @@ export const getMouseDown =
           const { elm } = refsArr[i];
           const bb = elm.getBoundingClientRect();
 
-          // Is Left
-          if (moveEvt.pageX > bb.left - 20 && moveEvt.pageX < bb.left + 20) {
-            isValidDrop = true;
-            dropIndex = i;
-            elm.parentNode!.insertBefore(separator, elm);
-            break;
-          }
+          if (refsArr[i].elm !== currentTarget) {
+            // Is Left
+            if (
+              moveEvt.pageX > bb.left - x2 / 2 &&
+              moveEvt.pageX < bb.left + x2 / 2
+            ) {
+              isValidDrop = true;
+              dropIndex = i;
+              elm.parentNode!.insertBefore(separator, elm);
+              break;
+            }
 
-          // Is Right
-          if (moveEvt.pageX > bb.right - 20 && moveEvt.pageX < bb.right + 20) {
-            isValidDrop = true;
-            dropIndex = i + 1;
-            elm.parentNode!.insertBefore(separator, elm.nextSibling);
-            break;
+            // Is Right
+            if (
+              moveEvt.pageX > bb.right - x2 / 2 &&
+              moveEvt.pageX < bb.right + x2 / 2
+            ) {
+              isValidDrop = true;
+              dropIndex = i + 1;
+              elm.parentNode!.insertBefore(separator, elm.nextSibling);
+              break;
+            }
           }
         }
       }

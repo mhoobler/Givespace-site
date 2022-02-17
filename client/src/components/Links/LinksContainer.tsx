@@ -39,29 +39,29 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
     : null;
 
   return (
-    <div>
+    <div className="links-container">
       {listing.links &&
         listing.links.map((link: Link) => (
-          <div className="links" key={link.id}>
-            <a href={link.url} key={link.id} target="_blank">
-              {link.title}
-            </a>
-            <div className={`row-container ${!isEditing && "hidden"}`}>
+          <div className="link-wrapper" key={link.id}>
+            <div className={`link ${isEditing ? "" : "editing"}`}>
               <button onClick={() => removeLink(link.id)}>X</button>
+              <a href={link.url} key={link.id} target="_blank">
+                {link.title}
+              </a>
               <button onClick={() => setLinkEditingId(link.id)}>Edit</button>
             </div>
           </div>
         ))}
-      <div className={`row-container ${!isEditing && "hidden"}`}>
-        <input
-          className={`${!isValid && "invalid_input"}`}
-          type="text"
-          ref={linkInputRef}
-          placeholder="add link"
-        />
-        <button onClick={handleSubmit} type="submit">
-          submit
-        </button>
+      <div
+        className={`d-flex link-wrapper input-wrapper ${
+          !isEditing && "hidden"
+        }`}
+      >
+        <div className="link">
+          <button onClick={handleSubmit} type="submit">
+            Add Link
+          </button>
+        </div>
       </div>
       <EditLinkModal link={linkEditing} handleClose={handleEditLinkClose} />
     </div>

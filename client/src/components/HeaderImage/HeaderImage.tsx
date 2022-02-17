@@ -9,6 +9,8 @@ import React, {
 import { ImageCrop, Modal, ToggleEdit } from "..";
 import { acceptedImageFiles } from "../../utils/references";
 
+import { Camera, Palette } from "../../assets";
+
 import "./HeaderImage.less";
 
 type Props = {
@@ -112,7 +114,13 @@ const HeaderImage: React.FC<Props> = ({
             onClick={handleModal}
             className={`toggle-input icons-container f-center`}
           >
-            <div className="icon-btn">Click This</div>
+            <div className="icon-btn">
+              <img src={Palette} alt="" />
+            </div>
+
+            <div className="icon-btn">
+              <img src={Camera} alt="" />
+            </div>
           </div>
           <div className={`toggle-input image-wrapper`}>
             <img id="header-image-display" src={value} alt="" />

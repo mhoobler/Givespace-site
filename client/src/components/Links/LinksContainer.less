@@ -1,17 +1,29 @@
 .hidden {
   display: none;
 }
-.row-container {
+
+.links-container {
   display: flex;
   flex-wrap: wrap;
-}
-.links {
-  .row-container();
 
-  > * {
-    margin: 4px;
+  .link-wrapper {
+    padding: 4px;
+    width: 50%;
+
+    .link {
+      border: 2px solid pink;
+      display: flex;
+      width: 100%;
+
+      &.editing {
+        >button {
+          display: none;
+        }
+      }
+    }
   }
 }
+
 .invalid_input {
   background-color: #f2dede;
   border-color: #ebccd1;
