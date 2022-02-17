@@ -6,10 +6,10 @@ import React, {
   useEffect,
 } from "react";
 
-import { ImageCrop, Modal, ToggleEdit } from "..";
+import { ImageCrop, Modal, ToggleEdit, ColorInput } from "..";
 import { acceptedImageFiles } from "../../utils/references";
 
-import { Camera, Palette } from "../../assets";
+import { Camera } from "../../assets";
 
 import "./HeaderImage.less";
 
@@ -100,7 +100,7 @@ const HeaderImage: React.FC<Props> = ({
         }
       },
       "image/jpg", // file type
-      0.9, // image quality
+      0.9 // image quality
     );
   };
 
@@ -110,15 +110,8 @@ const HeaderImage: React.FC<Props> = ({
         {/* open modal, display image */}
         {/* TODO: Replace Icons */}
         <div className="toggle-wrapper">
-          <div
-            onClick={handleModal}
-            className={`toggle-input icons-container f-center`}
-          >
-            <div className="icon-btn">
-              <img src={Palette} alt="" />
-            </div>
-
-            <div className="icon-btn">
+          <div className={`toggle-input icons-container f-center`}>
+            <div onClick={handleModal} className="icon-btn">
               <img src={Camera} alt="" />
             </div>
           </div>

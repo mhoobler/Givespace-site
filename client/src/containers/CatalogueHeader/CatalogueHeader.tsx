@@ -5,8 +5,10 @@ import {
   HeaderImage,
   AvatarImage,
   CalendarInput,
+  ColorInput,
 } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
+import { updateCatalogueCache } from "../../utils/functions";
 import { statusOptions } from "../../utils/references";
 
 import "./CatalogueHeader.less";
@@ -30,6 +32,17 @@ const CatalogueHeader: React.FC<Props> = ({
     <div className="catalogue-header-container">
       {/* header image hero*/}
       <div className="header-image-wrapper">
+        <ColorInput
+          handleSubmit={(color) => editCatalogue(color, "header_color")}
+          handleChange={(color) =>
+            updateCatalogueCache(
+              `Catalogue:${catalogue.id}`,
+              "header_color",
+              color
+            )
+          }
+          color={catalogue.header_color}
+        />
         <HeaderImage
           isEditing={isEditing}
           handleSubmit={editCatalogueFile}
