@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 
-import { ImageCrop, Modal, ToggleEdit, ColorInput } from "..";
+import { ImageCrop, Modal, ToggleEdit } from "..";
 import { acceptedImageFiles } from "../../utils/references";
 
 import { Camera } from "../../assets";

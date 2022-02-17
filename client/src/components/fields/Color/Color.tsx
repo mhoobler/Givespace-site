@@ -1,6 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Palette } from "../../../assets";
-import { SketchPicker } from "react-color";
 
 import "./Color.less";
 import { useEffect } from "react";
@@ -19,7 +18,6 @@ const Color = ({ color, handleChange, handleSubmit }: Props) => {
   };
 
   useEffect(() => {
-    console.log("set");
     colorInput.current?.addEventListener("change", () => {
       handleSubmit(colorInput.current?.value || "#ffffff");
     });
