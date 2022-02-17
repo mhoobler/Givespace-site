@@ -53,7 +53,11 @@ const ListingModal: React.FC<Props> = ({
             isEditing={isEditing}
             handleSubmit={editListing(listing.id)}
             value={listing.name || ""}
-            keyProp="name"
+            fieldEditingProp={{
+              typename: "Listing",
+              key: "name",
+              id: listing.id,
+            }}
             className="h2"
             placeholder="Title"
           />
@@ -71,7 +75,11 @@ const ListingModal: React.FC<Props> = ({
             isEditing={isEditing}
             handleSubmit={editListing(listing.id)}
             value={listing.description || ""}
-            keyProp="description"
+            fieldEditingProp={{
+              typename: "Listing",
+              key: "description",
+              id: listing.id,
+            }}
             placeholder="Description"
           />
           <ListingLabelContainer
@@ -84,7 +92,11 @@ const ListingModal: React.FC<Props> = ({
               isEditing={isEditing}
               handleSubmit={editListing(listing.id)}
               value={listing.price?.toString() || ""}
-              keyProp="price"
+              fieldEditingProp={{
+                typename: "Listing",
+                key: "price",
+                id: listing.id,
+              }}
               validator={(value) => {
                 // if value contains letters return false
                 return !/[a-z]/i.test(value);

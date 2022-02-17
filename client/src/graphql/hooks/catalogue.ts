@@ -1,6 +1,9 @@
 import { useMutation, useSubscription } from "@apollo/client";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
-import { updateCatalogueCache } from "../../utils/functions";
+import {
+  concurrentEditingBlocker,
+  updateCatalogueCache,
+} from "../../utils/functions";
 import {
   LIVE_CATALOGUE,
   INCREMENT_CATALOGUE_VIEWS,
@@ -29,11 +32,14 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
       onSubscriptionData: ({ client, subscriptionData }) => {
         const { data } = subscriptionData;
         if (data && data.liveCatalogue) {
-          const catalogue = data.liveCatalogue;
+          let catalogue = data.liveCatalogue;
 
           // catalogue cleaning
           // if fieldEditing block the relevant update
-          if (fieldEditing) delete catalogue[fieldEditing];
+          console.log("fieldEditing", fieldEditing);
+          if (fieldEditing) {
+            catalogue = concurrentEditingBlocker(catalogue, fieldEditing);
+          }
           // prevents labels from being shown if MFD
           const labelsMFD: Label[] | null = catalogue.labels
             ? catalogue.labels.filter((label: Label) =>

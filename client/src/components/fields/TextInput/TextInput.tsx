@@ -7,7 +7,7 @@ type Props = {
   isEditing: boolean;
   handleSubmit: GenericEdit;
   value: string;
-  keyProp: string;
+  fieldEditingProp: FieldEditing;
   validator?: (value: string) => boolean;
   placeholder?: string;
   className?: string;
@@ -18,7 +18,7 @@ const TextInput = ({
   isEditing,
   handleSubmit,
   value,
-  keyProp,
+  fieldEditingProp,
   validator,
   placeholder,
   className,
@@ -36,12 +36,12 @@ const TextInput = ({
     setIsValid(currentlyIsValid);
     if (currentlyIsValid) {
       setFieldEditing(null);
-      handleSubmit(text, keyProp);
+      handleSubmit(text, fieldEditingProp.key);
     }
   };
 
   const handleFocus = (evt: React.SyntheticEvent<HTMLInputElement>) => {
-    setFieldEditing(keyProp);
+    setFieldEditing(fieldEditingProp);
   };
 
   return (
@@ -53,7 +53,7 @@ const TextInput = ({
         type="text"
         onChange={(e) => setText(e.target.value)}
         onFocus={handleFocus}
-        name={keyProp}
+        name={fieldEditingProp.key}
         value={text}
         onBlur={handleBlur}
         placeholder={placeholder || ""}
