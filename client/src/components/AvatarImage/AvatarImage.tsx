@@ -98,10 +98,11 @@ const AvatarImage: React.FC<Props> = ({
         const filename = splitFile[0] + Date.now() + "." + splitFile[1];
         if (blob) {
           handleSubmit(new File([blob], filename), keyProp);
+          handleModal();
         }
       },
       "image/jpg", // file type
-      0.9 // image quality
+      0.9, // image quality
     );
   };
 
