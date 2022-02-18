@@ -12,8 +12,6 @@ import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { UndoNotification } from "../../components";
 
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
-import { useQuery } from "@apollo/client";
-import { GET_CATALOGUE } from "../../graphql/schemas";
 import { cleanedPath } from "../../utils/functions";
 
 const Catalogue: React.FC = () => {
@@ -44,15 +42,16 @@ const Catalogue: React.FC = () => {
   const idVariable = { [isEditId ? "edit_id" : "id"]: corresponding_id };
 
   // All ApolloHooks are moved to custom hook for organization
-  const { incrementCatalogueViewsMuation, handleCatalogueSubscription } =
-    useCatalogueApolloHooks({
-      id: corresponding_id,
-    });
+  const {
+    incrementCatalogueViewsMuation,
+    handleCatalogueSubscription,
+    handleCatalogueQuery,
+  } = useCatalogueApolloHooks({
+    id: corresponding_id,
+  });
   // query below scouts the catalogue and populates the cache
   // (that cache is how the catalogue is rendered)
-  const catalogueQuery = useQuery(GET_CATALOGUE, {
-    variables: { ...idVariable },
-  });
+  const catalogueQuery = handleCatalogueQuery(idVariable);
   handleCatalogueSubscription(idVariable);
 
   // Inputs need to toggle from Editing to Display state
@@ -117,8 +116,6 @@ const Catalogue: React.FC = () => {
   const selectedListing = selectedListingId
     ? catalogue.listings!.find((li: Listing) => li.id === selectedListingId)!
     : null;
-
-  console.log("catalogue", catalogue);
 
   return (
     <div className="page-wrapper">

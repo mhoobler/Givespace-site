@@ -1,4 +1,4 @@
-import { useMutation, useSubscription } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import {
   concurrentEditingBlocker,
@@ -9,6 +9,7 @@ import {
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
   UPDATE_CATALOGUE_FILES,
+  GET_CATALOGUE,
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
@@ -16,6 +17,14 @@ import { apolloHookErrorHandler } from "../../utils/functions";
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();
   const { fieldEditing } = useFieldEditing();
+
+  const handleCatalogueQuery = (idVariable: { [x: string]: string }) => {
+    const catalogueQuery = useQuery(GET_CATALOGUE, {
+      variables: { ...idVariable },
+    });
+    apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
+    return catalogueQuery;
+  };
 
   const [incrementCatalogueViewsMuation, { error }] = useMutation(
     INCREMENT_CATALOGUE_VIEWS
@@ -36,9 +45,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
           // catalogue cleaning
           // if fieldEditing block the relevant update
-          console.log("fieldEditing", fieldEditing);
           if (fieldEditing) {
-            console.log("fieldEditing BLOCKING");
             catalogue = concurrentEditingBlocker(catalogue, fieldEditing);
           }
           // prevents labels from being shown if MFD
@@ -51,7 +58,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
                 )
               : null;
           if (labelsMFD) {
-            console.log("labelsMFD BLOCKING");
+            console.log("labelsMFD BLOCKING", labelsMFD);
             const labelsMFDIds: string[] = labelsMFD.map(
               (label: Label) => label.id
             );
@@ -73,7 +80,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
                 )
               : null;
           if (listingsMFD) {
-            console.log("listingsMFD BLOCKING");
+            console.log("listingsMFD BLOCKING", listingsMFD);
             const listingsMFDIds: string[] = listingsMFD.map(
               (listing: Listing) => listing.id
             );
@@ -85,6 +92,8 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
             if (newListings && newListings.length === 0) newListings = null;
             catalogue.listings = newListings;
           }
+
+          console.log("catalogue", catalogue);
 
           client.writeFragment({
             id: `Catalogue:${catalogue.id}`,
@@ -137,6 +146,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
   return {
     incrementCatalogueViewsMuation,
+    handleCatalogueQuery,
     handleCatalogueSubscription,
     editCatalogue,
     editCatalogueFile,
