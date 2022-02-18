@@ -1,11 +1,15 @@
-import { useMutation, useSubscription } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
-import { updateCatalogueCache } from "../../utils/functions";
+import {
+  concurrentEditingBlocker,
+  updateCatalogueCache,
+} from "../../utils/functions";
 import {
   LIVE_CATALOGUE,
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
   UPDATE_CATALOGUE_FILES,
+  GET_CATALOGUE,
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
@@ -13,6 +17,14 @@ import { apolloHookErrorHandler } from "../../utils/functions";
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();
   const { fieldEditing } = useFieldEditing();
+
+  const handleCatalogueQuery = (idVariable: { [x: string]: string }) => {
+    const catalogueQuery = useQuery(GET_CATALOGUE, {
+      variables: { ...idVariable },
+    });
+    apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
+    return catalogueQuery;
+  };
 
   const [incrementCatalogueViewsMuation, { error }] = useMutation(
     INCREMENT_CATALOGUE_VIEWS
@@ -29,20 +41,24 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
       onSubscriptionData: ({ client, subscriptionData }) => {
         const { data } = subscriptionData;
         if (data && data.liveCatalogue) {
-          const catalogue = data.liveCatalogue;
+          let catalogue = data.liveCatalogue;
 
           // catalogue cleaning
           // if fieldEditing block the relevant update
-          if (fieldEditing) delete catalogue[fieldEditing];
+          if (fieldEditing) {
+            catalogue = concurrentEditingBlocker(catalogue, fieldEditing);
+          }
           // prevents labels from being shown if MFD
-          const labelsMFD: Label[] | null = catalogue.labels
-            ? catalogue.labels.filter((label: Label) =>
-                markedForDeletion.find(
-                  (mfd) => mfd.id.split(":")[1] === label.id
+          const labelsMFD: Label[] | null =
+            markedForDeletion.length && catalogue.labels
+              ? catalogue.labels.filter((label: Label) =>
+                  markedForDeletion.find(
+                    (mfd) => mfd.id.split(":")[1] === label.id
+                  )
                 )
-              )
-            : null;
+              : null;
           if (labelsMFD) {
+            console.log("labelsMFD BLOCKING", labelsMFD);
             const labelsMFDIds: string[] = labelsMFD.map(
               (label: Label) => label.id
             );
@@ -55,14 +71,16 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
             catalogue.labels = newLabels;
           }
           // prevents listings from being shown if MFD
-          const listingsMFD: Listing[] | null = catalogue.listings
-            ? catalogue.listings.filter((listing: Listing) =>
-                markedForDeletion.find(
-                  (mfd) => mfd.id.split(":")[1] === listing.id
+          const listingsMFD: Listing[] | null =
+            markedForDeletion.length && catalogue.listings
+              ? catalogue.listings.filter((listing: Listing) =>
+                  markedForDeletion.find(
+                    (mfd) => mfd.id.split(":")[1] === listing.id
+                  )
                 )
-              )
-            : null;
+              : null;
           if (listingsMFD) {
+            console.log("listingsMFD BLOCKING", listingsMFD);
             const listingsMFDIds: string[] = listingsMFD.map(
               (listing: Listing) => listing.id
             );
@@ -126,6 +144,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
   return {
     incrementCatalogueViewsMuation,
+    handleCatalogueQuery,
     handleCatalogueSubscription,
     editCatalogue,
     editCatalogueFile,

@@ -9,6 +9,7 @@ declare namespace CatalogueHook {
 
   export type base = {
     incrementCatalogueViewsMuation: any;
+    handleCatalogueQuery: (idVariable: { [x: string]: string }) => any;
     handleCatalogueSubscription: (idVariable: { [x: string]: string }) => any;
     editCatalogue: editCatalogue;
     editCatalogueFile: editCatalogueFile;

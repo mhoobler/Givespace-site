@@ -84,6 +84,11 @@ interface ListingLabel {
   label: Label;
 }
 
+interface UseMarkedForDeletion {
+  markedForDeletion: MarkedForDeletion[];
+  setMarkedForDeletion: (value: MarkedForDeletion[]) => void;
+}
+
 type MarkedForDeletion = {
   id: string;
   text: string;
@@ -97,3 +102,13 @@ type RemoveMFD = {
   id: string;
   isUndo: boolean;
 } | null;
+
+interface UseFieldEditing {
+  fieldEditing: FieldEditing | null;
+  setFieldEditing: (value: FieldEditing | null) => void;
+}
+interface FieldEditing {
+  typename: string;
+  id: string;
+  key: string;
+}

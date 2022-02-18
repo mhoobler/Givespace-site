@@ -126,3 +126,54 @@ export const cleanedPath = (path: string): string => {
   }
   return reducedUrl;
 };
+
+export const concurrentEditingBlocker = (
+  catalogue: CatalogueType,
+  fieldEditing: FieldEditing
+): CatalogueType => {
+  switch (fieldEditing.typename) {
+    case "Catalogue":
+      // TODO: create enum for catalogue fields
+      // @ts-ignore
+      delete catalogue[fieldEditing.key];
+      break;
+    case "Listing":
+      let listingRef: Listing | undefined | null;
+      listingRef =
+        catalogue.listings &&
+        catalogue.listings!.find(
+          (listing: Listing) => listing.id === fieldEditing.id
+        );
+      // @ts-ignore
+      if (listingRef) delete listingRef[fieldEditing.key];
+      break;
+    case "Label":
+      break;
+    case "ListingLabel":
+      break;
+    case "Link":
+      // listing where link is found
+      let listingRefForLink: Listing | undefined | null;
+      listingRefForLink =
+        catalogue.listings &&
+        catalogue.listings!.find(
+          (listing: Listing) =>
+            listing.links &&
+            listing.links.find((link: Link) => link.id === fieldEditing.id)
+        );
+      let linkRef: Link | undefined | null;
+      linkRef =
+        listingRefForLink &&
+        listingRefForLink.links &&
+        listingRefForLink.links.find(
+          (link: Link) => link.id === fieldEditing.id
+        );
+      // @ts-ignore
+      if (linkRef) delete linkRef[fieldEditing.key];
+      break;
+    default:
+      break;
+  }
+
+  return catalogue;
+};
