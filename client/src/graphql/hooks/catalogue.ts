@@ -93,8 +93,6 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
             catalogue.listings = newListings;
           }
 
-          console.log("catalogue", catalogue);
-
           client.writeFragment({
             id: `Catalogue:${catalogue.id}`,
             fragment: ALL_CATALOGUE_FIELDS,
