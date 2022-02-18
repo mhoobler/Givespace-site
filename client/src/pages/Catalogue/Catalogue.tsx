@@ -118,6 +118,8 @@ const Catalogue: React.FC = () => {
     ? catalogue.listings!.find((li: Listing) => li.id === selectedListingId)!
     : null;
 
+  console.log("catalogue", catalogue);
+
   return (
     <div className="page-wrapper">
       <CatalogueToolbar editable={editable} />

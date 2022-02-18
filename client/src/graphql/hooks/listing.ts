@@ -67,6 +67,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
     (id: string) => (value: string, keyProp: string) => {
       updateCatalogueCache(`Listing:${id}`, keyProp, value);
       editListingMutation({
+        fetchPolicy: "no-cache",
         variables: {
           value,
           id,
@@ -79,6 +80,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
     (id: string) => async (value: Boolean, keyProp: string) => {
       updateCatalogueCache(`Listing:${id}`, keyProp, value);
       editListingMutation({
+        fetchPolicy: "no-cache",
         variables: {
           value: value.toString(),
           id,
@@ -185,7 +187,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion,
+      setMarkedForDeletion
     );
   };
 

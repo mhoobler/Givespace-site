@@ -38,17 +38,20 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
           // if fieldEditing block the relevant update
           console.log("fieldEditing", fieldEditing);
           if (fieldEditing) {
+            console.log("fieldEditing BLOCKING");
             catalogue = concurrentEditingBlocker(catalogue, fieldEditing);
           }
           // prevents labels from being shown if MFD
-          const labelsMFD: Label[] | null = catalogue.labels
-            ? catalogue.labels.filter((label: Label) =>
-                markedForDeletion.find(
-                  (mfd) => mfd.id.split(":")[1] === label.id
+          const labelsMFD: Label[] | null =
+            markedForDeletion.length && catalogue.labels
+              ? catalogue.labels.filter((label: Label) =>
+                  markedForDeletion.find(
+                    (mfd) => mfd.id.split(":")[1] === label.id
+                  )
                 )
-              )
-            : null;
+              : null;
           if (labelsMFD) {
+            console.log("labelsMFD BLOCKING");
             const labelsMFDIds: string[] = labelsMFD.map(
               (label: Label) => label.id
             );
@@ -61,14 +64,16 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
             catalogue.labels = newLabels;
           }
           // prevents listings from being shown if MFD
-          const listingsMFD: Listing[] | null = catalogue.listings
-            ? catalogue.listings.filter((listing: Listing) =>
-                markedForDeletion.find(
-                  (mfd) => mfd.id.split(":")[1] === listing.id
+          const listingsMFD: Listing[] | null =
+            markedForDeletion.length && catalogue.listings
+              ? catalogue.listings.filter((listing: Listing) =>
+                  markedForDeletion.find(
+                    (mfd) => mfd.id.split(":")[1] === listing.id
+                  )
                 )
-              )
-            : null;
+              : null;
           if (listingsMFD) {
+            console.log("listingsMFD BLOCKING");
             const listingsMFDIds: string[] = listingsMFD.map(
               (listing: Listing) => listing.id
             );
