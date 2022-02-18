@@ -66,6 +66,7 @@ const Catalogue: React.FC = () => {
   if (catalogueQuery.error) {
     return <div>Catalogue not found</div>;
   }
+
   if (catalogueQuery.data && catalogueQuery.data.catalogues[0]) {
     // The catalogue being used in the catalogue state
     // will always be the cached catalogue as fetched
@@ -80,6 +81,7 @@ const Catalogue: React.FC = () => {
   if (!catalogue) {
     return <div>Loading...</div>;
   }
+  console.log("catalogue", catalogue);
 
   let editable = isEditId || current_user_id === catalogue.user_id;
 

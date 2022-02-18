@@ -20,6 +20,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
   const handleCatalogueQuery = (idVariable: { [x: string]: string }) => {
     const catalogueQuery = useQuery(GET_CATALOGUE, {
+      nextFetchPolicy: "standby",
       variables: { ...idVariable },
     });
     apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
@@ -93,6 +94,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
             catalogue.listings = newListings;
           }
 
+          console.log("sub wrtigin catalogue", catalogue);
           client.writeFragment({
             id: `Catalogue:${catalogue.id}`,
             fragment: ALL_CATALOGUE_FIELDS,
