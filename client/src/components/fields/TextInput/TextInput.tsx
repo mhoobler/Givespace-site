@@ -36,7 +36,6 @@ const TextInput = ({
     setIsValid(currentlyIsValid);
     if (currentlyIsValid) {
       setFieldEditing(null);
-      console.log("TEXT SUBMIT", text, fieldEditingProp.key);
       handleSubmit(text, fieldEditingProp.key);
     }
   };

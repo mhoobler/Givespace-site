@@ -89,13 +89,18 @@ interface UseMarkedForDeletion {
   setMarkedForDeletion: (value: MarkedForDeletion[]) => void;
 }
 
+interface DependentCacheItems {
+  id: string;
+  fragment: DocumentNode;
+  fragmentName: string;
+  data: any;
+}
+
 type MarkedForDeletion = {
   id: string;
   text: string;
   timeout: any;
-  data: any;
-  fragment: DocumentNode;
-  fragmentName: string;
+  dependentCacheItems: DocumentNode;
 };
 
 type RemoveMFD = {
