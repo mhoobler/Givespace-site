@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
-import { catalogueParser, updateCatalogueCache } from "../../utils/functions";
+import {
+  catalogueFEParser,
+  removeFromCacheIfMFD,
+  updateCatalogueCache,
+} from "../../utils/functions";
 import {
   LIVE_CATALOGUE,
   INCREMENT_CATALOGUE_VIEWS,
@@ -20,24 +24,24 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     const catalogueQuery = useQuery(GET_CATALOGUE, {
       nextFetchPolicy: "no-cache",
       variables: { ...idVariable },
-      onCompleted: (data) => {
-        console.log("query", data);
-        if (data.catalogues && data.catalogues.length) {
-          let catalogue = catalogueParser(
-            data.catalogues[0],
-            fieldEditing,
-            markedForDeletion
-          );
+      // onCompleted: (data) => {
+      //   console.log("query", data);
+      //   if (data.catalogues && data.catalogues.length) {
+      //     let catalogue = catalogueParser(
+      //       data.catalogues[0],
+      //       fieldEditing,
+      //       markedForDeletion
+      //     );
 
-          console.log("query writing", catalogue);
-          client.writeFragment({
-            id: `Catalogue:${catalogue.id}`,
-            fragment: ALL_CATALOGUE_FIELDS,
-            fragmentName: "AllCatalogueFields",
-            data: catalogue,
-          });
-        }
-      },
+      //     console.log("query writing", catalogue);
+      //     client.writeFragment({
+      //       id: `Catalogue:${catalogue.id}`,
+      //       fragment: ALL_CATALOGUE_FIELDS,
+      //       fragmentName: "AllCatalogueFields",
+      //       data: catalogue,
+      //     });
+      //   }
+      // },
     });
     apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
     return catalogueQuery;
@@ -58,12 +62,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
       onSubscriptionData: ({ client, subscriptionData }) => {
         const { data } = subscriptionData;
         if (data && data.liveCatalogue) {
-          let catalogue = catalogueParser(
-            data.liveCatalogue,
-            fieldEditing,
-            markedForDeletion
-          );
-
+          let catalogue = catalogueFEParser(data.liveCatalogue, fieldEditing);
           console.log("sub wrtigin catalogue", catalogue);
           client.writeFragment({
             id: `Catalogue:${catalogue.id}`,
@@ -71,6 +70,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
             fragmentName: "AllCatalogueFields",
             data: catalogue,
           });
+          removeFromCacheIfMFD(catalogue, markedForDeletion);
         }
       },
     });
@@ -83,7 +83,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     editCatalogueMutation,
     { loading: _updateCatalogueLoading, error: updateCatalogueError },
   ] = useMutation(UPDATE_CATALOGUE);
-  apolloHookErrorHandler("updateCatalogueM<", updateCatalogueError);
+  apolloHookErrorHandler("updateCatalogue", updateCatalogueError);
 
   const editCatalogue = (text: string, objectKey: string) => {
     updateCatalogueCache(`Catalogue:${id}`, objectKey, text);

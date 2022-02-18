@@ -178,17 +178,23 @@ export const concurrentEditingBlocker = (
   return catalogue;
 };
 
-export const catalogueParser = (
+export const catalogueFEParser = (
   catalogue: CatalogueType,
-  fieldEditing: FieldEditing | null,
-  markedForDeletion: MarkedForDeletion[]
+  fieldEditing: FieldEditing | null
 ): CatalogueType => {
   // catalogue cleaning
   // if fieldEditing block the relevant update
   if (fieldEditing) {
     catalogue = concurrentEditingBlocker(catalogue, fieldEditing);
   }
-  // prevents labels from being shown if MFD
+
+  return catalogue;
+};
+
+export const removeFromCacheIfMFD = (
+  catalogue: CatalogueType,
+  markedForDeletion: MarkedForDeletion[]
+) => {
   const labelsMFD: Label[] | null =
     markedForDeletion.length && catalogue.labels
       ? catalogue.labels.filter((label: Label) =>
@@ -198,13 +204,10 @@ export const catalogueParser = (
   if (labelsMFD) {
     console.log("labelsMFD BLOCKING", labelsMFD);
     const labelsMFDIds: string[] = labelsMFD.map((label: Label) => label.id);
-    let newLabels: Label[] | null = catalogue.labels
-      ? catalogue.labels.filter(
-          (label: Label) => !labelsMFDIds.includes(label.id)
-        )
-      : [];
-    if (newLabels && newLabels.length === 0) newLabels = null;
-    catalogue.labels = newLabels;
+    // for each labelsMFDIds remove from cache
+    labelsMFDIds.forEach((labelId: string) => {
+      handleCacheDeletion(`Label:${labelId}`);
+    });
   }
   // prevents listings from being shown if MFD
   const listingsMFD: Listing[] | null =
@@ -214,17 +217,13 @@ export const catalogueParser = (
         )
       : null;
   if (listingsMFD) {
-    console.log("listingsMFD BLOCKING", listingsMFD);
+    // console.log("listingsMFD BLOCKING", listingsMFD);
     const listingsMFDIds: string[] = listingsMFD.map(
       (listing: Listing) => listing.id
     );
-    let newListings: Listing[] | null = catalogue.listings
-      ? catalogue.listings.filter(
-          (listing: Listing) => !listingsMFDIds.includes(listing.id)
-        )
-      : [];
-    if (newListings && newListings.length === 0) newListings = null;
-    catalogue.listings = newListings;
+    // for each listingsMFDIds remove from cache
+    listingsMFDIds.forEach((labelId: string) => {
+      handleCacheDeletion(`Listing:${labelId}`);
+    });
   }
-  return catalogue;
 };

@@ -17,7 +17,7 @@ interface CatalogueStub {
   edit_id: string;
   user_id: string;
   status: Status;
-  title: string;
+  title: string | null;
   description: string | null;
   created: string;
   updated: string;

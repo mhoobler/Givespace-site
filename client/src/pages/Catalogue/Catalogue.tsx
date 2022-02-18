@@ -12,7 +12,13 @@ import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { UndoNotification } from "../../components";
 
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
-import { cleanedPath } from "../../utils/functions";
+import {
+  catalogueFEParser,
+  cleanedPath,
+  handleCacheDeletion,
+  removeFromCacheIfMFD,
+} from "../../utils/functions";
+import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 
 const Catalogue: React.FC = () => {
   // get navigation params
@@ -26,6 +32,8 @@ const Catalogue: React.FC = () => {
   };
   const queryStrings = useQueryStrings();
   const isEditId = Boolean(queryStrings.get("edit"));
+  const { fieldEditing } = useFieldEditing();
+  const { markedForDeletion } = useMarkedForDeletion();
 
   let initialSelectedListingId: string | null = null;
   let splitPath = cleanedPath(location.pathname).split("/");
@@ -52,8 +60,8 @@ const Catalogue: React.FC = () => {
   // query below scouts the catalogue and populates the cache
   // (that cache is how the catalogue is rendered)
   const catalogueQuery = handleCatalogueQuery(idVariable);
-  handleCatalogueSubscription(idVariable);
-
+  const sub = handleCatalogueSubscription(idVariable);
+  console.log("sub", sub);
   // Inputs need to toggle from Editing to Display state
   const [isEditing, setIsEditing] = useState(true);
   useEffect(() => {
@@ -76,6 +84,9 @@ const Catalogue: React.FC = () => {
       fragment: ALL_CATALOGUE_FIELDS,
       fragmentName: "AllCatalogueFields",
     });
+    if (catalogue) {
+      removeFromCacheIfMFD(catalogue, markedForDeletion);
+    }
   }
 
   if (!catalogue) {
