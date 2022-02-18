@@ -202,7 +202,6 @@ export const removeFromCacheIfMFD = (
         )
       : null;
   if (labelsMFD) {
-    console.log("labelsMFD BLOCKING", labelsMFD);
     const labelsMFDIds: string[] = labelsMFD.map((label: Label) => label.id);
     // for each labelsMFDIds remove from cache
     labelsMFDIds.forEach((labelId: string) => {
@@ -217,7 +216,6 @@ export const removeFromCacheIfMFD = (
         )
       : null;
   if (listingsMFD) {
-    // console.log("listingsMFD BLOCKING", listingsMFD);
     const listingsMFDIds: string[] = listingsMFD.map(
       (listing: Listing) => listing.id
     );

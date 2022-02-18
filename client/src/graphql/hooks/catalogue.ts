@@ -14,7 +14,6 @@ import {
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
-import client from "../clientConfig";
 
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();
@@ -24,24 +23,6 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     const catalogueQuery = useQuery(GET_CATALOGUE, {
       nextFetchPolicy: "no-cache",
       variables: { ...idVariable },
-      // onCompleted: (data) => {
-      //   console.log("query", data);
-      //   if (data.catalogues && data.catalogues.length) {
-      //     let catalogue = catalogueParser(
-      //       data.catalogues[0],
-      //       fieldEditing,
-      //       markedForDeletion
-      //     );
-
-      //     console.log("query writing", catalogue);
-      //     client.writeFragment({
-      //       id: `Catalogue:${catalogue.id}`,
-      //       fragment: ALL_CATALOGUE_FIELDS,
-      //       fragmentName: "AllCatalogueFields",
-      //       data: catalogue,
-      //     });
-      //   }
-      // },
     });
     apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
     return catalogueQuery;
@@ -63,7 +44,6 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
         const { data } = subscriptionData;
         if (data && data.liveCatalogue) {
           let catalogue = catalogueFEParser(data.liveCatalogue, fieldEditing);
-          console.log("sub wrtigin catalogue", catalogue);
           client.writeFragment({
             id: `Catalogue:${catalogue.id}`,
             fragment: ALL_CATALOGUE_FIELDS,

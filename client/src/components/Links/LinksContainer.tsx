@@ -13,13 +13,13 @@ type Props = {
 const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
   const linkInputRef = useRef<HTMLInputElement>(null);
   const [linkEditingId, setLinkEditingId] = useState<string | null>(null);
-  const [isValid, setIsValid] = useState(true);
+  const [_isValid, setIsValid] = useState(true);
   const { addLink, removeLink } = useLinkApolloHooks();
 
   const handleSubmit = () => {
     if (!linkInputRef.current) {
       console.log("no input");
-      return;
+      return null;
     }
     if (isUrl(linkInputRef.current.value)) {
       setIsValid(true);
@@ -34,9 +34,10 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
     setLinkEditingId(null);
   };
 
-  const linkEditing = linkEditingId
-    ? listing.links!.find((lk: Link) => lk.id === linkEditingId)!
-    : null;
+  const linkEditing =
+    linkEditingId && listing.links
+      ? listing.links.find((lk: Link) => lk.id === linkEditingId)!
+      : null;
 
   return (
     <div className="links-container">
