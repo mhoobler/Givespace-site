@@ -3,7 +3,7 @@ import React from "react";
 import "./Label.less";
 
 type LabelProps = {
-  isEditing: boolean;
+  isEditing?: boolean;
   label: Label;
   faint?: boolean;
   deleteLabel?: (id: string) => void;

@@ -1,0 +1,35 @@
+.icon-button {
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.65);
+  margin: 8px 4px;
+  padding: 10px;
+  border-radius: 100px;
+  width: 40px;
+  height: 40px;
+
+  &.danger-outline {
+    background-color: white;
+    border: 1px solid #EB0000;
+  }
+
+  &.danger {
+    background-color: #EB0000;
+  }
+
+  &.primary {
+  }
+
+  &.primary-outline {
+  }
+
+  img {
+    filter: invert(1);
+    width: 100%;
+    height: auto;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}

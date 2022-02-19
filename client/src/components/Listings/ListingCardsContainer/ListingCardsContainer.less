@@ -1,0 +1,68 @@
+.listing-cards-container-wrapper {
+  .listing-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+
+    >* {
+      width: 45%;
+      margin-right: 10%;
+    }
+
+    >*:nth-child(2n) {
+      width: 45%;
+      margin-right: 0;
+    }
+  }
+}
+
+@media screen {
+  // sm
+  @media (min-width: 576px) {
+
+  }
+
+  // md
+  @media (min-width: 768px) {
+    .listing-cards-container-wrapper {
+      .listing-cards-container {
+        >*:nth-child(2n),
+        >* {
+          width: 30%;
+          margin-right: 4.999%;
+        }
+
+        >*:nth-child(3n) {
+          width: 30%;
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  // lg
+  @media (min-width: 992px) {
+  }
+
+  // xl
+  @media (min-width: 1200px) {
+    .listing-cards-container-wrapper {
+      .listing-cards-container {
+        >*:nth-child(2n),
+        >*:nth-child(3n),
+        >* {
+          width: 18%;
+          margin-right: 2.5%;
+        }
+
+        >*:nth-child(3n) {
+          width: 18%;
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  // xxl
+  @media (min-width: 1400px) {
+  }
+}

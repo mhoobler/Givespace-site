@@ -1,6 +1,9 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { IconButton, Label, LabelContainer } from "../..";
 import { cleanedPath } from "../../../utils/functions";
+
+import { X } from "../../../assets";
 
 import "./ListingCard.less";
 
@@ -22,6 +25,7 @@ const ListingCard: React.FC<Props> = ({
   const handleDelete = () => {
     deleteListing(listing.id);
   };
+  console.log(listing);
 
   const handleSelect = () => {
     let urlToNavigate: string = cleanedPath(location.pathname);
@@ -39,24 +43,40 @@ const ListingCard: React.FC<Props> = ({
     <div className={`card ${isEditing ? "editing" : ""}`}>
       <div className="card-header text-center">
         <span>. . .</span>
-        <button onClick={handleDelete}>x</button>
+        <IconButton onClick={handleDelete} src={X} />
       </div>
       <div className="card-body" onClick={handleSelect}>
-        <h4>{listing.name}</h4>
-        {/* TODO: DELETE THIS */}
-        <p>{listing.description}</p>
-        {listing.show_price && (
-          <h4>
-            <span className="price">${listing.price}</span>
-          </h4>
-        )}
-        <img
-          style={{ width: "100px" }}
-          src={
-            listing.image_url ||
-            "https://media.wired.com/photos/592722c1af95806129f51b71/master/pass/MIT-Web-Loading.jpg"
-          }
-        />
+        <div className="listing-image">
+          <img
+            style={{ width: "100px" }}
+            src={
+              listing.image_url ||
+              "https://media.wired.com/photos/592722c1af95806129f51b71/master/pass/MIT-Web-Loading.jpg"
+            }
+          />
+        </div>
+
+        <div className="listing-title-description">
+          <h4>{listing.name}</h4>
+          <p>{listing.description}</p>
+        </div>
+
+        <div className="listing-labels">
+          <LabelContainer>
+            {listing.labels &&
+              listing.labels.map((e: any) => {
+                return <Label label={e.label} />;
+              })}
+          </LabelContainer>
+        </div>
+
+        <div className="listing-price">
+          {listing.show_price && (
+            <h4>
+              <span className="price">${listing.price}</span>
+            </h4>
+          )}
+        </div>
       </div>
     </div>
   );

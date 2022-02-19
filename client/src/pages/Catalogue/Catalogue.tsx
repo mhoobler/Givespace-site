@@ -22,7 +22,7 @@ const Catalogue: React.FC = () => {
   const useQueryStrings = () => {
     return useMemo(
       () => new URLSearchParams(location.search),
-      [location.search]
+      [location.search],
     );
   };
   const queryStrings = useQueryStrings();
@@ -35,7 +35,7 @@ const Catalogue: React.FC = () => {
     initialSelectedListingId = splitPath[3];
   }
   const [selectedListingId, setSelectedListingId] = useState<string | null>(
-    initialSelectedListingId
+    initialSelectedListingId,
   );
 
   const current_user_id = localStorage.getItem("authorization");
@@ -138,7 +138,6 @@ const Catalogue: React.FC = () => {
 
   return (
     <div className="page-wrapper">
-      <CatalogueToolbar />
       <CatalogueHeader
         isEditing={isEditing}
         editable={editable}

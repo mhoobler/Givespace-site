@@ -8,6 +8,7 @@ import { apolloHookErrorHandler } from "./utils/functions";
 import "./App.less";
 import { useMarkedForDeletion, useRemoveMFD } from "./state/store";
 import { cache } from "./graphql/clientConfig";
+import { CatalogueToolbar } from "./containers";
 
 const App = () => {
   const { removeMFD, setRemoveMFD } = useRemoveMFD();
@@ -19,7 +20,7 @@ const App = () => {
     // handling undo and clearing of undo list
     if (removeMFD && markedForDeletion.find((mfd) => mfd.id === removeMFD.id)) {
       const currentMFD = markedForDeletion.find(
-        (mfd) => mfd.id === removeMFD.id
+        (mfd) => mfd.id === removeMFD.id,
       )!;
 
       if (removeMFD.isUndo) {
@@ -30,7 +31,7 @@ const App = () => {
       }
 
       setMarkedForDeletion(
-        markedForDeletion.filter((mfd) => mfd.id !== removeMFD.id)
+        markedForDeletion.filter((mfd) => mfd.id !== removeMFD.id),
       );
 
       setRemoveMFD(null);
@@ -40,6 +41,7 @@ const App = () => {
   return (
     <div className="app">
       <Router>
+        <CatalogueToolbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/lists" element={<CatalogueSelect />} />
