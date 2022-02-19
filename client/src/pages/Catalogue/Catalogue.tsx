@@ -100,8 +100,6 @@ const Catalogue: React.FC = () => {
       break;
   }
 
-  console.log("current_user_id", editable, current_user_id, catalogue.user_id);
-
   // TODO: should sort this in the backend
   const sortedLabels =
     catalogue.labels && catalogue.labels[0]
