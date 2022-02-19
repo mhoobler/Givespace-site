@@ -2,7 +2,7 @@ import React from "react";
 import {
   TextInput,
   Dropdown,
-  HeaderImage,
+  CatalogueBanner,
   AvatarImage,
   CalendarInput,
   ColorInput,
@@ -31,19 +31,8 @@ const CatalogueHeader: React.FC<Props> = ({
   return (
     <div className="catalogue-header-container">
       {/* header image hero*/}
-      <div className="header-image-wrapper">
-        <ColorInput
-          handleSubmit={(color) => editCatalogue(color, "header_color")}
-          handleChange={(color) =>
-            updateCatalogueCache(
-              `Catalogue:${catalogue.id}`,
-              "header_color",
-              color
-            )
-          }
-          color={catalogue.header_color}
-        />
-        <HeaderImage
+      <div className="catalogue-banner-wrapper">
+        <CatalogueBanner
           isEditing={isEditing}
           handleSubmit={editCatalogueFile}
           keyProp={"header_image_url"}

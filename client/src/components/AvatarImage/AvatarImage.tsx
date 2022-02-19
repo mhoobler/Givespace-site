@@ -6,8 +6,9 @@ import React, {
   useState,
 } from "react";
 
-import { ImageCrop, Modal, ToggleEdit } from "..";
+import { IconButton, ImageCrop, Modal, ToggleEdit } from "..";
 import { acceptedImageFiles } from "../../utils/references";
+import { Camera } from "../../assets";
 
 import "./AvatarImage.less";
 
@@ -98,24 +99,26 @@ const AvatarImage: React.FC<Props> = ({
         const filename = splitFile[0] + Date.now() + "." + splitFile[1];
         if (blob) {
           handleSubmit(new File([blob], filename), keyProp);
+          handleModal();
         }
       },
       "image/jpg", // file type
-      0.9 // image quality
+      0.9, // image quality
     );
   };
 
   return (
     <>
-      <ToggleEdit className="avatar-image-container" isEditing={isEditing}>
+      <ToggleEdit
+        className="avatar-image-container"
+        isEditing={isEditing}
+        style={{ display: value || isEditing ? "" : "none" }}
+      >
         {/* open modal, display image */}
         {/* TODO: Replace Icon */}
         <div className="toggle-wrapper">
-          <div
-            onClick={handleModal}
-            className={`toggle-input icons-container f-center`}
-          >
-            <div className="icon-btn">Click This</div>
+          <div className={`toggle-input icons-container f-center`}>
+            <IconButton onClick={handleModal} src={Camera} />
           </div>
           <div className={`toggle-input image-wrapper`}>
             <img id="avatar-image-display" src={value} alt="" />

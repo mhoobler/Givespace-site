@@ -6,12 +6,12 @@ import React, {
   useEffect,
 } from "react";
 
-import { ImageCrop, Modal, ToggleEdit } from "..";
+import { ImageCrop, Modal, ToggleEdit, ColorInput, IconButton } from "..";
 import { acceptedImageFiles } from "../../utils/references";
 
 import { Camera } from "../../assets";
 
-import "./HeaderImage.less";
+import "./CatalogueBanner.less";
 
 type Props = {
   isEditing: boolean;
@@ -21,7 +21,7 @@ type Props = {
   className?: string;
 };
 
-const HeaderImage: React.FC<Props> = ({
+const CatalogueBanner: React.FC<Props> = ({
   isEditing,
   handleSubmit,
   keyProp,
@@ -30,6 +30,7 @@ const HeaderImage: React.FC<Props> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
   // ImageCrop: use `createRef` and assign `new ImageCrop.RefManager`
   const cropRef = createRef<ImageCrop.RefManager>();
   (cropRef as any).current = new ImageCrop.RefManager({
@@ -98,24 +99,40 @@ const HeaderImage: React.FC<Props> = ({
         const filename = splitFile[0] + Date.now() + "." + splitFile[1];
         if (blob) {
           handleSubmit(new File([blob], filename), keyProp);
+          handleModal();
         }
       },
       "image/jpg", // file type
-      0.9 // image quality
+      0.9, // image quality
     );
   };
 
   return (
     <>
-      <ToggleEdit className="header-image-container" isEditing={isEditing}>
+      <ToggleEdit
+        className="catalogue-banner-container"
+        isEditing={isEditing}
+        style={{ display: value || isEditing ? "" : "none" }}
+      >
         {/* open modal, display image */}
-        {/* TODO: Replace Icons */}
         <div className="toggle-wrapper">
           <div className={`toggle-input icons-container f-center`}>
-            <div onClick={handleModal} className="icon-btn">
-              <img src={Camera} alt="" />
-            </div>
+            {/* change image */}
+            <IconButton onClick={handleModal} src={Camera} />
+            {/* color image */}
+            {/* TODO: TODO: TODO: change the handleFunctions */}
+            <ColorInput
+              color="#FFAAAA"
+              handleChange={(s: string) => {}}
+              handleSubmit={(s: string) => {}}
+            />
           </div>
+          {/* color border */}
+          <div
+            className="color-border"
+            style={{ backgroundColor: "red" }}
+          ></div>
+          {/* background images */}
           <div className={`toggle-input image-wrapper`}>
             <img id="header-image-display" src={value} alt="" />
           </div>
@@ -148,4 +165,4 @@ const HeaderImage: React.FC<Props> = ({
   );
 };
 
-export default HeaderImage;
+export default CatalogueBanner;

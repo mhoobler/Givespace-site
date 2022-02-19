@@ -212,21 +212,26 @@ class RefManager {
   }
 
   getRectImageData() {
-    this.canvas.width = this.originalWidth;
-    this.canvas.height = this.originalHeight;
-    const { height, width } = this.canvas;
+    const canvas2 = document.createElement("canvas");
+    canvas2.width = this.originalWidth;
+    canvas2.height = this.originalHeight;
+    const ctx2 = canvas2.getContext("2d");
+    if (!ctx2) {
+      throw new Error();
+    }
+
+    const { height, width } = canvas2;
     const { aspect, inX, inY, sx, sy, zoom } = this;
-    this.ctx.drawImage(this.image, 0, 0, width, height);
+    ctx2.drawImage(this.image, 0, 0, width, height);
 
     if (this.aspect > 1) {
       const [px, py] = [width / zoom, height / aspect / zoom];
       const [x1, y1] = [inX + sx, inY + sy];
-      console.log(x1, y1);
-      return this.ctx.getImageData(x1, y1, px, py);
+      return ctx2.getImageData(x1, y1, px, py);
     } else {
       const [px, py] = [(width * aspect) / zoom, height / zoom];
       const [x1, y1] = [inX + sx, inY * sy];
-      return this.ctx.getImageData(x1, y1, px, py);
+      return ctx2.getImageData(x1, y1, px, py);
     }
   }
 
@@ -242,17 +247,23 @@ class RefManager {
   }
 
   getArcImageData() {
-    this.canvas.width = this.originalWidth;
-    this.canvas.height = this.originalHeight;
-    const { height, width } = this.canvas;
+    const canvas2 = document.createElement("canvas");
+    canvas2.width = this.originalWidth;
+    canvas2.height = this.originalHeight;
+    const ctx2 = canvas2.getContext("2d");
+    if (!ctx2) {
+      throw new Error();
+    }
+
+    const { height, width } = canvas2;
     const { zoom, shortSide, inX, inY } = this;
-    this.ctx.drawImage(this.image, -inX, -inY, width, height);
+    ctx2.drawImage(this.image, -inX, -inY, width, height);
 
     const [cx, cy] = [width / 2, height / 2];
     const px = (shortSide - 20) / zoom;
     const px2 = px / 2;
 
-    return this.ctx.getImageData(cx - px2, cy - px2, px, px);
+    return ctx2.getImageData(cx - px2, cy - px2, px, px);
   }
 
   render() {

@@ -5,6 +5,8 @@ import { CreateCatalogueButton, DeleteCatalogueButton } from "../../components";
 import { MY_CATALOGUES } from "../../graphql/schemas";
 import { apolloHookErrorHandler } from "../../utils/functions";
 
+import "./CatalogueSelect.less";
+
 const CatalogueRow: React.FC<CatalogueStub> = ({
   id,
   //user_id,
@@ -39,22 +41,19 @@ const CatalogueSelect = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div data-testid="test">
-      <div className="row">
-        <h2>Your Catalogues</h2>
-      </div>
-      <div className="row">
-        <div className="col-2">
-          <Link className="btn btn-primary" to={`/`}>
-            Go Back
-          </Link>
+    <div className="page-wrapper catalogue-select-wrapper">
+      <div className="page-container catalogue-select-container">
+        <div className="title-row">
+          <h2>My Lists</h2>
+          <p>All lists saved on this device</p>
         </div>
-        <CreateCatalogueButton />
+        <div className="catalogues-container">
+          {results.data &&
+            results.data.myCatalogues.map((e: CatalogueStub) => (
+              <CatalogueRow key={e.id} {...e} />
+            ))}
+        </div>
       </div>
-      {results.data &&
-        results.data.myCatalogues.map((e: CatalogueStub) => (
-          <CatalogueRow key={e.id} {...e} />
-        ))}
     </div>
   );
 };

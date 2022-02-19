@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import DatePicker, { CalendarContainer } from "react-datepicker";
 
 import "./CalendarInput.less";
@@ -14,6 +14,7 @@ const CalendarInput: React.FC<Props> = ({
   handleDateInput,
   keyProp,
 }) => {
+  const pickerRef = useRef<any>(null);
   const [date, setDate] = useState(value ? new Date(value) : null);
   const [show, setShow] = useState(false);
 
@@ -39,31 +40,32 @@ const CalendarInput: React.FC<Props> = ({
     );
   };
 
-  if (!date) {
-    return (
-      <>
-        {show ? (
-          <Container>
-            <DatePicker
-              selected={new Date()}
-              onChange={handleChange}
-              onBlur={() => setShow(false)}
-              calendarContainer={Container}
-            />
-          </Container>
-        ) : (
-          <button onClick={() => setShow(true)}>Set Event Date</button>
-        )}
-      </>
-    );
-  }
+  const handleClick = () => {
+    setShow(true);
+    setTimeout(() => pickerRef.current?.setFocus(), 1);
+  };
+
+  const handleBlur = () => {
+    console.log(pickerRef);
+    setShow(false);
+  };
 
   return (
-    <DatePicker
-      selected={date}
-      onChange={handleChange}
-      calendarContainer={Container}
-    />
+    <>
+      {show ? (
+        <Container>
+          <DatePicker
+            ref={pickerRef}
+            selected={new Date()}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            calendarContainer={Container}
+          />
+        </Container>
+      ) : (
+        <button onClick={handleClick}>Set Event Date</button>
+      )}
+    </>
   );
 };
 

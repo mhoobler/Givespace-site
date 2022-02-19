@@ -1,13 +1,13 @@
 import React from "react";
 
-//import "./ListingCardsContainer.less";
+import "./ListingCardsContainer.less";
 
 type Props = {};
 
 const ListingCardsContainer: React.FC<Props> = ({ children }) => {
   return (
-    <div className="col-12">
-      <div className="d-flex justify-content-between flex-wrap">{children}</div>
+    <div className="listing-cards-container-wrapper">
+      <div className="listing-cards-container">{children}</div>
     </div>
   );
 };

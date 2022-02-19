@@ -3,8 +3,8 @@ import React, { useState, useRef } from "react";
 import "./LabelContainer.less";
 
 type Props = {
-  createLabel: (name: string) => void;
-  isEditing: boolean;
+  createLabel?: (name: string) => void;
+  isEditing?: boolean;
 };
 
 const LabelContainer: React.FC<Props> = ({
@@ -23,7 +23,7 @@ const LabelContainer: React.FC<Props> = ({
     if (!containerRef.current) {
       throw new Error("Could not get labels container");
     }
-    if (isAdding) {
+    if (createLabel && isAdding) {
       if (inputRef.current.value !== "") {
         createLabel(inputRef.current.value);
       }
@@ -39,7 +39,7 @@ const LabelContainer: React.FC<Props> = ({
   return (
     <div className="labels-container" ref={containerRef}>
       {children}
-      {isEditing && (
+      {createLabel && isEditing && (
         <div className={`f-center add-label-group ${isAdding ? "adding" : ""}`}>
           <input ref={inputRef} className="add-label-input" type="text" />
           <button className="add-label-button" onClick={handleAddLabel}>
