@@ -5,10 +5,9 @@ import {
   CatalogueBanner,
   AvatarImage,
   CalendarInput,
-  ColorInput,
 } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
-import { handleCopy, updateCatalogueCache } from "../../utils/functions";
+import { handleCopy } from "../../utils/functions";
 import { statusOptions } from "../../utils/references";
 
 import "./CatalogueHeader.less";
@@ -116,14 +115,17 @@ const CatalogueHeader: React.FC<Props> = ({
               >
                 Edit
               </button>
-              <a
-                onClick={() =>
-                  handleCopy(`/list/${catalogue.edit_id}?edit=true`)
-                }
-                className="btn btn-link"
-              >
-                Copy Editor Link
-              </a>
+              {editable && (
+                <a
+                  onClick={() =>
+                    handleCopy(`/list/${catalogue.edit_id}?edit=true`)
+                  }
+                  className="btn btn-link"
+                >
+                  Copy Editor Link
+                </a>
+              )}
+
               <a
                 onClick={() => handleCopy(`/list/${catalogue.id}`)}
                 className="btn btn-link"
