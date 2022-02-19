@@ -85,6 +85,7 @@ const Catalogue: React.FC = () => {
   if (!catalogue) {
     return <div>Loading...</div>;
   }
+  // console.log("catalogue", catalogue);
 
   let editable = isEditId || current_user_id === catalogue.user_id;
 

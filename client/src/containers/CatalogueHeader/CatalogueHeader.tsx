@@ -82,7 +82,7 @@ const CatalogueHeader: React.FC<Props> = ({
                   key: "title",
                   id: catalogue.id,
                 }}
-                value={catalogue.title}
+                value={catalogue.title || ""}
                 className="fs-2"
               />
             </div>

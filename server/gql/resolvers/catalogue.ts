@@ -146,7 +146,10 @@ const catalogueResolvers = {
         path: string
       ): Promise<string> => {
         // get the extension from path
-        if (key === "header_image_url") {
+        if (
+          preResult.rows[0].header_color === "#000000" &&
+          key === "header_image_url"
+        ) {
           const dominantColor: string | null = await new Promise(
             (resolve, reject) => {
               Jimp.read(path, (err, sourceImage) => {
