@@ -5,7 +5,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 export { default as ImageCrop } from "./ImageCrop/ImageCrop";
 export { default as AvatarImage } from "./AvatarImage/AvatarImage";
-export { default as HeaderImage } from "./HeaderImage/HeaderImage";
+export { default as CatalogueBanner } from "./CatalogueBanner/CatalogueBanner";
 export { default as ToggleEdit } from "./ToggleEdit/ToggleEdit";
 export { default as Modal } from "./Modal/Modal";
 export { default as DeleteCatalogueButton } from "./DeleteCatalogueButton/DeleteCatalogueButton";
@@ -28,3 +28,5 @@ export { default as Checkbox } from "./fields/Checkbox/Checkbox";
 export { default as TextareaInput } from "./fields/TextreaInput/TextareaInput";
 export { default as ListingLabelContainer } from "./Labels/ListingLabelContainer";
 export { default as LinksContainer } from "./Links/LinksContainer";
+
+export { default as IconButton } from "./IconButton/IconButton";

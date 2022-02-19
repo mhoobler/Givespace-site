@@ -1,6 +1,9 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { IconButton } from "../..";
 import { cleanedPath } from "../../../utils/functions";
+
+import { X } from "../../../assets";
 
 import "./ListingCard.less";
 
@@ -39,7 +42,7 @@ const ListingCard: React.FC<Props> = ({
     <div className={`card ${isEditing ? "editing" : ""}`}>
       <div className="card-header text-center">
         <span>. . .</span>
-        <button onClick={handleDelete}>x</button>
+        <IconButton onClick={handleDelete} src={X} />
       </div>
       <div className="card-body" onClick={handleSelect}>
         <h4>{listing.name}</h4>

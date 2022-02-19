@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { IconButton } from "../..";
 import { Palette } from "../../../assets";
 
 import "./Color.less";
@@ -23,15 +24,15 @@ const Color = ({ color, handleChange, handleSubmit }: Props) => {
     });
   }, [colorInput]);
 
+  const handleBlur = () => {
+    if (colorInput.current?.value) {
+      handleSubmit(colorInput.current?.value);
+    }
+  };
+
   return (
     <div>
-      <div
-        onClick={handleToggle}
-        className="icon-btn"
-        style={{ backgroundColor: color }}
-      >
-        <img src={Palette} alt="" />
-      </div>
+      <IconButton onClick={handleToggle} src={Palette} />
       <div className="color-picker-container">
         <input
           className="color-picker-input"
@@ -39,6 +40,7 @@ const Color = ({ color, handleChange, handleSubmit }: Props) => {
           type="color"
           value={color}
           onChange={() => handleChange(colorInput.current?.value || "#ffffff")}
+          onBlur={handleBlur}
         />
         {/* <SketchPicker
           color={color}
