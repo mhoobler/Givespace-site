@@ -40,7 +40,6 @@ const Home = () => {
 
   return (
     <div className="container-fluid">
-      <div className="row nav-like"></div>
       <section className="welcome row">
         <div className="col">
           <h3>Welcome to GiveSpace</h3>

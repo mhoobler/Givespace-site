@@ -36,6 +36,10 @@ app.get("/", async (_req, res) => {
   res.status(200).render("index");
 });
 
+app.get("/lists", async (_req, res) => {
+  res.status(200).render("index");
+});
+
 // create an app.get that accepts two different urls like /api/users and /api/posts
 
 app.get(
@@ -49,8 +53,8 @@ app.get(
         fullCatalogueQuery(
           `WHERE ${queryStrings.edit ? "edit_id" : "id"} = '${
             params.catalogue_id
-          }'`
-        )
+          }'`,
+        ),
       );
       if (!query.rows.length) {
         res.status(200).render("list", { og_title: "Catalogue not found" });
@@ -63,7 +67,7 @@ app.get(
           });
         } else {
           const listing = catalogue.listings.find(
-            (listing) => listing.id === params.listing_id
+            (listing) => listing.id === params.listing_id,
           );
           if (!listing) {
             res.status(200).render("list", {
@@ -81,7 +85,7 @@ app.get(
     } catch (err) {
       res.status(500);
     }
-  }
+  },
 );
 
 const httpServer = createServer(app);
