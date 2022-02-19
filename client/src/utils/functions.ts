@@ -270,3 +270,9 @@ export const removeFromCacheIfMFD = (
     });
   }
 };
+
+export const handleCopy = (path: string): void => {
+  const currentUrl = window.location.href;
+  const domain = currentUrl.split("/").slice(0, 3).join("/");
+  navigator.clipboard.writeText(domain + path);
+};

@@ -8,19 +8,21 @@ import {
   ColorInput,
 } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
-import { updateCatalogueCache } from "../../utils/functions";
+import { handleCopy, updateCatalogueCache } from "../../utils/functions";
 import { statusOptions } from "../../utils/references";
 
 import "./CatalogueHeader.less";
 
 type Props = {
   isEditing: any;
+  editable: boolean;
   catalogue: CatalogueType;
   toggleEdit: () => void;
 };
 
 const CatalogueHeader: React.FC<Props> = ({
   isEditing,
+  editable,
   catalogue,
   toggleEdit,
 }) => {
@@ -108,11 +110,26 @@ const CatalogueHeader: React.FC<Props> = ({
           <div className="d-flex flex-grow-1 flex-md-column flex-sm-row right-half">
             {/* edit toggle, editor link, share link, public/private options */}
             <div className="d-flex justify-content-end">
-              <button className="btn btn-primary" onClick={toggleEdit}>
+              <button
+                className={`btn btn-primary ${editable ? "" : "hidden"}`}
+                onClick={toggleEdit}
+              >
                 Edit
               </button>
-              <a className="btn btn-link">Copy Editor Link</a>
-              <a className="btn btn-link">Share</a>
+              <a
+                onClick={() =>
+                  handleCopy(`/list/${catalogue.edit_id}?edit=true`)
+                }
+                className="btn btn-link"
+              >
+                Copy Editor Link
+              </a>
+              <a
+                onClick={() => handleCopy(`/list/${catalogue.id}`)}
+                className="btn btn-link"
+              >
+                Share
+              </a>
             </div>
             <div className="d-flex justify-content-end">
               <Dropdown

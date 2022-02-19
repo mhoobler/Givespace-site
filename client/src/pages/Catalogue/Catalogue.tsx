@@ -56,7 +56,7 @@ const Catalogue: React.FC = () => {
   const catalogueQuery = handleCatalogueQuery(idVariable);
   handleCatalogueSubscription(idVariable);
   // Inputs need to toggle from Editing to Display state
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   useEffect(() => {
     incrementCatalogueViewsMuation({
       variables: { ...idVariable },
@@ -80,14 +80,27 @@ const Catalogue: React.FC = () => {
     if (catalogue) {
       removeFromCacheIfMFD(catalogue, markedForDeletion);
     }
+    console.log("catalogue", catalogue);
   }
 
   if (!catalogue) {
     return <div>Loading...</div>;
   }
+  console.log("OUT catalogue", catalogue);
   // console.log("catalogue", catalogue);
 
-  let editable = isEditId || current_user_id === catalogue.user_id;
+  // status conditions
+  let editable = current_user_id === catalogue.user_id;
+  switch (catalogue.status) {
+    case "public":
+      if (isEditId) editable = true;
+      break;
+    case "private":
+      if (!editable && isEditing) setIsEditing(false);
+      break;
+    default:
+      break;
+  }
 
   // TODO: should sort this in the backend
   const sortedLabels =
@@ -127,6 +140,7 @@ const Catalogue: React.FC = () => {
     <div className="page-wrapper">
       <CatalogueHeader
         isEditing={isEditing}
+        editable={editable}
         catalogue={catalogue}
         toggleEdit={() => setIsEditing((prev) => !prev)}
       />
