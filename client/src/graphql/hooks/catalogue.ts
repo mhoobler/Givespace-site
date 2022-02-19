@@ -14,6 +14,7 @@ import {
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
+import client from "../clientConfig";
 
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();
@@ -21,8 +22,22 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
   const handleCatalogueQuery = (idVariable: { [x: string]: string }) => {
     const catalogueQuery = useQuery(GET_CATALOGUE, {
-      nextFetchPolicy: "no-cache",
+      // // TODO: remove this, this is what tracks cache changes
+      // nextFetchPolicy: "no-cache",
       variables: { ...idVariable },
+      onCompleted: (data) => {
+        console.log("catalogueQuery", data);
+        if (data.catalogues && data.catalogues[0]) {
+          let catalogue = catalogueFEParser(data.catalogues[0], fieldEditing);
+          client.writeFragment({
+            id: `Catalogue:${catalogue.id}`,
+            fragment: ALL_CATALOGUE_FIELDS,
+            fragmentName: "AllCatalogueFields",
+            data: catalogue,
+          });
+          removeFromCacheIfMFD(catalogue, markedForDeletion);
+        }
+      },
     });
     apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
     return catalogueQuery;

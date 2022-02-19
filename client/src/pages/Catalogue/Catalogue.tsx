@@ -80,11 +80,13 @@ const Catalogue: React.FC = () => {
     if (catalogue) {
       removeFromCacheIfMFD(catalogue, markedForDeletion);
     }
+    console.log("catalogue", catalogue);
   }
 
   if (!catalogue) {
     return <div>Loading...</div>;
   }
+  console.log("OUT catalogue", catalogue);
   // console.log("catalogue", catalogue);
 
   // status conditions
