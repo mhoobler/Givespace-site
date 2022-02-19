@@ -23,11 +23,8 @@ const App = () => {
       )!;
 
       if (removeMFD.isUndo) {
-        cache.writeFragment({
-          id: currentMFD.id,
-          fragment: currentMFD.fragment,
-          fragmentName: currentMFD.fragmentName,
-          data: currentMFD.data,
+        currentMFD.dependentCacheItems.forEach((dci: DependentCacheItems) => {
+          cache.writeFragment(dci);
         });
       } else {
       }

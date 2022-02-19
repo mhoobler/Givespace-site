@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import {
-  concurrentEditingBlocker,
+  catalogueFEParser,
+  removeFromCacheIfMFD,
   updateCatalogueCache,
 } from "../../utils/functions";
 import {
@@ -20,6 +21,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
   const handleCatalogueQuery = (idVariable: { [x: string]: string }) => {
     const catalogueQuery = useQuery(GET_CATALOGUE, {
+      nextFetchPolicy: "no-cache",
       variables: { ...idVariable },
     });
     apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
@@ -41,64 +43,14 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
       onSubscriptionData: ({ client, subscriptionData }) => {
         const { data } = subscriptionData;
         if (data && data.liveCatalogue) {
-          let catalogue = data.liveCatalogue;
-
-          // catalogue cleaning
-          // if fieldEditing block the relevant update
-          if (fieldEditing) {
-            catalogue = concurrentEditingBlocker(catalogue, fieldEditing);
-          }
-          // prevents labels from being shown if MFD
-          const labelsMFD: Label[] | null =
-            markedForDeletion.length && catalogue.labels
-              ? catalogue.labels.filter((label: Label) =>
-                  markedForDeletion.find(
-                    (mfd) => mfd.id.split(":")[1] === label.id
-                  )
-                )
-              : null;
-          if (labelsMFD) {
-            console.log("labelsMFD BLOCKING", labelsMFD);
-            const labelsMFDIds: string[] = labelsMFD.map(
-              (label: Label) => label.id
-            );
-            let newLabels: Label[] | null = catalogue.labels
-              ? catalogue.labels.filter(
-                  (label: Label) => !labelsMFDIds.includes(label.id)
-                )
-              : [];
-            if (newLabels && newLabels.length === 0) newLabels = null;
-            catalogue.labels = newLabels;
-          }
-          // prevents listings from being shown if MFD
-          const listingsMFD: Listing[] | null =
-            markedForDeletion.length && catalogue.listings
-              ? catalogue.listings.filter((listing: Listing) =>
-                  markedForDeletion.find(
-                    (mfd) => mfd.id.split(":")[1] === listing.id
-                  )
-                )
-              : null;
-          if (listingsMFD) {
-            console.log("listingsMFD BLOCKING", listingsMFD);
-            const listingsMFDIds: string[] = listingsMFD.map(
-              (listing: Listing) => listing.id
-            );
-            let newListings: Listing[] | null = catalogue.listings
-              ? catalogue.listings.filter(
-                  (listing: Listing) => !listingsMFDIds.includes(listing.id)
-                )
-              : [];
-            if (newListings && newListings.length === 0) newListings = null;
-            catalogue.listings = newListings;
-          }
-
+          let catalogue = catalogueFEParser(data.liveCatalogue, fieldEditing);
           client.writeFragment({
             id: `Catalogue:${catalogue.id}`,
             fragment: ALL_CATALOGUE_FIELDS,
             fragmentName: "AllCatalogueFields",
             data: catalogue,
           });
+          removeFromCacheIfMFD(catalogue, markedForDeletion);
         }
       },
     });
@@ -111,7 +63,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     editCatalogueMutation,
     { loading: _updateCatalogueLoading, error: updateCatalogueError },
   ] = useMutation(UPDATE_CATALOGUE);
-  apolloHookErrorHandler("updateCatalogueM<", updateCatalogueError);
+  apolloHookErrorHandler("updateCatalogue", updateCatalogueError);
 
   const editCatalogue = (text: string, objectKey: string) => {
     updateCatalogueCache(`Catalogue:${id}`, objectKey, text);

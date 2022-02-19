@@ -17,7 +17,7 @@ interface CatalogueStub {
   edit_id: string;
   user_id: string;
   status: Status;
-  title: string;
+  title: string | null;
   description: string | null;
   created: string;
   updated: string;
@@ -89,13 +89,18 @@ interface UseMarkedForDeletion {
   setMarkedForDeletion: (value: MarkedForDeletion[]) => void;
 }
 
+interface DependentCacheItems {
+  id: string;
+  fragment: DocumentNode;
+  fragmentName: string;
+  data: any;
+}
+
 type MarkedForDeletion = {
   id: string;
   text: string;
   timeout: any;
-  data: any;
-  fragment: DocumentNode;
-  fragmentName: string;
+  dependentCacheItems: DocumentNode;
 };
 
 type RemoveMFD = {

@@ -12,6 +12,7 @@ import {
 import { pubsub } from "../index";
 import scrapeItemFeatures from "../../scraping/init";
 import { uploadToGC } from "../../utils/googleCloud";
+import { fullListingQuery } from "../../utils/sqlQueries";
 
 const listingResolvers = {
   Query: {},
@@ -102,7 +103,11 @@ const listingResolvers = {
 
       publishCatalogue(editedListingRaw.rows[0].catalogue_id);
 
-      return editedListingRaw.rows[0];
+      const fullEditiedListing = await db.query(
+        fullListingQuery(`WHERE li.id = '${id}'`)
+      );
+      notExist("Listing", fullEditiedListing.rows[0]);
+      return fullEditiedListing.rows[0];
     },
     editListingFile: async (_, { id, file }: { id: string; file: any }) => {
       let preResult: QueryResult<Listing> = await db.query(
