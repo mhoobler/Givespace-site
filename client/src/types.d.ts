@@ -17,7 +17,7 @@ interface CatalogueStub {
   edit_id: string;
   user_id: string;
   status: Status;
-  title: string;
+  title: string | null;
   description: string | null;
   created: string;
   updated: string;
@@ -84,16 +84,36 @@ interface ListingLabel {
   label: Label;
 }
 
+interface UseMarkedForDeletion {
+  markedForDeletion: MarkedForDeletion[];
+  setMarkedForDeletion: (value: MarkedForDeletion[]) => void;
+}
+
+interface DependentCacheItems {
+  id: string;
+  fragment: DocumentNode;
+  fragmentName: string;
+  data: any;
+}
+
 type MarkedForDeletion = {
   id: string;
   text: string;
   timeout: any;
-  data: any;
-  fragment: DocumentNode;
-  fragmentName: string;
+  dependentCacheItems: DocumentNode;
 };
 
 type RemoveMFD = {
   id: string;
   isUndo: boolean;
 } | null;
+
+interface UseFieldEditing {
+  fieldEditing: FieldEditing | null;
+  setFieldEditing: (value: FieldEditing | null) => void;
+}
+interface FieldEditing {
+  typename: string;
+  id: string;
+  key: string;
+}

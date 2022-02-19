@@ -39,7 +39,11 @@ const EditLinkModal: React.FC<Props> = ({ link, handleClose }) => {
           isEditing={true}
           handleSubmit={handleSubmit}
           value={link.title || ""}
-          keyProp={`Link:${link.id}:title`}
+          fieldEditingProp={{
+            typename: "Link",
+            key: "title",
+            id: link.id,
+          }}
           placeholder="title"
         />
       </div>
@@ -48,7 +52,11 @@ const EditLinkModal: React.FC<Props> = ({ link, handleClose }) => {
         handleSubmit={handleSubmit}
         validator={isUrl}
         value={link.url || ""}
-        keyProp={`Link:${link.id}:url`}
+        fieldEditingProp={{
+          typename: "Link",
+          key: "url",
+          id: link.id,
+        }}
         placeholder="url"
       />
     </Modal>

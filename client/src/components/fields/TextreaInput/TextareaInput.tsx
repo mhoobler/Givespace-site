@@ -6,7 +6,7 @@ type Props = {
   isEditing: boolean;
   handleSubmit: GenericEdit;
   value: string;
-  keyProp: string;
+  fieldEditingProp: FieldEditing;
   validator?: (value: string) => boolean;
   placeholder?: string;
   className?: string;
@@ -16,7 +16,7 @@ const TextareaInput = ({
   isEditing,
   handleSubmit,
   value,
-  keyProp,
+  fieldEditingProp,
   validator,
   placeholder,
   className,
@@ -35,11 +35,11 @@ const TextareaInput = ({
     const { value } = evt.currentTarget;
     if (currentlyIsValid) {
       setFieldEditing(null);
-      handleSubmit(value, keyProp);
+      handleSubmit(value, fieldEditingProp.key);
     }
   };
   const handleFocus = () => {
-    setFieldEditing(keyProp);
+    setFieldEditing(fieldEditingProp);
   };
   useEffect(() => {
     // @ts-ignore
@@ -58,7 +58,7 @@ const TextareaInput = ({
           isValid ? "" : "invalid_input"
         } ${className || ""}`}
         onChange={(e) => setText(e.target.value)}
-        name={keyProp}
+        name={fieldEditingProp.key}
         value={text}
         placeholder={placeholder || ""}
       />

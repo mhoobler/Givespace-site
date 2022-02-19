@@ -1,11 +1,16 @@
-import { useMutation, useSubscription } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
-import { updateCatalogueCache } from "../../utils/functions";
+import {
+  catalogueFEParser,
+  removeFromCacheIfMFD,
+  updateCatalogueCache,
+} from "../../utils/functions";
 import {
   LIVE_CATALOGUE,
   INCREMENT_CATALOGUE_VIEWS,
   UPDATE_CATALOGUE,
   UPDATE_CATALOGUE_FILES,
+  GET_CATALOGUE,
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
@@ -13,6 +18,15 @@ import { apolloHookErrorHandler } from "../../utils/functions";
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();
   const { fieldEditing } = useFieldEditing();
+
+  const handleCatalogueQuery = (idVariable: { [x: string]: string }) => {
+    const catalogueQuery = useQuery(GET_CATALOGUE, {
+      nextFetchPolicy: "no-cache",
+      variables: { ...idVariable },
+    });
+    apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
+    return catalogueQuery;
+  };
 
   const [incrementCatalogueViewsMuation, { error }] = useMutation(
     INCREMENT_CATALOGUE_VIEWS
@@ -29,58 +43,14 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
       onSubscriptionData: ({ client, subscriptionData }) => {
         const { data } = subscriptionData;
         if (data && data.liveCatalogue) {
-          const catalogue = data.liveCatalogue;
-
-          // catalogue cleaning
-          // if fieldEditing block the relevant update
-          if (fieldEditing) delete catalogue[fieldEditing];
-          // prevents labels from being shown if MFD
-          const labelsMFD: Label[] | null = catalogue.labels
-            ? catalogue.labels.filter((label: Label) =>
-                markedForDeletion.find(
-                  (mfd) => mfd.id.split(":")[1] === label.id
-                )
-              )
-            : null;
-          if (labelsMFD) {
-            const labelsMFDIds: string[] = labelsMFD.map(
-              (label: Label) => label.id
-            );
-            let newLabels: Label[] | null = catalogue.labels
-              ? catalogue.labels.filter(
-                  (label: Label) => !labelsMFDIds.includes(label.id)
-                )
-              : [];
-            if (newLabels && newLabels.length === 0) newLabels = null;
-            catalogue.labels = newLabels;
-          }
-          // prevents listings from being shown if MFD
-          const listingsMFD: Listing[] | null = catalogue.listings
-            ? catalogue.listings.filter((listing: Listing) =>
-                markedForDeletion.find(
-                  (mfd) => mfd.id.split(":")[1] === listing.id
-                )
-              )
-            : null;
-          if (listingsMFD) {
-            const listingsMFDIds: string[] = listingsMFD.map(
-              (listing: Listing) => listing.id
-            );
-            let newListings: Listing[] | null = catalogue.listings
-              ? catalogue.listings.filter(
-                  (listing: Listing) => !listingsMFDIds.includes(listing.id)
-                )
-              : [];
-            if (newListings && newListings.length === 0) newListings = null;
-            catalogue.listings = newListings;
-          }
-
+          let catalogue = catalogueFEParser(data.liveCatalogue, fieldEditing);
           client.writeFragment({
             id: `Catalogue:${catalogue.id}`,
             fragment: ALL_CATALOGUE_FIELDS,
             fragmentName: "AllCatalogueFields",
             data: catalogue,
           });
+          removeFromCacheIfMFD(catalogue, markedForDeletion);
         }
       },
     });
@@ -93,7 +63,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     editCatalogueMutation,
     { loading: _updateCatalogueLoading, error: updateCatalogueError },
   ] = useMutation(UPDATE_CATALOGUE);
-  apolloHookErrorHandler("updateCatalogueM<", updateCatalogueError);
+  apolloHookErrorHandler("updateCatalogue", updateCatalogueError);
 
   const editCatalogue = (text: string, objectKey: string) => {
     updateCatalogueCache(`Catalogue:${id}`, objectKey, text);
@@ -126,6 +96,7 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
   return {
     incrementCatalogueViewsMuation,
+    handleCatalogueQuery,
     handleCatalogueSubscription,
     editCatalogue,
     editCatalogueFile,

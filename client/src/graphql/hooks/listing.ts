@@ -185,7 +185,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
       "name",
       setRemoveMFD,
       markedForDeletion,
-      setMarkedForDeletion,
+      setMarkedForDeletion
     );
   };
 

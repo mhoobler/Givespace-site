@@ -8,7 +8,7 @@ import { useFieldEditing } from "../../../state/store";
 type DropdownProps = {
   className?: string;
   handleSubmit: GenericEdit;
-  keyProp: string;
+  fieldEditingProps: FieldEditing;
   value: string;
 };
 
@@ -31,7 +31,7 @@ const DropDownProvider = DropDownContext.Provider;
 const Dropdown: React.FC<DropdownProps> = ({
   className,
   handleSubmit,
-  keyProp,
+  fieldEditingProps,
   value,
   children,
 }) => {
@@ -40,18 +40,22 @@ const Dropdown: React.FC<DropdownProps> = ({
   const { fieldEditing, setFieldEditing } = useFieldEditing();
 
   useEffect(() => {
-    if (fieldEditing !== keyProp) {
+    if (
+      !fieldEditing ||
+      (fieldEditing.key !== fieldEditingProps.key &&
+        fieldEditing.typename !== fieldEditingProps.typename)
+    ) {
       setActiveValue(value);
     }
   }, [value]);
 
   useEffect(() => {
-    handleSubmit(activeValue, keyProp);
+    handleSubmit(activeValue, fieldEditingProps.key);
   }, [activeValue]);
 
   useEffect(() => {
     if (show) {
-      setFieldEditing(keyProp);
+      setFieldEditing(fieldEditingProps);
     } else {
       setFieldEditing(null);
     }

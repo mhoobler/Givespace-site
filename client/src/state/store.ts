@@ -2,18 +2,14 @@ import { makeVar, ReactiveVar, useReactiveVar } from "@apollo/client";
 
 // Special hooks that triggers an update of a Query or
 // subcription when its value changes
-const fieldEditingVar: ReactiveVar<string | null> = makeVar<string | null>(
-  null
-);
-type FieldEditing = {
-  fieldEditing: string | null;
-  setFieldEditing: (value: string | null) => void;
-};
+
+const fieldEditingVar: ReactiveVar<FieldEditing | null> =
+  makeVar<FieldEditing | null>(null);
 // The behaviour of fields in relation to useFieldEditing
 // should be explicidly defined in the field components
-export const useFieldEditing = (): FieldEditing => {
+export const useFieldEditing = (): UseFieldEditing => {
   const fieldEditing = useReactiveVar(fieldEditingVar);
-  const setFieldEditing = (value: string | null) => {
+  const setFieldEditing = (value: FieldEditing | null) => {
     fieldEditingVar(value);
   };
   return { fieldEditing, setFieldEditing };
@@ -22,10 +18,7 @@ export const useFieldEditing = (): FieldEditing => {
 const markedForDeletionVar: ReactiveVar<MarkedForDeletion[]> = makeVar<
   MarkedForDeletion[]
 >([]);
-type UseMarkedForDeletion = {
-  markedForDeletion: MarkedForDeletion[];
-  setMarkedForDeletion: (value: MarkedForDeletion[]) => void;
-};
+
 export const useMarkedForDeletion = (): UseMarkedForDeletion => {
   const markedForDeletion = useReactiveVar(markedForDeletionVar);
   const setMarkedForDeletion = (value: MarkedForDeletion[]) => {

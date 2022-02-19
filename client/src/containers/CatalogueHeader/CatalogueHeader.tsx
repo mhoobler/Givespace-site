@@ -56,14 +56,22 @@ const CatalogueHeader: React.FC<Props> = ({
               <TextInput
                 isEditing={isEditing}
                 handleSubmit={editCatalogue}
-                keyProp="author"
+                fieldEditingProp={{
+                  typename: "Catalogue",
+                  key: "author",
+                  id: catalogue.id,
+                }}
                 value={catalogue.author || ""}
               />
               <TextInput
                 isEditing={isEditing}
                 handleSubmit={editCatalogue}
-                keyProp="title"
-                value={catalogue.title}
+                fieldEditingProp={{
+                  typename: "Catalogue",
+                  key: "title",
+                  id: catalogue.id,
+                }}
+                value={catalogue.title || ""}
                 className="fs-2"
               />
             </div>
@@ -85,7 +93,11 @@ const CatalogueHeader: React.FC<Props> = ({
             <TextInput
               isEditing={isEditing}
               handleSubmit={editCatalogue}
-              keyProp="description"
+              fieldEditingProp={{
+                typename: "Catalogue",
+                key: "description",
+                id: catalogue.id,
+              }}
               value={catalogue.description || ""}
             />
           </div>
@@ -106,7 +118,11 @@ const CatalogueHeader: React.FC<Props> = ({
               <Dropdown
                 value={catalogue.status}
                 handleSubmit={editCatalogue}
-                keyProp="status"
+                fieldEditingProps={{
+                  typename: "Catalogue",
+                  key: "status",
+                  id: catalogue.id,
+                }}
                 className={isEditing ? "hidden" : ""}
               >
                 <Dropdown.Toggle disable={!isEditing} />

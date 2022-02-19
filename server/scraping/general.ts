@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import cheerio, { Cheerio } from "cheerio";
-import { ScrapedFeatures } from "types";
+import { ScrapedFeatures } from "../types";
 import { isUrl } from "../utils/functions";
 import { UserInputError } from "apollo-server-express";
 
