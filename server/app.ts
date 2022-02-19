@@ -4,7 +4,7 @@ import { createServer } from "http";
 import db from "./db";
 import { fullCatalogueQuery } from "./utils/sqlQueries";
 import { QueryResult } from "pg";
-import { Catalogue } from "types";
+import { Catalogue } from "./types";
 
 const app = express();
 

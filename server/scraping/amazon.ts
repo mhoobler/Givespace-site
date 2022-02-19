@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import cheerio from "cheerio";
-import { ScrapedFeatures } from "types";
+import { ScrapedFeatures } from "../types";
 import { UserInputError } from "apollo-server-express";
 
 export const scrapeListingByName = async (

@@ -1,4 +1,4 @@
-import { ScrapedFeatures } from "types";
+import { ScrapedFeatures } from "../types";
 import { isUrl } from "../utils/functions";
 import { scrapeListingByName, scrapeListingByUrl } from "./amazon";
 import { generalScraper } from "./general";
