@@ -1,6 +1,7 @@
 const Cloud = require("@google-cloud/storage");
 
 const { Storage } = Cloud;
+console.log(process.env);
 const storage = new Storage({
   projectId: process.env.GC_PROJECT_ID,
   credentials: {
