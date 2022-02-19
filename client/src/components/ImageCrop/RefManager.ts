@@ -256,11 +256,12 @@ class RefManager {
     }
 
     const { height, width } = canvas2;
-    const { zoom, shortSide, inX, inY } = this;
+    const { zoom, inX, inY } = this;
     ctx2.drawImage(this.image, -inX, -inY, width, height);
 
     const [cx, cy] = [width / 2, height / 2];
-    const px = (shortSide - 20) / zoom;
+    const shortSide = width < height ? width : height;
+    const px = shortSide / zoom;
     const px2 = px / 2;
 
     return ctx2.getImageData(cx - px2, cy - px2, px, px);
