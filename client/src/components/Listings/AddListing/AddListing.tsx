@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { KeyboardEvent, useRef } from "react";
 
 import "./AddListing.less";
 
@@ -18,12 +18,21 @@ const AddListing: React.FC<Props> = ({ handleSubmit }) => {
     }
   };
 
+  const handleKeyDown = (evt: KeyboardEvent) => {
+    if (evt.key === "Enter" && inputRef.current) {
+      const target = inputRef.current;
+
+      handleSubmit(target.value);
+      target.value = "";
+    }
+  };
+
   return (
     <div className="col-6 d-flex flex-column add-listing-container">
       <label>Add Item:</label>
       <div className="d-flex">
         <div className="inputs-container">
-          <input ref={inputRef} type="text" />
+          <input ref={inputRef} onKeyDown={handleKeyDown} type="text" />
           <button onClick={handleClick}>+</button>
         </div>
       </div>

@@ -1,4 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { KeyboardEvent, useState, useRef } from "react";
+import { IconButton } from "..";
+import { Plus } from "../../assets";
 
 import "./LabelContainer.less";
 
@@ -36,15 +38,31 @@ const LabelContainer: React.FC<Props> = ({
     }
   };
 
+  const inputKeyDown = (evt: KeyboardEvent) => {
+    if (evt.key === "Enter" && inputRef.current && createLabel) {
+      const target = inputRef.current;
+
+      createLabel(target.value);
+      target.value = "";
+    }
+  };
+
   return (
     <div className="labels-container" ref={containerRef}>
       {children}
       {createLabel && isEditing && (
         <div className={`f-center add-label-group ${isAdding ? "adding" : ""}`}>
-          <input ref={inputRef} className="add-label-input" type="text" />
-          <button className="add-label-button" onClick={handleAddLabel}>
-            +
-          </button>
+          <input
+            ref={inputRef}
+            onKeyDown={inputKeyDown}
+            className="add-label-input"
+            type="text"
+          />
+          <IconButton
+            className="add-label-button"
+            src={Plus}
+            onClick={handleAddLabel}
+          />
         </div>
       )}
     </div>
