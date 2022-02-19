@@ -1,4 +1,7 @@
 import React from "react";
+import { IconButton } from "..";
+
+import { X } from "../../assets";
 
 import "./Label.less";
 
@@ -37,9 +40,16 @@ const Label: React.FC<LabelProps> = ({
       } ${faint && "faint"}`}
     >
       <span>{label.name}</span>
-      <button className="delete-label" onClick={handleDeleteClick}>
-        x
+
+      <IconButton
+        className="delete-label"
+        src={X}
+        onClick={handleDeleteClick}
+      />
+      {/* <button className="delete-label" onClick={handleDeleteClick}>
+        <img src={X} alt="delete-label" />
       </button>
+        */}
     </div>
   );
 };
