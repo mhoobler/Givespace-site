@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 interface ToolbarProps {}
 
-interface CatalogueToolbarProps extends ToolbarProps {
-  editable: boolean;
-}
+interface CatalogueToolbarProps extends ToolbarProps {}
 
 const Toolbar: React.FC<ToolbarProps> = ({ children }) => {
   return <nav className="toolbar-container">{children}</nav>;
