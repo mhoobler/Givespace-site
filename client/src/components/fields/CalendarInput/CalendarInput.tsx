@@ -1,71 +1,62 @@
-import React, { useState, useRef } from "react";
-import DatePicker, { CalendarContainer } from "react-datepicker";
+import React, { useRef, useEffect } from "react";
 
 import "./CalendarInput.less";
 
 type Props = {
+  isEditing: boolean;
   value: string | undefined | null | Date;
-  keyProp: string;
-  handleDateInput: GenericEdit;
+  handleOnSubmit: (date: string) => void;
 };
 
 const CalendarInput: React.FC<Props> = ({
+  isEditing,
   value,
-  handleDateInput,
-  keyProp,
+  handleOnSubmit,
 }) => {
-  const pickerRef = useRef<any>(null);
-  const [date, setDate] = useState(value ? new Date(value) : null);
-  const [show, setShow] = useState(false);
+  // transform date to a valid format
+  let date = useRef<HTMLInputElement>(null);
 
-  const handleChange = (date: Date) => {
-    setDate(date);
-    handleDateInput(date.toISOString(), keyProp);
+  useEffect(() => {
+    let newValue: string | null | undefined;
+    if (value) {
+      newValue = new Date(value).toISOString();
+      newValue = newValue.split("T")[0];
+      console.log("newValue: ", newValue);
+    }
+    if (date.current && typeof newValue === "string") {
+      date.current.value = newValue ? newValue : "";
+    }
+  }, [value]);
+  const handleOnKeyPress = (e: any) => {
+    if (date.current && e.key === "Enter") {
+      date.current.blur();
+      handleOnSubmit(new Date(date.current.value).toISOString());
+    }
   };
-
-  const handleClear = () => {
-    setDate(null);
-  };
-
-  const Container: React.FC = ({ children }) => {
-    return (
-      <CalendarContainer className="calendar-container">
-        <div className="calendar-clear">
-          <button className="btn btn-danger" onClick={handleClear}>
-            Clear
-          </button>
-        </div>
-        <div className="calendar-children"> {children}</div>
-      </CalendarContainer>
-    );
-  };
-
-  const handleClick = () => {
-    setShow(true);
-    setTimeout(() => pickerRef.current?.setFocus(), 1);
-  };
-
-  const handleBlur = () => {
-    console.log(pickerRef);
-    setShow(false);
-  };
+  // transform value to format MM/DD/YYYY
+  let valueToDisplay: any = value
+    ? new Date(value).toISOString()
+    : "No date selected";
+  valueToDisplay = valueToDisplay.split("T")[0].split("-");
+  valueToDisplay = [
+    valueToDisplay[1],
+    valueToDisplay[2],
+    valueToDisplay[0],
+  ].join("/");
 
   return (
-    <>
-      {show ? (
-        <Container>
-          <DatePicker
-            ref={pickerRef}
-            selected={new Date()}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            calendarContainer={Container}
-          />
-        </Container>
-      ) : (
-        <button onClick={handleClick}>Set Event Date</button>
-      )}
-    </>
+    <div className="calendar-input">
+      <input
+        ref={date}
+        className={`${isEditing ? "" : "hidden"}`}
+        type="date"
+        onKeyPress={handleOnKeyPress}
+        onBlur={(e) => handleOnSubmit(new Date(e.target.value).toISOString())}
+      />
+      <div className={`${isEditing ? "hidden" : ""}`}>
+        {valueToDisplay || "No date selected"}
+      </div>
+    </div>
   );
 };
 

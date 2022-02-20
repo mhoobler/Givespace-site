@@ -85,9 +85,11 @@ const CatalogueHeader: React.FC<Props> = ({
             <div className="col-4 views-wrapper">views: {catalogue.views}</div>
             <div className="col-4 event-date-wrapper">
               <CalendarInput
+                isEditing={isEditing}
                 value={catalogue.event_date}
-                keyProp="event_date"
-                handleDateInput={editCatalogue}
+                handleOnSubmit={(date: string) =>
+                  editCatalogue(date, "event_date")
+                }
               />
             </div>
           </div>

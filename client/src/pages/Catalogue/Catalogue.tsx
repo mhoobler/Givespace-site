@@ -82,7 +82,6 @@ const Catalogue: React.FC = () => {
   if (!catalogue) {
     return <div>Loading...</div>;
   }
-  console.log("catalogue", catalogue);
   // console.log("catalogue", catalogue);
 
   // status conditions
@@ -103,7 +102,6 @@ const Catalogue: React.FC = () => {
     catalogue.labels && catalogue.labels[0]
       ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
       : [];
-  console.log("sortedLabels", sortedLabels);
 
   // TODO: Should sort this in the backend
   const sortedListings =
