@@ -19,7 +19,6 @@ export const getMouseDown =
     const refsArr: ref[] = Object.values(refs).sort(
       (a, b) => a.data.ordering - b.data.ordering,
     );
-    console.log("down");
 
     const currentTarget = refs[id].elm;
     const currentParent = currentTarget.parentElement;
@@ -40,7 +39,6 @@ export const getMouseDown =
     let dropIndex = refsArr.findIndex((ref) => ref.elm === currentTarget);
 
     const MouseUp = (upEvt: MouseEvent) => {
-      console.log("up");
       clearTimeout(holdMouseTimeout);
       window.removeEventListener("mouseup", MouseUp);
       window.removeEventListener("mousemove", MouseMove);
@@ -64,9 +62,9 @@ export const getMouseDown =
       return extra;
     });
 
-    for (let f of refElms) {
-      console.log(f.boundingBox);
-    }
+    //for (let f of refElms) {
+    //  console.log(f.boundingBox);
+    //}
 
     const MouseMove = (moveEvt: MouseEvent) => {
       console.log("move");
@@ -98,7 +96,6 @@ export const getMouseDown =
             const isValidY = my > bb.top && my < bb.bottom;
             // Is Left
             if (isValidY && mx > bb.left - x2 && mx < bb.left + x2) {
-              console.log(isValidY, true, false);
               isValidDrop = true;
               dropIndex = i;
               elm.parentNode!.insertBefore(separator, elm);
@@ -108,14 +105,12 @@ export const getMouseDown =
 
             // Is Right
             if (isValidY && mx > bb.right - x2 && mx < bb.right + x2) {
-              console.log(isValidY, false, true);
               isValidDrop = true;
               dropIndex = i + 1;
               elm.parentNode!.insertBefore(separator, elm.nextSibling);
               currentTarget.remove();
               break;
             }
-            console.log(isValidY, false, false);
           }
         }
       }
