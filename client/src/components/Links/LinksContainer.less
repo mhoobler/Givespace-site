@@ -14,10 +14,44 @@
       border: 2px solid pink;
       display: flex;
       width: 100%;
+      height: 2rem;
+      font-size: 2rem;
 
       &.editing {
         >button {
           display: none;
+        }
+      }
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+
+      input {
+        border: none;
+        width: 80%;
+        font-size: 1.5rem;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .icon-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 16px;
+        width: 16px;
+        padding: 2px;
+        margin: 0;
+        background-color: @primary500;
+        transform: translateY(calc(50% - 2px)) translateX(8px);
+
+        img {
+          filter: invert(1);
         }
       }
     }

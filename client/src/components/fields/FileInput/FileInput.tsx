@@ -38,7 +38,7 @@ const FileInput: React.FC<Props> = ({
         name={keyProp}
         accept="*.png,*.jpeg,*.jpg,*.txt ,*.gif"
       />
-      <div className={`toggle-display`}>image_url: {value}</div>
+      <img src={value} alt="" />
     </ToggleEdit>
   );
 };

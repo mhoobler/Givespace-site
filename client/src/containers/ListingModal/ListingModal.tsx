@@ -48,7 +48,7 @@ const ListingModal: React.FC<Props> = ({
       <Modal.Header close={handleClose}>{listing && listing.name}</Modal.Header>
       <Modal.Body>
         {/* left side - name, image*/}
-        <div className="left-side">
+        <div className="left-side side">
           <TextInput
             isEditing={isEditing}
             handleSubmit={editListing(listing.id)}
@@ -61,16 +61,19 @@ const ListingModal: React.FC<Props> = ({
             className="h2"
             placeholder="Title"
           />
-          <FileInput
-            isEditing={isEditing}
-            handleSubmit={editListingFile(listing.id)}
-            keyProp="image_url"
-            value={listing.image_url || ""}
-          />
+          <div className="image-wrapper">
+            <FileInput
+              className="image-input"
+              isEditing={isEditing}
+              handleSubmit={editListingFile(listing.id)}
+              keyProp="image_url"
+              value={listing.image_url || ""}
+            />
+          </div>
         </div>
         <div className="listing-separator"></div>
         {/* right side - description, labels, links, price*/}
-        <div className="right-side">
+        <div className="right-side side">
           <TextareaInput
             isEditing={isEditing}
             handleSubmit={editListing(listing.id)}
@@ -87,7 +90,7 @@ const ListingModal: React.FC<Props> = ({
             listing={listing}
             isEditing={isEditing}
           />
-          <div className="d-flex justify-content-between">
+          <div className="f-row price">
             <TextInput
               isEditing={isEditing}
               handleSubmit={editListing(listing.id)}
