@@ -25,7 +25,6 @@ const ListingCard: React.FC<Props> = ({
   const handleDelete = () => {
     deleteListing(listing.id);
   };
-  console.log(listing);
 
   const handleSelect = () => {
     let urlToNavigate: string = cleanedPath(location.pathname);

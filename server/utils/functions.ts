@@ -53,8 +53,7 @@ export const handleFile = async (
 
     return callbackReturn;
     // return "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Bonnet_macaque_%28Macaca_radiata%29_Photograph_By_Shantanu_Kuveskar.jpg/220px-Bonnet_macaque_%28Macaca_radiata%29_Photograph_By_Shantanu_Kuveskar.jpg";
-  } catch(err) {
-
+  } catch (err) {
     console.log(err);
     throw new UserInputError("File upload failed");
   }
@@ -89,14 +88,15 @@ export const notExist = (whatText: string, obj: any): void => {
   }
 };
 
-export const maxOrdering = (list: any[] | null): number => {
+export const endOrdering = (list: any[] | null, type: string): number => {
   if (!list || (list && list.length === 0)) return 0;
-  return (
-    list.reduce(
-      // @ts-ignore
-      (max, listing) => Math.max(max, listing.ordering),
-      list[0].ordering
-    ) + 1
+  return list.reduce(
+    // @ts-ignore
+    (max, ins) => {
+      if (type === "max") return Math.max(max, ins.ordering);
+      if (type === "min") return Math.min(max, ins.ordering);
+    },
+    list[0].ordering
   );
 };
 

@@ -6,12 +6,14 @@ import {
   CatalogueItems,
   ListingModal,
 } from "../../containers";
-import { cache } from "../../graphql/clientConfig";
-import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { UndoNotification } from "../../components";
 
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
-import { cleanedPath, removeFromCacheIfMFD } from "../../utils/functions";
+import {
+  cleanedPath,
+  getCatalogueFromCache,
+  removeFromCacheIfMFD,
+} from "../../utils/functions";
 import { useMarkedForDeletion } from "../../state/store";
 
 const Catalogue: React.FC = () => {
@@ -55,7 +57,7 @@ const Catalogue: React.FC = () => {
   const catalogueQuery = handleCatalogueQuery(idVariable);
   handleCatalogueSubscription(idVariable);
   // Inputs need to toggle from Editing to Display state
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   useEffect(() => {
     incrementCatalogueViewsMuation({
       variables: { ...idVariable },
@@ -71,21 +73,15 @@ const Catalogue: React.FC = () => {
     // The catalogue being used in the catalogue state
     // will always be the cached catalogue as fetched
     // by CATALOGUE_FRAGMENT
-    catalogue = cache.readFragment({
-      id: `Catalogue:${catalogueQuery.data.catalogues[0].id}`,
-      fragment: ALL_CATALOGUE_FIELDS,
-      fragmentName: "AllCatalogueFields",
-    });
+    catalogue = getCatalogueFromCache(catalogueQuery.data.catalogues[0].id);
     if (catalogue) {
       removeFromCacheIfMFD(catalogue, markedForDeletion);
     }
-    console.log("catalogue", catalogue);
   }
 
   if (!catalogue) {
     return <div>Loading...</div>;
   }
-  console.log("OUT catalogue", catalogue);
   // console.log("catalogue", catalogue);
 
   // status conditions

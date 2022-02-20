@@ -12,12 +12,15 @@ import { acceptedImageFiles } from "../../utils/references";
 import { Camera } from "../../assets";
 
 import "./CatalogueBanner.less";
+import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
+import { updateCatalogueCache } from "../../utils/functions";
 
 type Props = {
   isEditing: boolean;
   handleSubmit: CatalogueHook.editCatalogueFile;
   value: string;
   keyProp: string;
+  catalogue: CatalogueType;
   className?: string;
 };
 
@@ -26,10 +29,12 @@ const CatalogueBanner: React.FC<Props> = ({
   handleSubmit,
   keyProp,
   value,
+  catalogue,
   className,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const { editCatalogue } = useCatalogueApolloHooks({ id: catalogue.id });
 
   // ImageCrop: use `createRef` and assign `new ImageCrop.RefManager`
   const cropRef = createRef<ImageCrop.RefManager>();
@@ -103,7 +108,7 @@ const CatalogueBanner: React.FC<Props> = ({
         }
       },
       "image/jpg", // file type
-      0.9, // image quality
+      0.9 // image quality
     );
   };
 
@@ -122,9 +127,18 @@ const CatalogueBanner: React.FC<Props> = ({
             {/* color image */}
             {/* TODO: TODO: TODO: change the handleFunctions */}
             <ColorInput
-              color="#FFAAAA"
-              handleChange={(s: string) => {}}
-              handleSubmit={(s: string) => {}}
+              color={catalogue.header_color}
+              handleChange={(color: string) =>
+                updateCatalogueCache(
+                  `Catalogue:${catalogue.id}`,
+                  "header_color",
+                  color
+                )
+              }
+              handleSubmit={(color: string) => {
+                console.log("submit", color);
+                editCatalogue(color, "header_color");
+              }}
             />
           </div>
           {/* color border */}

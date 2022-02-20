@@ -3,6 +3,8 @@ import {
   handleDeletion,
   updateCatalogueCache,
   apolloHookErrorHandler,
+  endOrdering,
+  getCatalogueFromCache,
 } from "../../utils/functions";
 import { CREATE_LABEL, DELETE_LABEL, UPDATE_LABEL_ORDER } from "../schemas";
 import { cache } from "../clientConfig";
@@ -19,24 +21,33 @@ const useLabelApolloHooks: LabelHook.FC = ({ catalogue_id }) => {
   apolloHookErrorHandler("createLabelError", createLabelError);
 
   const createLabel = (name: string) => {
+    const catalogue = getCatalogueFromCache(catalogue_id);
+
     cache.modify({
       id: `Catalogue:${catalogue_id}`,
       fields: {
         labels(existing): Label[] {
-          if (!existing) return [{ ...dummyLabel, name }];
+          console.log(existing);
+          if (!existing) return [{ ...dummyLabel(catalogue_id), name }];
           return [
             ...existing,
-            { ...dummyLabel, name, ordering: existing.length },
+            {
+              ...dummyLabel(catalogue_id),
+              name,
+              ordering: endOrdering(catalogue?.labels || [], "max") + 1,
+            },
           ];
         },
       },
     });
-    createLabelMutation({
-      variables: {
-        name,
-        catalogue_id: catalogue_id,
-      },
-    });
+    setTimeout(() => {
+      createLabelMutation({
+        variables: {
+          name,
+          catalogue_id: catalogue_id,
+        },
+      });
+    }, 1000);
   };
 
   const [deleteLabelMutation, { error: deleteLabelError }] =

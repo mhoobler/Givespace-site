@@ -8,9 +8,10 @@ import {
 } from "../../graphql/schemas";
 import {
   handleDeletion,
-  maxOrdering,
+  endOrdering,
   updateCatalogueCache,
   apolloHookErrorHandler,
+  getCatalogueFromCache,
 } from "../../utils/functions";
 import { cache } from "../clientConfig";
 import { dummyListing } from "../../utils/references";
@@ -28,34 +29,41 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const createListing = (catalogue_id: string) => (name: string) => {
     // TODO: when item is fetched alladditional listings get removed
+    const catalogue = getCatalogueFromCache(catalogue_id);
+
     cache.modify({
       id: `Catalogue:${catalogue_id}`,
       fields: {
         listings(existing) {
+          console.log(existing);
           if (existing) {
             return [
               ...existing,
               {
                 ...dummyListing(catalogue_id),
-                ordering: maxOrdering(existing) + 1,
+                name: name.slice(0, 50),
+                ordering: endOrdering(catalogue?.listings || [], "min") - 1,
               },
             ];
           }
           return [
             {
               ...dummyListing(catalogue_id),
+              name: name.slice(0, 50),
               ordering: 0,
             },
           ];
         },
       },
     });
-    createListingMutation({
-      variables: {
-        name,
-        catalogue_id,
-      },
-    });
+    setTimeout(() => {
+      createListingMutation({
+        variables: {
+          name,
+          catalogue_id,
+        },
+      });
+    }, 1000);
   };
 
   // EDIT

@@ -43,8 +43,8 @@ interface Label {
   ordering: number;
   is_private: boolean;
   link_url: string | null;
-  created: string;
-  updated: string;
+  created: Date;
+  updated: Date;
 }
 
 interface Listing {

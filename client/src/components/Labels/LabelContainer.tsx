@@ -57,6 +57,8 @@ const LabelContainer: React.FC<Props> = ({
             onKeyDown={inputKeyDown}
             className="add-label-input"
             type="text"
+            // closes when user clicks outside of the input
+            onBlur={() => setIsAdding(false)}
           />
           <IconButton
             className="add-label-button"

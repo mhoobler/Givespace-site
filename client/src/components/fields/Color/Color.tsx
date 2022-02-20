@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import { IconButton } from "../..";
 import { Palette } from "../../../assets";
 
 import "./Color.less";
@@ -13,29 +12,39 @@ const Color = ({ color, handleChange, handleSubmit }: Props) => {
   const colorInput = useRef<HTMLInputElement>();
 
   const handleToggle = () => {
-    // make colorInput's color swatch visible with IconButton onClick
+    // on toggle click on colorInput
     colorInput.current?.click();
+    colorInput.current?.focus();
   };
-
-  const onChange = (evt: React.SyntheticEvent<HTMLInputElement>) => {
-    const {value} = evt.currentTarget;
-
-    handleChange(value || "#ffffff");
-    handleSubmit(value || "#ffffff");
-  }
-
 
   return (
     <div>
-      <IconButton onClick={handleToggle} src={Palette} />
+      <div
+        onClick={handleToggle}
+        className="icon-btn"
+        // this style change is only a proof of concept
+        style={{ backgroundColor: color }}
+      >
+        <img src={Palette} alt="" />
+      </div>
       <div className="color-picker-container">
         <input
-          ref={colorInput}
           className="color-picker-input"
+          // @ts-ignore
+          ref={colorInput}
           type="color"
           value={color}
-          onChange={onChange}
+          onBlur={(e) => {
+            handleSubmit(e.target.value || "#ff0000");
+          }}
+          onChange={(e) => {
+            handleChange(e.target.value || "#ff0000");
+          }}
         />
+        {/* <SketchPicker
+          color={color}
+          onChangeComplete={(color) => setColor(color.hex)}
+        /> */}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import { DocumentNode } from "graphql";
 import { cache } from "../graphql/clientConfig";
 import {
@@ -7,12 +8,28 @@ import {
   LISTING_LABEL_FIELDS,
 } from "../graphql/fragments";
 
+export const getCatalogueFromCache = (
+  catalogueId: string
+): CatalogueType | null => {
+  return cache.readFragment({
+    id: `Catalogue:${catalogueId}`,
+    fragment: ALL_CATALOGUE_FIELDS,
+    fragmentName: "AllCatalogueFields",
+  });
+};
+
 export const apolloHookErrorHandler = (
   path: string,
-  hookError: any,
+  hookError: ApolloError | undefined,
   warning?: boolean
 ): void => {
   if (hookError) {
+    if (hookError.message.includes("Catalogue does not exist")) {
+      console.log("Catalogue does not exist", path);
+      window.location.reload();
+      return;
+    }
+    // if (warning || process.env.NODE_ENV === 'production') {
     if (warning) {
       console.log(hookError);
       console.warn(`☝️☝️☝️ ERROR at "${path}" ☝️☝️☝️`);
@@ -40,11 +57,14 @@ export const handleCacheDeletion = (cacheId: string) => {
   cache.gc();
 };
 
-export const maxOrdering = (list: any[]): number => {
-  if (!list[0]) return 0;
+export const endOrdering = (list: any[] | null, type: string): number => {
+  if (!list || (list && list.length === 0)) return 0;
   return list.reduce(
     // @ts-ignore
-    (max, listing) => Math.max(max, listing.ordering),
+    (max, ins) => {
+      if (type === "max") return Math.max(max, ins.ordering);
+      if (type === "min") return Math.min(max, ins.ordering);
+    },
     list[0].ordering
   );
 };

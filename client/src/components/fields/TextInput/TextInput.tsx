@@ -37,11 +37,17 @@ const TextInput = ({
     if (currentlyIsValid) {
       setFieldEditing(null);
       handleSubmit(text, fieldEditingProp.key);
+      evt.currentTarget.blur();
     }
   };
 
   const handleFocus = (evt: React.SyntheticEvent<HTMLInputElement>) => {
     setFieldEditing(fieldEditingProp);
+  };
+  const handleOnEnter = (evt: React.KeyboardEvent<HTMLInputElement>) => {
+    if (evt.key === "Enter") {
+      handleBlur(evt);
+    }
   };
 
   return (
@@ -51,6 +57,7 @@ const TextInput = ({
           isValid ? "" : "invalid_input"
         } ${className || ""}`}
         type="text"
+        onKeyPress={handleOnEnter}
         onChange={(e) => setText(e.target.value)}
         onFocus={handleFocus}
         name={fieldEditingProp.key}

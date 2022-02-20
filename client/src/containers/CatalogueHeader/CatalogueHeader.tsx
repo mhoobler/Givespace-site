@@ -5,6 +5,7 @@ import {
   CatalogueBanner,
   AvatarImage,
   CalendarInput,
+  TextareaInput,
 } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 import { handleCopy } from "../../utils/functions";
@@ -38,6 +39,7 @@ const CatalogueHeader: React.FC<Props> = ({
           handleSubmit={editCatalogueFile}
           keyProp={"header_image_url"}
           value={catalogue.header_image_url || ""}
+          catalogue={catalogue}
         />
       </div>
       <div className="header-content">
@@ -83,15 +85,17 @@ const CatalogueHeader: React.FC<Props> = ({
             <div className="col-4 views-wrapper">views: {catalogue.views}</div>
             <div className="col-4 event-date-wrapper">
               <CalendarInput
+                isEditing={isEditing}
                 value={catalogue.event_date}
-                keyProp="event_date"
-                handleDateInput={editCatalogue}
+                handleOnSubmit={(date: string) =>
+                  editCatalogue(date, "event_date")
+                }
               />
             </div>
           </div>
           {/* description */}
           <div>
-            <TextInput
+            <TextareaInput
               isEditing={isEditing}
               handleSubmit={editCatalogue}
               fieldEditingProp={{

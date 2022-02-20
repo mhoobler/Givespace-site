@@ -14,7 +14,6 @@ import {
 } from "../../graphql/schemas";
 import { useFieldEditing, useMarkedForDeletion } from "../../state/store";
 import { apolloHookErrorHandler } from "../../utils/functions";
-import client from "../clientConfig";
 
 const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
   const { markedForDeletion } = useMarkedForDeletion();
@@ -22,31 +21,18 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
 
   const handleCatalogueQuery = (idVariable: { [x: string]: string }) => {
     const catalogueQuery = useQuery(GET_CATALOGUE, {
-      // // TODO: remove this, this is what tracks cache changes
-      // nextFetchPolicy: "no-cache",
       variables: { ...idVariable },
-      onCompleted: (data) => {
-        console.log("catalogueQuery", data);
-        if (data.catalogues && data.catalogues[0]) {
-          let catalogue = catalogueFEParser(data.catalogues[0], fieldEditing);
-          client.writeFragment({
-            id: `Catalogue:${catalogue.id}`,
-            fragment: ALL_CATALOGUE_FIELDS,
-            fragmentName: "AllCatalogueFields",
-            data: catalogue,
-          });
-          removeFromCacheIfMFD(catalogue, markedForDeletion);
-        }
-      },
     });
-    apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
+    // prevents page from being reloaded on error
+    if (catalogueQuery.error) {
+      if (catalogueQuery.error.message.includes("Catalogue does not exist")) {
+        console.log("catalogueQuery", ": Catalogue does not exist");
+      } else {
+        apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
+      }
+    }
     return catalogueQuery;
   };
-
-  const [incrementCatalogueViewsMuation, { error }] = useMutation(
-    INCREMENT_CATALOGUE_VIEWS
-  );
-  apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
 
   const handleCatalogueSubscription = (idVariable: { [x: string]: string }) => {
     const subscription = useSubscription(LIVE_CATALOGUE, {
@@ -69,10 +55,38 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
         }
       },
     });
-    apolloHookErrorHandler("catalogueSubscription", subscription.error);
+    // prevents page from being reloaded on error
+    if (subscription.error) {
+      if (subscription.error.message.includes("Catalogue does not exist")) {
+        console.log("catalogueSubscription", ": Catalogue does not exist");
+      } else {
+        apolloHookErrorHandler("catalogueSubscription", subscription.error);
+      }
+    }
 
     return subscription;
   };
+
+  const [
+    incrementCatalogueViewsMuation,
+    { error: incrrementCatalogueViewsError },
+  ] = useMutation(INCREMENT_CATALOGUE_VIEWS);
+  // prevents page from being reloaded on error
+  if (incrrementCatalogueViewsError) {
+    if (
+      incrrementCatalogueViewsError.message.includes("Catalogue does not exist")
+    ) {
+      console.log(
+        "incrementCatalogueViewsMuation",
+        ": Catalogue does not exist"
+      );
+    } else {
+      apolloHookErrorHandler(
+        "incrementCatalogueViewsMuation",
+        incrrementCatalogueViewsError
+      );
+    }
+  }
 
   const [
     editCatalogueMutation,

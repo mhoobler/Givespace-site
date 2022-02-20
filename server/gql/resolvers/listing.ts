@@ -5,7 +5,7 @@ import {
   deleteFileIfNotUsed,
   getFullCatalogues,
   handleFile,
-  maxOrdering,
+  endOrdering,
   notExist,
   publishCatalogue,
 } from "../../utils/functions";
@@ -33,12 +33,12 @@ const listingResolvers = {
       if (isUrl) {
         newListingRes = await db.query(
           "INSERT INTO listings (catalogue_id, ordering) VALUES ($1, $2) RETURNING *",
-          [catalogue_id, maxOrdering(fullCatalogue.listings) + 1]
+          [catalogue_id, endOrdering(fullCatalogue.listings, "min") - 1]
         );
       } else {
         newListingRes = await db.query(
           "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-          [catalogue_id, name, maxOrdering(fullCatalogue.listings) + 1]
+          [catalogue_id, name, endOrdering(fullCatalogue.listings, "min") - 1]
         );
       }
 
