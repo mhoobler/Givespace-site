@@ -5,6 +5,7 @@ import {
   CatalogueBanner,
   AvatarImage,
   CalendarInput,
+  TextareaInput,
 } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 import { handleCopy } from "../../utils/functions";
@@ -92,7 +93,7 @@ const CatalogueHeader: React.FC<Props> = ({
           </div>
           {/* description */}
           <div>
-            <TextInput
+            <TextareaInput
               isEditing={isEditing}
               handleSubmit={editCatalogue}
               fieldEditingProp={{
