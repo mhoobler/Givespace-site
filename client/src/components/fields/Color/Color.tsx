@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { Palette } from "../../../assets";
 
 import "./Color.less";
@@ -10,7 +10,6 @@ type Props = {
 };
 const Color = ({ color, handleChange, handleSubmit }: Props) => {
   const colorInput = useRef<HTMLInputElement>();
-  const [inputColor, setInputColor] = useState(color);
 
   const handleToggle = () => {
     // on toggle click on colorInput
