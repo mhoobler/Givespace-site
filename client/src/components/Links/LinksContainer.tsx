@@ -62,8 +62,8 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
         }`}
       >
         <div className="link input-wrapper">
-          <input type="text" placeholder="Add Link" />
-          <IconButton src={Plus} onClick={() => {}} />
+          <input ref={linkInputRef} type="text" placeholder="Add Link" />
+          <IconButton src={Plus} onClick={handleSubmit} />
         </div>
       </div>
       <EditLinkModal link={linkEditing} handleClose={handleEditLinkClose} />
