@@ -116,17 +116,19 @@ const CatalogueHeader: React.FC<Props> = ({
                 Edit
               </button>
             </div>
-            <div className="btn-wrapper">
-              <a
-                onClick={() =>
-                  handleCopy(`/list/${catalogue.edit_id}?edit=true`)
-                }
-                className="btn btn-link"
-              >
-                Copy Editor Link
-              </a>
-            </div>
-            <div className="btn-wrapper">
+            {editable &&
+              <div className="btn-wrapper">
+                <a
+                  onClick={() =>
+                    handleCopy(`/list/${catalogue.edit_id}?edit=true`)
+                  }
+                  className="btn btn-link"
+                >
+                  Copy Editor Link
+                </a>
+              </div>
+              <div className="btn-wrapper">
+            }
               <a
                 onClick={() => handleCopy(`/list/${catalogue.id}`)}
                 className="btn btn-link"

@@ -53,21 +53,22 @@ app.get(
         fullCatalogueQuery(
           `WHERE ${queryStrings.edit ? "edit_id" : "id"} = '${
             params.catalogue_id
-          }'`,
-        ),
+          }'`
+        )
       );
+      console.log(query.rows);
       if (!query.rows.length) {
         res.status(200).render("list", { og_title: "Catalogue not found" });
       } else {
         const catalogue: Catalogue = query.rows[0];
         if (!params.listing_id) {
           res.status(200).render("list", {
-            title: catalogue.title,
+            title: catalogue.title || "Untitled Catalogue",
             description: `Catalogue "${catalogue.title}" contains ${catalogue.listings.length} listings`,
           });
         } else {
           const listing = catalogue.listings.find(
-            (listing) => listing.id === params.listing_id,
+            (listing) => listing.id === params.listing_id
           );
           if (!listing) {
             res.status(200).render("list", {
@@ -85,7 +86,7 @@ app.get(
     } catch (err) {
       res.status(500);
     }
-  },
+  }
 );
 
 const httpServer = createServer(app);

@@ -53,6 +53,7 @@ const CatalogueSelect = () => {
               <CatalogueRow key={e.id} {...e} />
             ))}
         </div>
+        <CreateCatalogueButton />
       </div>
     </div>
   );
