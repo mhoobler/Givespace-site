@@ -38,6 +38,7 @@ const CatalogueHeader: React.FC<Props> = ({
           handleSubmit={editCatalogueFile}
           keyProp={"header_image_url"}
           value={catalogue.header_image_url || ""}
+          catalogue={catalogue}
         />
       </div>
       <div className="header-content">
