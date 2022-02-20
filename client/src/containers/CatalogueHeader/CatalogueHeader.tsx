@@ -116,7 +116,7 @@ const CatalogueHeader: React.FC<Props> = ({
                 Edit
               </button>
             </div>
-            {editable &&
+            {editable && (
               <div className="btn-wrapper">
                 <a
                   onClick={() =>
@@ -127,8 +127,8 @@ const CatalogueHeader: React.FC<Props> = ({
                   Copy Editor Link
                 </a>
               </div>
-              <div className="btn-wrapper">
-            }
+            )}
+            <div className="btn-wrapper">
               <a
                 onClick={() => handleCopy(`/list/${catalogue.id}`)}
                 className="btn btn-link"
