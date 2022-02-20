@@ -1,6 +1,6 @@
-import React, { useRef, MouseEvent } from "react";
+import React, { useRef, useEffect } from "react";
+import { X } from "../../assets";
 
-// TODO: I think this whole page needs touch up
 import "./Modal.less";
 
 type ModalProps = {
@@ -11,6 +11,22 @@ type ModalProps = {
 
 const Modal: React.FC<ModalProps> = ({ className, show, close, children }) => {
   const outterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (outterRef.current) {
+      if (show) {
+        outterRef.current.classList.remove("hide");
+        setTimeout(() => {
+          outterRef.current!.classList.add("show");
+        }, 1);
+      } else {
+        outterRef.current.classList.remove("show");
+        setTimeout(() => {
+          outterRef.current!.classList.add("hide");
+        }, 125);
+      }
+    }
+  });
 
   //Close the modal if we click on the outterRef
   const handleOutterClick = (evt: React.SyntheticEvent<HTMLDivElement>) => {
@@ -23,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({ className, show, close, children }) => {
 
   return (
     <div
-      className={`modal ${show && "show"} ${className || ""}`}
+      className={`modal hide ${className || ""}`}
       onClick={handleOutterClick}
       ref={outterRef}
     >
@@ -44,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ close, children }) => {
       <div className="modal-title">{children}</div>
       {close && (
         <button type="button" className="close" onClick={close}>
-          X
+          <img src={X} />
         </button>
       )}
     </div>

@@ -1,27 +1,40 @@
-.container-fluid {
+.home-page-container {
   display: flex;
   flex-direction: column;
-
-  .nav-like {
-    height: 40px;
-    background-color: #D5D5D5;
-  }
   
-  .welcome {
+  .welcome-section {
     flex: 1 0 40vh;
-    background-color: #C4C4C4;
+    padding: 2rem 3rem 0rem 3rem;
+    background-color: #C9042C;
+    display: flex;
 
-    .container {
+    .text-container {
+      display: flex;
+      flex: 1 0 50%;
+      flex-direction: column;
+      color: white;
+
+      >* {
+        margin: 1rem 0 0 0 ;
+      }
+
+      .f-row {
+        .btn-wrapper {
+          display: flex;
+          width: 12rem !important;
+        }
+      }
+    }
+
+    .image-container {
+      flex: 1 0 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
-  .description {
+  .description-section {
     flex: 1 0 40vh;
-
-    .box {
-      height: 5rem;
-      width: 5rem;
-      background-color: #C4C4C4;
-    }
   }
 }

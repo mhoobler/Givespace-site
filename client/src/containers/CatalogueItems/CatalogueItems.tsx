@@ -35,14 +35,18 @@ const CatalogueItems: React.FC<Props> = ({
   });
 
   return (
-    <div className="row catalogue-items-container">
+    <div className="catalogue-items-container">
       {/* add item, sort */}
-      <div className="row">
-        <AddListing handleSubmit={createListing(catalogue.id)} />
-        <div className="col-md-6 col-sm-12">Sort</div>
+      <div className="add-listing-sort">
+        <div className="add-listing-wrapper">
+          <AddListing handleSubmit={createListing(catalogue.id)} />
+        </div>
+        <div className="sort-wrapper">
+          <div className="col-md-6 col-sm-12">Sort</div>
+        </div>
       </div>
       {/* labels */}
-      <div className="col-12">
+      <div className="labels-container-wrapper">
         <LabelContainer createLabel={createLabel} isEditing={isEditing}>
           <DragAndDrop handleReorder={reorderLabel}>
             {labels.map((e: Label) => (
@@ -59,20 +63,22 @@ const CatalogueItems: React.FC<Props> = ({
           </DragAndDrop>
         </LabelContainer>
       </div>
-      <ListingCardsContainer>
-        <DragAndDrop handleReorder={reorderListing(catalogue.id)}>
-          {listings.map((e: Listing) => (
-            <Draggable key={e.id} refData={e}>
-              <ListingCard
-                listing={e}
-                isEditing={isEditing}
-                selectListing={handleSelectListing}
-                deleteListing={deleteListing}
-              />
-            </Draggable>
-          ))}
-        </DragAndDrop>
-      </ListingCardsContainer>
+      <div className="listing-cards-container-wrapper">
+        <ListingCardsContainer>
+          <DragAndDrop handleReorder={reorderListing(catalogue.id)}>
+            {listings.map((e: Listing) => (
+              <Draggable key={e.id} refData={e}>
+                <ListingCard
+                  listing={e}
+                  isEditing={isEditing}
+                  selectListing={handleSelectListing}
+                  deleteListing={deleteListing}
+                />
+              </Draggable>
+            ))}
+          </DragAndDrop>
+        </ListingCardsContainer>
+      </div>
     </div>
   );
 };

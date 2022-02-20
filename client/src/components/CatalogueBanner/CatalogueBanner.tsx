@@ -34,7 +34,7 @@ const CatalogueBanner: React.FC<Props> = ({
   // ImageCrop: use `createRef` and assign `new ImageCrop.RefManager`
   const cropRef = createRef<ImageCrop.RefManager>();
   (cropRef as any).current = new ImageCrop.RefManager({
-    aspect: 5.5,
+    aspect: 6,
     bound_h: 0.6,
     bound_w: 0.8,
     shape: "rect",
