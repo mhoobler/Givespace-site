@@ -144,7 +144,7 @@ const CatalogueBanner: React.FC<Props> = ({
           {/* color border */}
           <div
             className="color-border"
-            style={{ backgroundColor: "red" }}
+            style={{ backgroundColor: catalogue.header_color }}
           ></div>
           {/* background images */}
           <div className={`toggle-input image-wrapper`}>
