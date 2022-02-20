@@ -19,7 +19,6 @@ export const getMouseDown =
     const refsArr: ref[] = Object.values(refs).sort(
       (a, b) => a.data.ordering - b.data.ordering,
     );
-
     const currentTarget = refs[id].elm;
     const currentParent = currentTarget.parentElement;
     const currentSibling = currentTarget.nextSibling;
@@ -52,6 +51,13 @@ export const getMouseDown =
       currentParent!.insertBefore(currentTarget, currentSibling);
       currentTarget.style.opacity = "";
       currentTarget.style.display = "";
+
+      if (!timeoutFired) {
+        const f = currentTarget.onmousedown;
+        currentTarget.onmousedown = null;
+        (document.elementFromPoint(upEvt.pageX, upEvt.pageY) as any).click();
+        currentTarget.onmousedown = f;
+      }
     };
 
     window.addEventListener("mouseup", MouseUp);
@@ -116,7 +122,9 @@ export const getMouseDown =
       }
     };
 
+    let timeoutFired = false;
     const holdMouseTimeout = setTimeout(() => {
       window.addEventListener("mousemove", MouseMove);
+      timeoutFired = true;
     }, 125);
   };

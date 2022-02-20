@@ -10,7 +10,7 @@ const DNDProvider = DNDContext.Provider;
 
 type elmRefs = {
   [key: string]: {
-    elm: HTMLElement;
+    elm: HTMLDivElement;
     data: any;
     mousedown: (evt: MouseEvent) => void;
   };
