@@ -51,6 +51,12 @@ module.exports = {
           {
             loader: "less-loader",
           },
+          {
+            loader: "style-resources-loader",
+            options: {
+              patterns: [path.resolve(__dirname, "client/src/theme.less")],
+            },
+          },
         ],
       },
       {

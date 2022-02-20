@@ -1,4 +1,6 @@
 import React from "react";
+import { IconButton } from "../..";
+import { ChevronDown, ChevronUp } from "../../../assets";
 
 import { DropDownContext } from "./Dropdown";
 
@@ -7,26 +9,22 @@ type ToggleProps = {
   className?: string;
 };
 
-const Toggle: React.FC<ToggleProps> = ({ className, disable, children }) => {
-  const { activeValue, setShow } = React.useContext(DropDownContext);
+const Toggle: React.FC<ToggleProps> = ({ className, disable }) => {
+  const { activeValue, show, setShow } = React.useContext(DropDownContext);
   const handleToggle = () => {
     setShow((prev: boolean) => !prev);
   };
-
-  if (disable) {
-    return (
-      <div className={`${!className && ""} ${disable && "disable"}`}>
-        {activeValue}
-      </div>
-    );
-  }
+  console.log(className);
 
   return (
-    <div
-      className={`dropdown-toggle ${!className && ""}`}
-      onClick={handleToggle}
-    >
-      {activeValue}
+    <div className={`dropdown-toggle ${className ? className : ""}`}>
+      <span>{activeValue}</span>
+      {!disable && (
+        <IconButton
+          src={show ? ChevronUp : ChevronDown}
+          onClick={handleToggle}
+        />
+      )}
     </div>
   );
 };

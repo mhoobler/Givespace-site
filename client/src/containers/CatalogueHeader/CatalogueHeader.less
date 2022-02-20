@@ -15,16 +15,21 @@
 
     .left-half {
       display: flex;
-      flex: 1 0 auto;
+      flex: 1 0 50%;
       flex-direction: column;
 
-      .avatar-author-title {
+      .avatar-author-title-container {
         margin-bottom: 1.625rem;
+        display: flex;
 
         .avatar-image-wrapper {
+
         }
 
         .author-title-wrapper {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
       }
 
@@ -39,7 +44,17 @@
 
     .right-half {
       display: flex;
-      flex: 1 0 auto;
+      flex: 1 0 50%;
+
+      .edit-copy-share {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .dropdown-wrapper {
+        display: flex;
+        justify-content: flex-end;
+      }
     }
   }
 }
@@ -60,7 +75,7 @@
       flex-direction: row !important;
     }
     .right-half {
-      flex-direction: row;
+      flex-direction: column;
     }
   }
 

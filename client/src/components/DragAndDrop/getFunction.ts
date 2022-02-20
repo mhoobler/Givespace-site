@@ -19,6 +19,7 @@ export const getMouseDown =
     const refsArr: ref[] = Object.values(refs).sort(
       (a, b) => a.data.ordering - b.data.ordering,
     );
+    console.log("down");
 
     const currentTarget = refs[id].elm;
     const targetBoundingBox = currentTarget.getBoundingClientRect();
@@ -37,6 +38,7 @@ export const getMouseDown =
     let dropIndex = refsArr.findIndex((ref) => ref.elm === currentTarget);
 
     const MouseUp = (upEvt: MouseEvent) => {
+      console.log("up");
       clearTimeout(holdMouseTimeout);
       window.removeEventListener("mouseup", MouseUp);
       window.removeEventListener("mousemove", MouseMove);
@@ -64,6 +66,7 @@ export const getMouseDown =
     }
 
     const MouseMove = (moveEvt: MouseEvent) => {
+      console.log("move");
       append = root.appendChild(cloneTarget) as HTMLElement;
       append.style.width = px(targetBoundingBox.width);
       append.style.height = px(targetBoundingBox.height);
@@ -96,7 +99,7 @@ export const getMouseDown =
               isValidDrop = true;
               dropIndex = i;
               elm.parentNode!.insertBefore(separator, elm);
-              currentTarget.style.display = "none";
+              currentTarget.remove();
               break;
             }
 
@@ -109,7 +112,7 @@ export const getMouseDown =
               isValidDrop = true;
               dropIndex = i + 1;
               elm.parentNode!.insertBefore(separator, elm.nextSibling);
-              currentTarget.style.display = "none";
+              currentTarget.remove();
               break;
             }
           }

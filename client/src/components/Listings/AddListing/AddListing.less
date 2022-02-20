@@ -1,13 +1,38 @@
 .add-listing-container {
+  display: flex;
+  flex-direction: column;
+  height: 3.5rem;
 
+  label {
+    margin-bottom: 0.5rem;
+    height: 1rem;
+  }
 
   .inputs-container {
+    position: relative;
     flex: 0 1 auto;
-    border: 2px solid black;
+    width: 100%;
+    height: 2.5rem;
 
-    >* {
-      border: none;
-      background-color: none;
+    input {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #484848;
+      border-radius: 5px;
+    } 
+
+    .btn-wrapper {
+      position: absolute;
+      height: 100%;
+      top: 4px;
+      right: 4px;
+      width: 2rem;
+
+      .btn {
+        padding: 0 1rem;
+        border-radius: 5px;
+        height: calc(100% - 8px);
+      }
     }
   }
 }
