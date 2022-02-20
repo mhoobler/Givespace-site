@@ -56,15 +56,21 @@ app.get(
           }'`
         )
       );
-      console.log(query.rows);
       if (!query.rows.length) {
-        res.status(200).render("list", { og_title: "Catalogue not found" });
+        res
+          .status(200)
+          .render("list", {
+            title: "Catalogue not found",
+            description: "Catalogue not found",
+          });
       } else {
         const catalogue: Catalogue = query.rows[0];
         if (!params.listing_id) {
           res.status(200).render("list", {
             title: catalogue.title || "Untitled Catalogue",
-            description: `Catalogue "${catalogue.title}" contains ${catalogue.listings.length} listings`,
+            description: `Catalogue "${catalogue.title}" contains ${
+              catalogue.listings ? catalogue.listings.length : "no"
+            } listings`,
           });
         } else {
           const listing = catalogue.listings.find(

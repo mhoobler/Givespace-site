@@ -75,10 +75,6 @@ CREATE TABLE listing_labels (
 INSERT INTO catalogues (
   user_id
 ) VALUES (
-  'id'
-), (
-  'id'
-), (
   '6a3a2967-0258-4caf-8fef-f844c060b2f2'
 );
 
@@ -92,6 +88,11 @@ INSERT INTO catalogues (
   'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title1'
+), (
+  'a970498b-71ff-470a-8c61-1fc4101449dd',
+  'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
+  'title2'
 ); 
 
 INSERT INTO labels (

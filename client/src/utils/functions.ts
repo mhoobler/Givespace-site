@@ -1,4 +1,6 @@
+import { ApolloError } from "@apollo/client";
 import { DocumentNode } from "graphql";
+import { useNavigate } from "react-router-dom";
 import { cache } from "../graphql/clientConfig";
 import {
   ALL_CATALOGUE_FIELDS,
@@ -9,10 +11,16 @@ import {
 
 export const apolloHookErrorHandler = (
   path: string,
-  hookError: any,
+  hookError: ApolloError | undefined,
   warning?: boolean
 ): void => {
   if (hookError) {
+    if (hookError.message.includes("Catalogue does not exist")) {
+      console.log("Catalogue does not exist", path);
+      window.location.reload();
+      return;
+    }
+    // if (warning || process.env.NODE_ENV === 'production') {
     if (warning) {
       console.log(hookError);
       console.warn(`☝️☝️☝️ ERROR at "${path}" ☝️☝️☝️`);

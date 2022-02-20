@@ -39,14 +39,37 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
         }
       },
     });
-    apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
+    // prevents page from being reloaded on error
+    if (catalogueQuery.error) {
+      if (catalogueQuery.error.message.includes("Catalogue does not exist")) {
+        console.log("catalogueQuery", ": Catalogue does not exist");
+      } else {
+        apolloHookErrorHandler("catalogueQuery", catalogueQuery.error);
+      }
+    }
     return catalogueQuery;
   };
 
-  const [incrementCatalogueViewsMuation, { error }] = useMutation(
-    INCREMENT_CATALOGUE_VIEWS
-  );
-  apolloHookErrorHandler("useCatalogueApolloHooks.tsx", error);
+  const [
+    incrementCatalogueViewsMuation,
+    { error: incrrementCatalogueViewsError },
+  ] = useMutation(INCREMENT_CATALOGUE_VIEWS);
+  // prevents page from being reloaded on error
+  if (incrrementCatalogueViewsError) {
+    if (
+      incrrementCatalogueViewsError.message.includes("Catalogue does not exist")
+    ) {
+      console.log(
+        "incrementCatalogueViewsMuation",
+        ": Catalogue does not exist"
+      );
+    } else {
+      apolloHookErrorHandler(
+        "incrementCatalogueViewsMuation",
+        incrrementCatalogueViewsError
+      );
+    }
+  }
 
   const handleCatalogueSubscription = (idVariable: { [x: string]: string }) => {
     const subscription = useSubscription(LIVE_CATALOGUE, {
@@ -69,7 +92,14 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
         }
       },
     });
-    apolloHookErrorHandler("catalogueSubscription", subscription.error);
+    // prevents page from being reloaded on error
+    if (subscription.error) {
+      if (subscription.error.message.includes("Catalogue does not exist")) {
+        console.log("catalogueSubscription", ": Catalogue does not exist");
+      } else {
+        apolloHookErrorHandler("catalogueSubscription", subscription.error);
+      }
+    }
 
     return subscription;
   };
