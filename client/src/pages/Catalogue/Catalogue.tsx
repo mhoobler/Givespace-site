@@ -55,7 +55,7 @@ const Catalogue: React.FC = () => {
   const catalogueQuery = handleCatalogueQuery(idVariable);
   handleCatalogueSubscription(idVariable);
   // Inputs need to toggle from Editing to Display state
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   useEffect(() => {
     incrementCatalogueViewsMuation({
       variables: { ...idVariable },
@@ -79,13 +79,12 @@ const Catalogue: React.FC = () => {
     if (catalogue) {
       removeFromCacheIfMFD(catalogue, markedForDeletion);
     }
-    console.log("catalogue", catalogue);
   }
 
   if (!catalogue) {
     return <div>Loading...</div>;
   }
-  console.log("OUT catalogue", catalogue);
+  console.log("catalogue", catalogue);
   // console.log("catalogue", catalogue);
 
   // status conditions
