@@ -28,12 +28,14 @@ const AddListing: React.FC<Props> = ({ handleSubmit }) => {
   };
 
   return (
-    <div className="col-6 d-flex flex-column add-listing-container">
+    <div className="add-listing-container">
       <label>Add Item:</label>
-      <div className="d-flex">
-        <div className="inputs-container">
-          <input ref={inputRef} onKeyDown={handleKeyDown} type="text" />
-          <button onClick={handleClick}>+</button>
+      <div className="inputs-container">
+        <input ref={inputRef} onKeyDown={handleKeyDown} type="text" />
+        <div className="btn-wrapper">
+          <button className="btn btn-primary" onClick={handleClick}>
+            +
+          </button>
         </div>
       </div>
     </div>

@@ -1,9 +1,6 @@
-.card {
-  flex: 0 0 46%;
-  margin-top: 1.5rem;
-  border: 1px solid #9f9f9f !important;
-  border-radius: 15px !important;
+.listing-card {
   user-select: none;
+  height: 100%;
 
   &.editing {
     .card-header {
@@ -15,6 +12,13 @@
     display: none;
     position: relative;
     padding: 0;
+    height: 1rem;
+    text-align: center;
+
+    >img {
+      transform: translateY(-40%);
+      height: 100%;
+    }
 
     .icon-button {
       text-align: center;
@@ -23,10 +27,35 @@
       border-radius: 100px;
       height: 36px;
       width: 36px;
-
       position: absolute;
-      top: -16px;
-      right: -12px
+      top: -1.625rem;
+      right: -1.625rem
+    }
+  }
+
+  .listing-card-body {
+    .listing-image-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 8rem;
+      width: 100%;
+      overflow: hidden;
+
+      img {
+        object-fit: cover;
+        width: auto;
+        height: 100%;
+      }
+    }
+    .listing-title-description {
+      h5 {
+        font-weight: normal;
+      }
+
+      p {
+        font-size: .75rem;
+      }
     }
   }
 }
@@ -38,9 +67,6 @@
 
   // md
   @media (min-width: 768px) {
-    .card {
-      flex: 0 0 31%;
-    }
   }
 
   // lg
@@ -49,9 +75,6 @@
 
   // xl
   @media (min-width: 1200px) {
-    .card {
-      flex: 0 0 21%;
-    }
   }
 
   // xxl

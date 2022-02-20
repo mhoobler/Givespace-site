@@ -1,0 +1,55 @@
+.catalogue-items-container {
+  padding: 1rem;
+
+  .add-listing-sort {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 3rem;
+    margin-bottom: 1rem;
+
+    .add-listing-wrapper {
+      position: absolute;
+      width: 100%;
+      left: 0;
+    }
+
+    .sort-wrapper {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+
+  .listing-cards-container-wrapper {
+    margin-top: 1rem;
+  }
+}
+
+@media screen {
+  // sm
+  @media (min-width: 576px) {
+  }
+
+  // md
+  @media (min-width: 768px) {
+  }
+
+  // lg
+  @media (min-width: 992px) {
+    .catalogue-items-container {
+      .add-listing-sort {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+
+  // xl
+  @media (min-width: 1200px) {
+  }
+
+  // xxl
+  @media (min-width: 1400px) {
+  }
+}

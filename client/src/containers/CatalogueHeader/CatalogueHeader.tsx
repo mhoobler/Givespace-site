@@ -46,8 +46,8 @@ const CatalogueHeader: React.FC<Props> = ({
         {/* left half */}
         <div className="left-half">
           {/* avatar, author, title */}
-          <div className="d-flex avatar-author-title">
-            <div className="d-flex avatar-image-wrapper">
+          <div className="avatar-author-title-container">
+            <div className="avatar-image-wrapper">
               <AvatarImage
                 isEditing={isEditing}
                 handleSubmit={editCatalogueFile}
@@ -55,7 +55,7 @@ const CatalogueHeader: React.FC<Props> = ({
                 value={catalogue.profile_picture_url || ""}
               />
             </div>
-            <div className="d-flex flex-column author-title-wrapper">
+            <div className="author-title-wrapper">
               <TextInput
                 isEditing={isEditing}
                 handleSubmit={editCatalogue}
@@ -110,16 +110,18 @@ const CatalogueHeader: React.FC<Props> = ({
 
         {/* right half */}
         <div className="right-half">
-          <div className="d-flex flex-grow-1 flex-md-column flex-sm-row right-half">
-            {/* edit toggle, editor link, share link, public/private options */}
-            <div className="d-flex justify-content-end">
+          {/* edit toggle, editor link, share link, public/private options */}
+          <div className="edit-copy-share">
+            <div className="btn-wrapper">
               <button
                 className={`btn btn-primary ${editable ? "" : "hidden"}`}
                 onClick={toggleEdit}
               >
                 Edit
               </button>
-              {editable && (
+            </div>
+            {editable && (
+              <div className="btn-wrapper">
                 <a
                   onClick={() =>
                     handleCopy(`/list/${catalogue.edit_id}?edit=true`)
@@ -128,8 +130,9 @@ const CatalogueHeader: React.FC<Props> = ({
                 >
                   Copy Editor Link
                 </a>
-              )}
-
+              </div>
+            )}
+            <div className="btn-wrapper">
               <a
                 onClick={() => handleCopy(`/list/${catalogue.id}`)}
                 className="btn btn-link"
@@ -137,27 +140,28 @@ const CatalogueHeader: React.FC<Props> = ({
                 Share
               </a>
             </div>
-            <div className="d-flex justify-content-end">
-              <Dropdown
-                value={catalogue.status}
-                handleSubmit={editCatalogue}
-                fieldEditingProps={{
-                  typename: "Catalogue",
-                  key: "status",
-                  id: catalogue.id,
-                }}
-                className={isEditing ? "hidden" : ""}
-              >
-                <Dropdown.Toggle disable={!isEditing} />
-                <Dropdown.Menu>
-                  {statusOptions.map((option) => (
-                    <Dropdown.Item key={option} value={option}>
-                      {option}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
+          </div>
+          <div className="dropdown-wrapper">
+            <Dropdown
+              value={catalogue.status}
+              handleSubmit={editCatalogue}
+              fieldEditingProps={{
+                typename: "Catalogue",
+                key: "status",
+                id: catalogue.id,
+              }}
+              className="btn"
+            >
+              <Dropdown.Toggle className="btn" disable={!isEditing} />
+
+              <Dropdown.Menu>
+                {statusOptions.map((option) => (
+                  <Dropdown.Item className="btn" key={option} value={option}>
+                    {option}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         </div>
       </div>

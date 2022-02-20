@@ -1,11 +1,6 @@
-@banner-hxs: auto;
-@banner-hmd: 144px;
-@banner-hlg: 172px;
-@banner-hxl: 200px;
-
 .catalogue-banner-container {
   width: 100%;
-  height: @banner-hxs;
+  height: auto;
   padding-bottom: 2rem;
 
   .toggle-wrapper {
@@ -24,7 +19,6 @@
       z-index: 1;
 
       &.toggle-input {
-        filter: brightness(0.65);
         position: static;
       }
 
@@ -61,23 +55,14 @@
 
   // md
   @media (min-width: 768px) {
-    .catalogue-banner-container{
-      height: @banner-hmd;
-    }
   }
 
   // lg
   @media (min-width: 992px) {
-    .catalogue-banner-container{
-      height: @banner-hlg;
-    }
   }
 
   // xl
   @media (min-width: 1200px) {
-    .catalogue-banner-container{
-      height: @banner-hxl;
-    }
   }
 
   // xxl

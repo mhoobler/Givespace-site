@@ -5,6 +5,8 @@ import Menu from "./Menu";
 import Item from "./Item";
 import { useFieldEditing } from "../../../state/store";
 
+import "./Dropdown.less";
+
 type DropdownProps = {
   className?: string;
   handleSubmit: GenericEdit;

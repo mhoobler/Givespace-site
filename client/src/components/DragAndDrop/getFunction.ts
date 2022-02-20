@@ -19,8 +19,9 @@ export const getMouseDown =
     const refsArr: ref[] = Object.values(refs).sort(
       (a, b) => a.data.ordering - b.data.ordering,
     );
-
     const currentTarget = refs[id].elm;
+    const currentParent = currentTarget.parentElement;
+    const currentSibling = currentTarget.nextSibling;
     const targetBoundingBox = currentTarget.getBoundingClientRect();
     const cloneTarget = currentTarget.cloneNode(true);
     let append: HTMLElement;
@@ -47,8 +48,16 @@ export const getMouseDown =
       if (isValidDrop) {
         reorderLabel(id, dropIndex);
       }
+      currentParent!.insertBefore(currentTarget, currentSibling);
       currentTarget.style.opacity = "";
       currentTarget.style.display = "";
+
+      if (!timeoutFired) {
+        const f = currentTarget.onmousedown;
+        currentTarget.onmousedown = null;
+        (document.elementFromPoint(upEvt.pageX, upEvt.pageY) as any).click();
+        currentTarget.onmousedown = f;
+      }
     };
 
     window.addEventListener("mouseup", MouseUp);
@@ -59,11 +68,12 @@ export const getMouseDown =
       return extra;
     });
 
-    for (let f of refElms) {
-      console.log(f === currentTarget);
-    }
+    //for (let f of refElms) {
+    //  console.log(f.boundingBox);
+    //}
 
     const MouseMove = (moveEvt: MouseEvent) => {
+      console.log("move");
       append = root.appendChild(cloneTarget) as HTMLElement;
       append.style.width = px(targetBoundingBox.width);
       append.style.height = px(targetBoundingBox.height);
@@ -79,37 +89,32 @@ export const getMouseDown =
         append.style.left = px(moveEvt.pageX - x2 - window.scrollX);
         separator.remove();
         isValidDrop = false;
+        const [mx, my] = [
+          moveEvt.pageX - window.scrollX,
+          moveEvt.pageY - window.scrollY,
+        ];
 
         for (let i = 0; i < refElms.length; i++) {
           const elm = refElms[i];
           const bb = elm.boundingBox;
 
           if (refsArr[i].elm !== currentTarget) {
-            const isValidY =
-              moveEvt.pageY > bb.top && moveEvt.pageY < bb.bottom;
+            const isValidY = my > bb.top && my < bb.bottom;
             // Is Left
-            if (
-              isValidY &&
-              moveEvt.pageX > bb.left - x2 &&
-              moveEvt.pageX < bb.left + x2
-            ) {
+            if (isValidY && mx > bb.left - x2 && mx < bb.left + x2) {
               isValidDrop = true;
               dropIndex = i;
               elm.parentNode!.insertBefore(separator, elm);
-              currentTarget.style.display = "none";
+              currentTarget.remove();
               break;
             }
 
             // Is Right
-            if (
-              isValidY &&
-              moveEvt.pageX > bb.right - x2 &&
-              moveEvt.pageX < bb.right + x2
-            ) {
+            if (isValidY && mx > bb.right - x2 && mx < bb.right + x2) {
               isValidDrop = true;
               dropIndex = i + 1;
               elm.parentNode!.insertBefore(separator, elm.nextSibling);
-              currentTarget.style.display = "none";
+              currentTarget.remove();
               break;
             }
           }
@@ -117,7 +122,9 @@ export const getMouseDown =
       }
     };
 
+    let timeoutFired = false;
     const holdMouseTimeout = setTimeout(() => {
       window.addEventListener("mousemove", MouseMove);
+      timeoutFired = true;
     }, 125);
   };

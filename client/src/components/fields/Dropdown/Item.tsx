@@ -16,7 +16,10 @@ const Item: React.FC<ItemProps> = ({ children, className, value }) => {
   };
 
   return (
-    <div className={`dropdown-item ${!className && ""}`} onClick={handleSelect}>
+    <div
+      className={`dropdown-item ${className ? className : ""}`}
+      onClick={handleSelect}
+    >
       {children}
     </div>
   );

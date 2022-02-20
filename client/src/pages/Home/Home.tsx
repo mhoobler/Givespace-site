@@ -23,7 +23,7 @@ const Home = () => {
         );
       case cachedData.myCatalogues.length > 0:
         return (
-          <Link className="btn btn-primary" to={`/lists`}>
+          <Link className="btn btn-secondary-outline" to={`/lists`}>
             Go to Lists
           </Link>
         );
@@ -39,36 +39,29 @@ const Home = () => {
   };
 
   return (
-    <div className="container-fluid">
-      <section className="welcome row">
-        <div className="col">
-          <h3>Welcome to GiveSpace</h3>
+    <div className="home-page-container">
+      <section className="welcome-section">
+        <div className="text-container">
+          <h3 className="title">Welcome to GiveSpace</h3>
           <p>
             Some type of slogan or hook will be written here. Your lists made
             easy, or something
           </p>
-          <ButtonToShow />
-        </div>
-      </section>
-
-      <section className="description row">
-        <div className="d-flex flex-column justify-content-center">
-          <div className="row p-5 justify-content-around">
-            <div className="col-md-4 col-sm-12 d-flex flex-column align-items-center">
-              <div className="box"></div>
-              <p>Help</p>
+          <div className="f-row">
+            <div className="btn-wrapper">
+              <ButtonToShow />
             </div>
-            <div className="col-md-4 col-sm-12 d-flex flex-column align-items-center">
-              <div className="box"></div>
-              <p>Help</p>
-            </div>
-            <div className="col-md-4 col-sm-12 d-flex flex-column align-items-center">
-              <div className="box"></div>
-              <p>Help</p>
+            <div className="btn-wrapper">
+              <ButtonToShow />
             </div>
           </div>
         </div>
+        <div className="image-container">
+          <img src="#" alt="IMAGE" />
+        </div>
       </section>
+
+      <section className="description-section"></section>
     </div>
   );
 };

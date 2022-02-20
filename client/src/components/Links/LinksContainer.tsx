@@ -1,4 +1,6 @@
 import React, { useRef, useState } from "react";
+import { IconButton } from "..";
+import { Plus } from "../../assets";
 import useLinkApolloHooks from "../../graphql/hooks/link";
 import { isUrl } from "../../utils/functions";
 import EditLinkModal from "./EditLinkModal";
@@ -12,6 +14,7 @@ type Props = {
 
 const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
   const linkInputRef = useRef<HTMLInputElement>(null);
+  isEditing = true;
   const [linkEditingId, setLinkEditingId] = useState<string | null>(null);
   const [_isValid, setIsValid] = useState(true);
   const { addLink, removeLink } = useLinkApolloHooks();
@@ -58,10 +61,9 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
           !isEditing && "hidden"
         }`}
       >
-        <div className="link">
-          <button onClick={handleSubmit} type="submit">
-            Add Link
-          </button>
+        <div className="link input-wrapper">
+          <input type="text" placeholder="Add Link" />
+          <IconButton src={Plus} onClick={() => {}} />
         </div>
       </div>
       <EditLinkModal link={linkEditing} handleClose={handleEditLinkClose} />

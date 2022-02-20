@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IconButton, Label, LabelContainer } from "../..";
 import { cleanedPath } from "../../../utils/functions";
 
-import { X } from "../../../assets";
+import { DragHorizontal, X } from "../../../assets";
 
 import "./ListingCard.less";
 
@@ -39,24 +39,24 @@ const ListingCard: React.FC<Props> = ({
   };
 
   return (
-    <div className={`card ${isEditing ? "editing" : ""}`}>
+    <div className={`card ${isEditing ? "editing" : ""} listing-card`}>
       <div className="card-header text-center">
-        <span>. . .</span>
+        <img src={DragHorizontal} alt="drag" />
         <IconButton onClick={handleDelete} src={X} />
       </div>
-      <div className="card-body" onClick={handleSelect}>
-        <div className="listing-image">
+      <div className="card-body listing-card-body" onClick={handleSelect}>
+        <div className="listing-image-wrapper">
           <img
-            style={{ width: "100px" }}
             src={
               listing.image_url ||
               "https://media.wired.com/photos/592722c1af95806129f51b71/master/pass/MIT-Web-Loading.jpg"
             }
+            draggable={false}
           />
         </div>
 
         <div className="listing-title-description">
-          <h4>{listing.name}</h4>
+          <h5>{listing.name}</h5>
           <p>{listing.description}</p>
         </div>
 
@@ -71,9 +71,7 @@ const ListingCard: React.FC<Props> = ({
 
         <div className="listing-price">
           {listing.show_price && (
-            <h4>
-              <span className="price">${listing.price}</span>
-            </h4>
+            <span className="price">${listing.price}</span>
           )}
         </div>
       </div>

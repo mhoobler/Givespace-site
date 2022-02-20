@@ -9,7 +9,11 @@ type MenuProps = {
 const Menu: React.FC<MenuProps> = ({ children, className }) => {
   const { show } = React.useContext(DropDownContext);
   return (
-    <div className={`dropdown-menu ${show && "show"} ${!className && ""}`}>
+    <div
+      className={`dropdown-menu ${show && "show"} ${
+        className ? className : ""
+      }`}
+    >
       {children}
     </div>
   );
