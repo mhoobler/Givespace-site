@@ -16,7 +16,12 @@ const Modal: React.FC<ModalProps> = ({ className, show, close, children }) => {
   const handleOutterClick = (evt: React.SyntheticEvent<HTMLDivElement>) => {
     if (outterRef.current) {
       if (evt.target === outterRef.current) {
-        close();
+        // when leaving modal, this saves current changes because of the way
+        // submitting works on inputs
+        outterRef.current.focus();
+        setTimeout(() => {
+          close();
+        }, 0);
       }
     }
   };
@@ -24,10 +29,10 @@ const Modal: React.FC<ModalProps> = ({ className, show, close, children }) => {
   return (
     <div
       className={`modal ${show && "show"} ${className || ""}`}
-      onClick={handleOutterClick}
+      onMouseDown={handleOutterClick}
       ref={outterRef}
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog" onMouseDown={(e) => e.stopPropagation()}>
         <div className="modal-content">{children}</div>
       </div>
     </div>
