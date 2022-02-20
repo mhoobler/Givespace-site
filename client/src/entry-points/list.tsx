@@ -4,7 +4,6 @@ import { Catalogue } from "../pages";
 import { ApolloProvider } from "@apollo/client";
 import client from "../graphql/clientConfig";
 
-import "react-datepicker/dist/react-datepicker.css";
 import "../index.less";
 
 ReactDOM.hydrate(
@@ -13,5 +12,5 @@ ReactDOM.hydrate(
       <Catalogue />
     </React.StrictMode>
   </ApolloProvider>,
-  document.getElementById("root"),
+  document.getElementById("root")
 );

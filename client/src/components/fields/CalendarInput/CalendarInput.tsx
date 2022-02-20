@@ -54,7 +54,7 @@ const CalendarInput: React.FC<Props> = ({
         onBlur={(e) => handleOnSubmit(new Date(e.target.value).toISOString())}
       />
       <div className={`${isEditing ? "hidden" : ""}`}>
-        {valueToDisplay || "No date selected"}
+        {value ? valueToDisplay : "No date selected"}
       </div>
     </div>
   );
