@@ -4,16 +4,19 @@ export const statusOptions = ["public", "private", "sharable"];
 
 export const acceptedImageFiles = ["image/jpeg", "image/png"];
 
-export const dummyLabel = {
-  __typename: "Label",
-  id: "",
-  catalogue_id: "",
-  name: "",
-  ordering: 0,
-  is_private: false,
-  link_url: null,
-  created: "",
-  updated: "",
+export const dummyLabel = (catalogue_id: string): Label => {
+  return {
+    // @ts-ignore
+    __typename: "Label",
+    id: `${randomNumbers(4)}2a78-c744-4f8e-a2c5-d4a422fc657d`,
+    catalogue_id,
+    name: "",
+    ordering: 0,
+    is_private: false,
+    link_url: null,
+    created: new Date(),
+    updated: new Date(),
+  };
 };
 
 export const dummyListing = (catalogue_id: string): Listing => {

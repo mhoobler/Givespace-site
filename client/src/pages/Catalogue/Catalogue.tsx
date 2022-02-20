@@ -6,12 +6,14 @@ import {
   CatalogueItems,
   ListingModal,
 } from "../../containers";
-import { cache } from "../../graphql/clientConfig";
-import { ALL_CATALOGUE_FIELDS } from "../../graphql/fragments";
 import { UndoNotification } from "../../components";
 
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
-import { cleanedPath, removeFromCacheIfMFD } from "../../utils/functions";
+import {
+  cleanedPath,
+  getCatalogueFromCache,
+  removeFromCacheIfMFD,
+} from "../../utils/functions";
 import { useMarkedForDeletion } from "../../state/store";
 
 const Catalogue: React.FC = () => {
@@ -71,11 +73,7 @@ const Catalogue: React.FC = () => {
     // The catalogue being used in the catalogue state
     // will always be the cached catalogue as fetched
     // by CATALOGUE_FRAGMENT
-    catalogue = cache.readFragment({
-      id: `Catalogue:${catalogueQuery.data.catalogues[0].id}`,
-      fragment: ALL_CATALOGUE_FIELDS,
-      fragmentName: "AllCatalogueFields",
-    });
+    catalogue = getCatalogueFromCache(catalogueQuery.data.catalogues[0].id);
     if (catalogue) {
       removeFromCacheIfMFD(catalogue, markedForDeletion);
     }
@@ -105,6 +103,7 @@ const Catalogue: React.FC = () => {
     catalogue.labels && catalogue.labels[0]
       ? [...catalogue.labels].sort((a, b) => a.ordering - b.ordering)
       : [];
+  console.log("sortedLabels", sortedLabels);
 
   // TODO: Should sort this in the backend
   const sortedListings =

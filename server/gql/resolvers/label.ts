@@ -3,7 +3,7 @@ import { QueryResult } from "pg";
 import { Catalogue, Label } from "../../types";
 import {
   getFullCatalogues,
-  maxOrdering,
+  endOrdering,
   notExist,
   publishCatalogue,
 } from "../../utils/functions";
@@ -24,7 +24,7 @@ const labelResolvers = {
 
       const newLabelRes: QueryResult<Label> = await db.query(
         "INSERT INTO labels (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-        [catalogue_id, name, maxOrdering(fullCatalogue.labels) + 1]
+        [catalogue_id, name, endOrdering(fullCatalogue.labels, "max") + 1]
       );
       const newLabel: Label = newLabelRes.rows[0];
 
