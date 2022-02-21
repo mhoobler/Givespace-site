@@ -53,7 +53,7 @@ const CalendarInput: React.FC<Props> = ({
         onKeyPress={handleOnKeyPress}
         onBlur={(e) => handleOnSubmit(new Date(e.target.value).toISOString())}
       />
-      <div className={`${isEditing ? "hidden" : ""}`}>
+      <div className={`${isEditing || (!isEditing && !value) ? "hidden" : ""}`}>
         {value ? valueToDisplay : "No date selected"}
       </div>
     </div>

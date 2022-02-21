@@ -57,7 +57,7 @@ const Catalogue: React.FC = () => {
   const catalogueQuery = handleCatalogueQuery(idVariable);
   handleCatalogueSubscription(idVariable);
   // Inputs need to toggle from Editing to Display state
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   useEffect(() => {
     incrementCatalogueViewsMuation({
       variables: { ...idVariable },
