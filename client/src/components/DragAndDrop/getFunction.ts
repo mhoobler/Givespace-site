@@ -83,8 +83,8 @@ export const getMouseDown =
       currentTarget.style.opacity = "0.6";
 
       if (append) {
-        const y2 = targetBoundingBox.width / 2;
-        const x2 = targetBoundingBox.height / 2;
+        const y2 = targetBoundingBox.height / 2;
+        const x2 = targetBoundingBox.width / 2;
         append.style.top = px(moveEvt.pageY - y2 - window.scrollY);
         append.style.left = px(moveEvt.pageX - x2 - window.scrollX);
         separator.remove();
