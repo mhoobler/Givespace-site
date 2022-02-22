@@ -36,14 +36,14 @@ app.get("/", async (_req, res) => {
   res.status(200).render("index");
 });
 
-app.get("/lists", async (_req, res) => {
+app.get("/catalogues", async (_req, res) => {
   res.status(200).render("index");
 });
 
 // create an app.get that accepts two different urls like /api/users and /api/posts
 
 app.get(
-  ["/list/:catalogue_id/:listing_id", "/list/:catalogue_id"],
+  ["/ctg/:catalogue_id/:listing_id", "/ctg/:catalogue_id"],
   async (req, res) => {
     const params = req.params;
     // get the query strings from the url
@@ -57,12 +57,10 @@ app.get(
         )
       );
       if (!query.rows.length) {
-        res
-          .status(200)
-          .render("list", {
-            title: "Catalogue not found",
-            description: "Catalogue not found",
-          });
+        res.status(200).render("list", {
+          title: "Catalogue not found",
+          description: "Catalogue not found",
+        });
       } else {
         const catalogue: Catalogue = query.rows[0];
         if (!params.listing_id) {

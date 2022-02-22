@@ -124,7 +124,7 @@ const CatalogueHeader: React.FC<Props> = ({
               <div className="btn-wrapper">
                 <a
                   onClick={() =>
-                    handleCopy(`/list/${catalogue.edit_id}?edit=true`)
+                    handleCopy(`/ctg/${catalogue.edit_id}?edit=true`)
                   }
                   className="btn btn-link"
                 >
@@ -134,7 +134,7 @@ const CatalogueHeader: React.FC<Props> = ({
             )}
             <div className="btn-wrapper">
               <a
-                onClick={() => handleCopy(`/list/${catalogue.id}`)}
+                onClick={() => handleCopy(`/ctg/${catalogue.id}`)}
                 className="btn btn-link"
               >
                 Share

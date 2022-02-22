@@ -114,16 +114,7 @@ const Catalogue: React.FC = () => {
       : [];
 
   const handleListingModalClose = () => {
-    let reducedUrl: string = cleanedPath(location.pathname);
-    const params = reducedUrl.split("/");
-    if (params.length > 3) {
-      params.pop();
-    }
-    reducedUrl = params.join("/");
-    if (location.search) {
-      reducedUrl += location.search;
-    }
-    navigate(reducedUrl);
+    navigate(-1);
     setSelectedListingId(null);
   };
 
