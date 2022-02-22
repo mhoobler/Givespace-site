@@ -70,7 +70,7 @@ const ListingCard: React.FC<Props> = ({
         </div>
 
         <div className="listing-price">
-          {listing.show_price && (
+          {listing.show_price && listing.price && (
             <span className="price">${listing.price}</span>
           )}
         </div>
