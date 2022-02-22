@@ -1,6 +1,6 @@
 import db from "../../db";
 import { QueryResult } from "pg";
-import { ScrapedFeatures, Catalogue, Label, Listing } from "../../types";
+import { ScrapedFeatures, Catalogue, Label, Listing, Link } from "../../types";
 import {
   deleteFileIfNotUsed,
   getFullCatalogues,
@@ -8,6 +8,7 @@ import {
   endOrdering,
   notExist,
   publishCatalogue,
+  extractDomain,
 } from "../../utils/functions";
 import { pubsub } from "../index";
 import scrapeItemFeatures from "../../scraping/init";
@@ -42,7 +43,16 @@ const listingResolvers = {
         );
       }
 
-      const newListing: Listing = newListingRes.rows[0];
+      let newListing: Listing = newListingRes.rows[0];
+
+      if (isUrl) {
+        const title = extractDomain(name);
+        const newLisnkRes: QueryResult<Link> = await db.query(
+          "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
+          [newListing.id, name, title]
+        );
+        newListing = { ...newListing, links: [newLisnkRes.rows[0]] };
+      }
 
       publishCatalogue(catalogue_id);
 
@@ -66,8 +76,22 @@ const listingResolvers = {
             newListing.id,
           ]
         );
-        const updatedListing: Listing = updateListingRes.rows[0];
+        let updatedListing: Listing = updateListingRes.rows[0];
         notExist("Listing", updatedListing);
+
+        if (!isUrl) {
+          const title = extractDomain(features.item_url);
+          const newLisnkRes: QueryResult<Link> = await db.query(
+            "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
+            [updatedListing.id, features.item_url, title]
+          );
+          updatedListing = {
+            ...updatedListing,
+            links: currentListing.links
+              ? [...currentListing.links, newLisnkRes.rows[0]]
+              : [newLisnkRes.rows[0]],
+          };
+        }
 
         publishCatalogue(catalogue_id);
       };

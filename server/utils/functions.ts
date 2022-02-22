@@ -141,3 +141,11 @@ export const isUrl = (text: string): Boolean => {
     return true;
   return false;
 };
+
+export const extractDomain = (url: string): string => {
+  const domain = url.split("/")[2];
+  let title: string[] | string = domain.split(".");
+  if (title[0] === "www") title.shift();
+  title.pop();
+  return title.join(".");
+};
