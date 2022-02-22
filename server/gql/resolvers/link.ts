@@ -59,6 +59,7 @@ const linkResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Link> => {
+      if (!value) value = null;
       if (key === "url") {
         urlValidation(value);
       }

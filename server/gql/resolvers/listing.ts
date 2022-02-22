@@ -94,6 +94,7 @@ const listingResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Listing> => {
+      if (!value) value = null;
       const editedListingRaw: QueryResult<Listing> = await db.query(
         `UPDATE listings SET ${key} = $1 WHERE id = $2 RETURNING *`,
         [value, id]
