@@ -1,45 +1,21 @@
 import React, { createContext, useRef } from "react";
-import { getMouseDown } from "./getFunction";
+import DragHelper from "./DragHelper";
 
-const DNDContext = createContext<any>({
-  captureRef: () => null,
-  clearRef: () => null,
-  handleMouseDown: () => null,
-});
+const DNDContext = createContext<any>({});
 const DNDProvider = DNDContext.Provider;
-
-type elmRefs = {
-  [key: string]: {
-    elm: HTMLDivElement;
-    data: any;
-    mousedown: (evt: MouseEvent) => void;
-  };
-};
 
 type Props = {
   handleReorder: (id: string, ordering: number) => void;
 };
 
 const DragAndDrop: React.FC<Props> = ({ handleReorder, children }) => {
-  const elementsRef = useRef<elmRefs>({});
+  const elementsRef = useRef<DragHelper>(new DragHelper(handleReorder));
 
-  const captureRef = (elm: HTMLDivElement, data: any) => {
-    const { id } = data;
-    if (elm) {
-      const ref = (elementsRef.current[id] = {
-        elm,
-        data,
-        mousedown: getMouseDown(id, elementsRef.current, handleReorder),
-      });
-      ref.elm.onmousedown = ref.mousedown;
-    }
-  };
-
-  const clearRef = (id: string) => {
-    delete elementsRef.current[id];
-  };
-
-  return <DNDProvider value={{ captureRef, clearRef }}>{children}</DNDProvider>;
+  return (
+    <DNDProvider value={{ DragHelper: elementsRef.current }}>
+      {children}
+    </DNDProvider>
+  );
 };
 
 export { DNDContext };

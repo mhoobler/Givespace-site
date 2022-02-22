@@ -108,7 +108,7 @@ const CatalogueBanner: React.FC<Props> = ({
         }
       },
       "image/jpg", // file type
-      0.9 // image quality
+      0.9, // image quality
     );
   };
 
@@ -132,7 +132,7 @@ const CatalogueBanner: React.FC<Props> = ({
                 updateCatalogueCache(
                   `Catalogue:${catalogue.id}`,
                   "header_color",
-                  color
+                  color,
                 )
               }
               handleSubmit={(color: string) => {

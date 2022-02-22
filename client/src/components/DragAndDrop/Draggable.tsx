@@ -6,15 +6,17 @@ type Props = {
 };
 
 const Draggable: React.FC<Props> = ({ children, refData }) => {
-  const { captureRef, clearRef } = useContext(DNDContext);
+  const { DragHelper } = useContext(DNDContext);
 
   useEffect(() => {
     return () => {
-      clearRef(refData.id);
+      DragHelper.clearRef(refData.id);
     };
   }, []);
 
-  return <div ref={(elm) => captureRef(elm, refData)}>{children}</div>;
+  return (
+    <div ref={(elm) => DragHelper.captureRef(elm, refData)}>{children}</div>
+  );
 };
 
 export default Draggable;

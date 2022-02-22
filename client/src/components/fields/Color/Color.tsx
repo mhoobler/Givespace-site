@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { IconButton } from "../..";
 import { Palette } from "../../../assets";
 
 import "./Color.less";
@@ -19,14 +20,7 @@ const Color = ({ color, handleChange, handleSubmit }: Props) => {
 
   return (
     <div>
-      <div
-        onClick={handleToggle}
-        className="icon-btn"
-        // this style change is only a proof of concept
-        style={{ backgroundColor: color }}
-      >
-        <img src={Palette} alt="" />
-      </div>
+      <IconButton src={Palette} onClick={handleToggle} />
       <div className="color-picker-container">
         <input
           className="color-picker-input"
