@@ -18,7 +18,7 @@ const CreateCatalogueButton = (): React.ReactElement => {
           myCatalogues: [...prev.myCatalogues, data.createCatalogue],
         };
       });
-      navigate("/list/" + data.createCatalogue.id);
+      navigate("/ctg/" + data.createCatalogue.id);
     }
   }, [loading, data]);
 

@@ -9,7 +9,7 @@ import {
 } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 import { handleCopy } from "../../utils/functions";
-import { statusOptions } from "../../utils/references";
+import { statusOptions, statusTitles } from "../../utils/references";
 
 import "./CatalogueHeader.less";
 
@@ -124,7 +124,7 @@ const CatalogueHeader: React.FC<Props> = ({
               <div className="btn-wrapper">
                 <a
                   onClick={() =>
-                    handleCopy(`/list/${catalogue.edit_id}?edit=true`)
+                    handleCopy(`/ctg/${catalogue.edit_id}?edit=true`)
                   }
                   className="btn btn-link"
                 >
@@ -134,7 +134,7 @@ const CatalogueHeader: React.FC<Props> = ({
             )}
             <div className="btn-wrapper">
               <a
-                onClick={() => handleCopy(`/list/${catalogue.id}`)}
+                onClick={() => handleCopy(`/ctg/${catalogue.id}`)}
                 className="btn btn-link"
               >
                 Share
@@ -152,11 +152,22 @@ const CatalogueHeader: React.FC<Props> = ({
               }}
               className="btn"
             >
-              <Dropdown.Toggle className="btn" disable={!isEditing} />
+              <Dropdown.Toggle
+                className="btn"
+                disable={
+                  !isEditing ||
+                  catalogue.user_id !== localStorage.getItem("authorization")
+                }
+              />
 
               <Dropdown.Menu>
                 {statusOptions.map((option) => (
-                  <Dropdown.Item className="btn" key={option} value={option}>
+                  <Dropdown.Item
+                    title={statusTitles[option]}
+                    className="btn"
+                    key={option}
+                    value={option}
+                  >
                     {option}
                   </Dropdown.Item>
                 ))}

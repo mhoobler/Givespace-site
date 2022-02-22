@@ -4,10 +4,11 @@ import { DropDownContext } from "./Dropdown";
 
 type ItemProps = {
   value: string;
+  title?: string;
   className?: string;
 };
 
-const Item: React.FC<ItemProps> = ({ children, className, value }) => {
+const Item: React.FC<ItemProps> = ({ children, className, value, title }) => {
   const { setActiveValue, setShow } = React.useContext(DropDownContext);
 
   const handleSelect = () => {
@@ -17,6 +18,7 @@ const Item: React.FC<ItemProps> = ({ children, className, value }) => {
 
   return (
     <div
+      title={title}
       className={`dropdown-item ${className ? className : ""}`}
       onClick={handleSelect}
     >

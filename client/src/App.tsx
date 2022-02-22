@@ -20,7 +20,7 @@ const App = () => {
     // handling undo and clearing of undo list
     if (removeMFD && markedForDeletion.find((mfd) => mfd.id === removeMFD.id)) {
       const currentMFD = markedForDeletion.find(
-        (mfd) => mfd.id === removeMFD.id,
+        (mfd) => mfd.id === removeMFD.id
       )!;
 
       if (removeMFD.isUndo) {
@@ -31,7 +31,7 @@ const App = () => {
       }
 
       setMarkedForDeletion(
-        markedForDeletion.filter((mfd) => mfd.id !== removeMFD.id),
+        markedForDeletion.filter((mfd) => mfd.id !== removeMFD.id)
       );
 
       setRemoveMFD(null);
@@ -44,8 +44,8 @@ const App = () => {
         <CatalogueToolbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/lists" element={<CatalogueSelect />} />
-          <Route path="/list/:corresponding_id/*" element={<Catalogue />} />
+          <Route path="/catalogues" element={<CatalogueSelect />} />
+          <Route path="/ctg/:corresponding_id/*" element={<Catalogue />} />
         </Routes>
       </Router>
     </div>

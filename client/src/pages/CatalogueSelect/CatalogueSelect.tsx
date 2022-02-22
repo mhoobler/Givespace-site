@@ -21,7 +21,7 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
     <div className="row">
       <div className="col-8">{title}</div>
       <div className="col-4">
-        <Link className="btn btn-primary" to={`/list/${id}`}>
+        <Link className="btn btn-primary" to={`/ctg/${id}`}>
           Go
         </Link>
         <DeleteCatalogueButton id={id} />
