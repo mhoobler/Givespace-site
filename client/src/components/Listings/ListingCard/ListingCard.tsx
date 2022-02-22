@@ -39,12 +39,18 @@ const ListingCard: React.FC<Props> = ({
   };
 
   return (
-    <div className={`card ${isEditing ? "editing" : ""} listing-card`}>
-      <div className="card-header text-center">
+    <div
+      onClick={handleSelect}
+      className={`card ${isEditing ? "editing" : ""} listing-card`}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="card-header text-center"
+      >
         <img src={DragHorizontal} alt="drag" />
         <IconButton onClick={handleDelete} src={X} />
       </div>
-      <div className="card-body listing-card-body" onClick={handleSelect}>
+      <div className="card-body listing-card-body">
         <div className="listing-image-wrapper">
           <img
             src={
