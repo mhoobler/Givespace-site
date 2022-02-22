@@ -7,9 +7,9 @@ type Context = {
 };
 
 enum Status {
-  public = "public",
   private = "private",
-  sharable = "sharable",
+  public = "public",
+  collaborative = "collaborative",
 }
 
 interface CatalogueStub {

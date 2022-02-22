@@ -14,16 +14,15 @@ const Toggle: React.FC<ToggleProps> = ({ className, disable }) => {
   const handleToggle = () => {
     setShow((prev: boolean) => !prev);
   };
-  console.log(className);
 
   return (
-    <div className={`dropdown-toggle ${className ? className : ""}`}>
+    <div
+      onClick={disable ? undefined : handleToggle}
+      className={`dropdown-toggle ${className ? className : ""}`}
+    >
       <span>{activeValue}</span>
       {!disable && (
-        <IconButton
-          src={show ? ChevronUp : ChevronDown}
-          onClick={handleToggle}
-        />
+        <IconButton src={show ? ChevronUp : ChevronDown} onClick={() => {}} />
       )}
     </div>
   );

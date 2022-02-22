@@ -1,6 +1,6 @@
 import { randomNumbers } from "./functions";
 
-export const statusOptions = ["public", "private", "sharable"];
+export const statusOptions = ["private", "public", "collaborative"];
 
 export const acceptedImageFiles = ["image/jpeg", "image/png"];
 
