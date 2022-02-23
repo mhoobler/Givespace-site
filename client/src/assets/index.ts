@@ -14,3 +14,8 @@ export { default as ChevronsUp } from "./svgs/chevrons-up.svg";
 export { default as ChevronsLeft } from "./svgs/chevrons-left.svg";
 export { default as ChevronsRight } from "./svgs/chevrons-right.svg";
 export { default as DragHorizontal } from "./svgs/drag-horizontal.svg";
+export { default as Edit } from "./svgs/edit.svg";
+export { default as Edit2 } from "./svgs/edit-2.svg";
+export { default as Edit3 } from "./svgs/edit-3.svg";
+export { default as Eye } from "./svgs/eye.svg";
+export { default as EyeOff } from "./svgs/eye-off.svg";

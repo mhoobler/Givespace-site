@@ -35,10 +35,6 @@ const Color = ({ color, handleChange, handleSubmit }: Props) => {
             handleChange(e.target.value || "#ff0000");
           }}
         />
-        {/* <SketchPicker
-          color={color}
-          onChangeComplete={(color) => setColor(color.hex)}
-        /> */}
       </div>
     </div>
   );
