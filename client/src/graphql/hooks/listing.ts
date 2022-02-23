@@ -35,7 +35,6 @@ const ListingApolloHooks: ListingHook.FC = () => {
       id: `Catalogue:${catalogue_id}`,
       fields: {
         listings(existing) {
-          console.log(existing);
           if (existing) {
             return [
               ...existing,
@@ -56,14 +55,12 @@ const ListingApolloHooks: ListingHook.FC = () => {
         },
       },
     });
-    setTimeout(() => {
-      createListingMutation({
-        variables: {
-          name,
-          catalogue_id,
-        },
-      });
-    }, 1000);
+    createListingMutation({
+      variables: {
+        name,
+        catalogue_id,
+      },
+    });
   };
 
   // EDIT

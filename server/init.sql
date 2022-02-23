@@ -90,7 +90,7 @@ INSERT INTO catalogues (
   'title1'
 ), (
   'a970498b-71ff-470a-8c61-1fc4101449dd',
-  'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
+  '38016b4c-2466-44ed-add4-f6ac506c23b5',
   '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title2'
 ); 
@@ -143,27 +143,27 @@ INSERT INTO listings (
   'item2',
   2
 ), (
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36b1',
+  '1f0251d2-0d33-457a-89ef-5a0e6a5c36b1',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item3',
   3
 ), (
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36b2',
+  '2f0251d2-0d33-457a-89ef-5a0e6a5c36b2',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item4',
   4
 ), (
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36b3',
+  '3f0251d2-0d33-457a-89ef-5a0e6a5c36b3',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item5',
   5
 ), (
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36b4',
+  '4f0251d2-0d33-457a-89ef-5a0e6a5c36b4',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item6',
   6
 ), (
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36b5',
+  '5f0251d2-0d33-457a-89ef-5a0e6a5c36b5',
   'f470498b-71ff-470a-8c61-1fc4101449dd',
   'item7',
   7

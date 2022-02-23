@@ -90,30 +90,33 @@ const ListingModal: React.FC<Props> = ({
             listing={listing}
             isEditing={isEditing}
           />
-          <div className="f-row price">
-            <TextInput
-              isEditing={isEditing}
-              handleSubmit={editListing(listing.id)}
-              value={listing.price?.toString() || ""}
-              fieldEditingProp={{
-                typename: "Listing",
-                key: "price",
-                id: listing.id,
-              }}
-              validator={(value) => {
-                // if value contains letters return false
-                return !/[a-z]/i.test(value);
-              }}
-              placeholder="Price"
-            />
-            <Checkbox
-              isEditing={isEditing}
-              value={listing.show_price}
-              label="Show price"
-              keyProp="show_price"
-              onChange={editBoolean(listing.id)}
-            />
-          </div>
+          {isEditing || (listing.price && listing.show_price) ? (
+            <div className="f-row price">
+              $
+              <TextInput
+                isEditing={isEditing}
+                handleSubmit={editListing(listing.id)}
+                value={listing.price?.toString() || ""}
+                fieldEditingProp={{
+                  typename: "Listing",
+                  key: "price",
+                  id: listing.id,
+                }}
+                validator={(value) => {
+                  // if value contains letters return false
+                  return !/[a-z]/i.test(value);
+                }}
+                placeholder="Price"
+              />
+              <Checkbox
+                isEditing={isEditing}
+                value={listing.show_price}
+                label="Show price"
+                keyProp="show_price"
+                onChange={editBoolean(listing.id)}
+              />
+            </div>
+          ) : null}
           <LinksContainer listing={listing} isEditing={isEditing} />
         </div>
       </Modal.Body>

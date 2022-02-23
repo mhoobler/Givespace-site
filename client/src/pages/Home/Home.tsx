@@ -23,7 +23,7 @@ const Home = () => {
         );
       case cachedData.myCatalogues.length > 0:
         return (
-          <Link className="btn btn-secondary-outline" to={`/lists`}>
+          <Link className="btn btn-secondary-outline" to={`/catalogues`}>
             Go to Lists
           </Link>
         );

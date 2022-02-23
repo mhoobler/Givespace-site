@@ -40,14 +40,12 @@ const useLabelApolloHooks: LabelHook.FC = ({ catalogue_id }) => {
         },
       },
     });
-    setTimeout(() => {
-      createLabelMutation({
-        variables: {
-          name,
-          catalogue_id: catalogue_id,
-        },
-      });
-    }, 1000);
+    createLabelMutation({
+      variables: {
+        name,
+        catalogue_id: catalogue_id,
+      },
+    });
   };
 
   const [deleteLabelMutation, { error: deleteLabelError }] =

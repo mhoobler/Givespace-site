@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
-import React, { useEffect } from "react";
-import { cache } from "../../graphql/clientConfig";
+import React, { useState } from "react";
+import { Modal } from "..";
 import { DELTETE_CATALOGUE } from "../../graphql/schemas";
 import {
   apolloHookErrorHandler,
@@ -8,7 +8,8 @@ import {
 } from "../../utils/functions";
 
 const DeleteCatalogueButton: React.FC<{ id: string }> = ({ id }) => {
-  const [deleteCatalogue, { loading, error }] = useMutation(DELTETE_CATALOGUE, {
+  const [showModal, setShowModal] = useState(false);
+  const [deleteCatalogue, { error }] = useMutation(DELTETE_CATALOGUE, {
     variables: { id },
     fetchPolicy: "no-cache",
   });
@@ -16,17 +17,28 @@ const DeleteCatalogueButton: React.FC<{ id: string }> = ({ id }) => {
   apolloHookErrorHandler("CatalogueSelect.tsx", error);
 
   const handleDelete = () => {
-    // add a verification dialog
-    if (window.confirm("Are you sure you want to delete this catalogue?")) {
-      handleCacheDeletion(`Catalogue:${id}`);
-      deleteCatalogue();
-    }
+    setShowModal(false);
+    handleCacheDeletion(`Catalogue:${id}`);
+    deleteCatalogue();
   };
 
+  const handleClose = () => setShowModal(false);
+
   return (
-    <button className="btn btn-danger" onClick={handleDelete}>
-      Del
-    </button>
+    <div>
+      <button className="btn btn-danger" onClick={() => setShowModal(true)}>
+        Del
+      </button>
+      <Modal show={showModal} close={handleClose}>
+        <Modal.Header>
+          Are you sure you want to delete this catalogue?
+        </Modal.Header>
+        <Modal.Footer>
+          <button onClick={handleClose}>cancel</button>
+          <button onClick={handleDelete}>delete</button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 };
 

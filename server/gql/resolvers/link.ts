@@ -2,6 +2,7 @@ import db from "../../db";
 import { QueryResult } from "pg";
 import { Link, Listing } from "../../types";
 import {
+  extractDomain,
   listingIdToCatalogueId,
   notExist,
   publishCatalogue,
@@ -25,11 +26,7 @@ const linkResolvers = {
       // get only the domain name
 
       // cleaning up the url
-      const domain = url.split("/")[2];
-      let title: string[] | string = domain.split(".");
-      if (title[0] === "www") title.shift();
-      title.pop();
-      title = title.join(".");
+      const title = extractDomain(url);
 
       const newLinkRes: QueryResult<Link> = await db.query(
         "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
@@ -59,6 +56,7 @@ const linkResolvers = {
       _,
       { key, value, id }: { key: string; value: string; id: string }
     ): Promise<Link> => {
+      if (!value) value = null;
       if (key === "url") {
         urlValidation(value);
       }
