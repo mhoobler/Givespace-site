@@ -21,6 +21,7 @@ interface CatalogueStub {
   description: string | null;
   created: string;
   updated: string;
+  listings: ListingStub[] | null;
 }
 
 interface CatalogueType extends CatalogueStub {

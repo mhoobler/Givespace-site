@@ -12,6 +12,22 @@ export enum Status {
   sharable = "sharable",
 }
 
+export interface ListingTrunctated {
+  id: string;
+  image_url: string;
+}
+
+export interface CatalogueTruncated {
+  id: string;
+  user_id: string;
+  edit_id: string;
+  status: Status;
+  title: string;
+  description: string | null;
+  created: Date;
+  updated: Date;
+}
+
 export interface CatalogueListItem {
   id: string;
   user_id: string;
@@ -21,6 +37,7 @@ export interface CatalogueListItem {
   description: string | null;
   created: Date;
   updated: Date;
+  listings: ListingTrunctated[] | null;
 }
 
 export interface Catalogue extends CatalogueListItem {

@@ -2,10 +2,11 @@ import { gql } from "@apollo/client";
 import {
   LABEL_FIELDS,
   ALL_CATALOGUE_FIELDS,
-  CATALOGUE_LIST_ITEM_FIELDS,
+  CATALOGUE_TRUNCATED,
   LISTING_FIELDS,
   LISTING_LABEL_FIELDS,
   LINK_FIELDS,
+  CATALOGUE_LIST_ITEM_FIELDS,
 } from "./fragments";
 
 export const GET_JWT = gql`
@@ -33,19 +34,19 @@ export const MY_CATALOGUES = gql`
 `;
 
 export const CREATE_CATALOGUE = gql`
-  ${CATALOGUE_LIST_ITEM_FIELDS}
+  ${CATALOGUE_TRUNCATED}
   mutation CreateCatalogue {
     createCatalogue {
-      ...CatalogueListItemFields
+      ...CatalogueTruncatedFields
     }
   }
 `;
 
 export const DELTETE_CATALOGUE = gql`
-  ${CATALOGUE_LIST_ITEM_FIELDS}
+  ${CATALOGUE_TRUNCATED}
   mutation DeleteCatalogue($id: ID!) {
     deleteCatalogue(id: $id) {
-      ...CatalogueListItemFields
+      ...CatalogueTruncatedFields
     }
   }
 `;

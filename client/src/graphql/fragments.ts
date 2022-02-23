@@ -1,5 +1,18 @@
 import { gql } from "@apollo/client";
 
+export const CATALOGUE_TRUNCATED = gql`
+  fragment CatalogueTruncatedFields on Catalogue {
+    id
+    edit_id
+    user_id
+    status
+    title
+    description
+    created
+    updated
+  }
+`;
+
 export const CATALOGUE_LIST_ITEM_FIELDS = gql`
   fragment CatalogueListItemFields on Catalogue {
     id
@@ -10,6 +23,10 @@ export const CATALOGUE_LIST_ITEM_FIELDS = gql`
     description
     created
     updated
+    listings {
+      id
+      image_url
+    }
   }
 `;
 

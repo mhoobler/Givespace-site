@@ -71,6 +71,36 @@ export const fullCatalogueQuery = (whereString?: string | null) => {
   `;
 };
 
+export const myCataloguesQuery = (whereString?: string | null) => {
+  return `
+  SELECT 
+    c.id,
+    c.edit_id,
+    c.user_id,
+    c.status,
+    c.title,
+    c.description,
+    c.views,
+    c.header_image_url,
+    c.header_color,
+    c.author,
+    c.profile_picture_url,
+    c.event_date,
+    c.location,
+    c.created,
+    c.updated,
+    (
+      SELECT json_agg(json_build_object(
+        'id', li.id,
+        'image_url', li.image_url
+      )) AS listings
+      FROM listings li WHERE li.catalogue_id = c.id
+    )         
+  FROM catalogues c
+  ${whereString || ""};
+  `;
+};
+
 export const fullListingLabelQuery = (whereString?: string | null) => {
   return `
   SELECT lila.id,
