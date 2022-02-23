@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { KeyboardEvent, useRef, useState } from "react";
 import { IconButton } from "..";
 import { Plus } from "../../assets";
 import useLinkApolloHooks from "../../graphql/hooks/link";
@@ -32,6 +32,12 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
       setIsValid(false);
     }
   };
+  const inputKeyDown = (evt: KeyboardEvent) => {
+    if (evt.key === "Enter" && linkInputRef.current) {
+      addLink(listing.id, linkInputRef.current.value);
+      linkInputRef.current.value = "";
+    }
+  };
 
   const handleEditLinkClose = () => {
     setLinkEditingId(null);
@@ -62,7 +68,12 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
         }`}
       >
         <div className="link input-wrapper">
-          <input ref={linkInputRef} type="text" placeholder="Add Link" />
+          <input
+            ref={linkInputRef}
+            onKeyDown={inputKeyDown}
+            type="text"
+            placeholder="Add Link"
+          />
           <IconButton src={Plus} onClick={handleSubmit} />
         </div>
       </div>
