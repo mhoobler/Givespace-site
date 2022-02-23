@@ -1,4 +1,5 @@
 import React from "react";
+import { Edit2, Eye } from "../../assets";
 import {
   TextInput,
   Dropdown,
@@ -6,6 +7,7 @@ import {
   AvatarImage,
   CalendarInput,
   TextareaInput,
+  IconButton,
 } from "../../components";
 import useCatalogueApolloHooks from "../../graphql/hooks/catalogue";
 import { handleCopy } from "../../utils/functions";
@@ -113,12 +115,14 @@ const CatalogueHeader: React.FC<Props> = ({
           {/* edit toggle, editor link, share link, public/private options */}
           <div className="edit-copy-share">
             <div className="btn-wrapper">
-              <button
-                className={`btn btn-primary ${editable ? "" : "hidden"}`}
-                onClick={toggleEdit}
-              >
-                Edit
-              </button>
+              {editable && (
+                <IconButton
+                  className={`btn btn-primary edit-button`}
+                  src={isEditing ? Eye : Edit2}
+                  label={isEditing ? "Preview" : "Edit"}
+                  onClick={toggleEdit}
+                />
+              )}
             </div>
             {editable && (
               <div className="btn-wrapper">
@@ -126,7 +130,7 @@ const CatalogueHeader: React.FC<Props> = ({
                   onClick={() =>
                     handleCopy(`/ctg/${catalogue.edit_id}?edit=true`)
                   }
-                  className="btn btn-link"
+                  className="btn"
                 >
                   Copy Editor Link
                 </a>
@@ -135,7 +139,7 @@ const CatalogueHeader: React.FC<Props> = ({
             <div className="btn-wrapper">
               <a
                 onClick={() => handleCopy(`/ctg/${catalogue.id}`)}
-                className="btn btn-link"
+                className="btn"
               >
                 Share
               </a>
