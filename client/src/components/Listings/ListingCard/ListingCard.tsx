@@ -69,8 +69,8 @@ const ListingCard: React.FC<Props> = ({
         <div className="listing-labels">
           <LabelContainer>
             {listing.labels &&
-              listing.labels.map((e: any) => {
-                return <Label label={e.label} />;
+              listing.labels.map((e: ListingLabel) => {
+                return <Label key={e.id} label={e.label} />;
               })}
           </LabelContainer>
         </div>

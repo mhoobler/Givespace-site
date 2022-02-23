@@ -65,9 +65,10 @@ const AvatarImage: React.FC<Props> = ({
     const file = evt.target.files[0];
     if (!acceptedImageFiles.includes(file.type)) {
       throw new Error("Invalid file type");
+    } else {
+      // ImageCrop: load a file
+      cropRef.current.loadFile(file);
     }
-    // ImageCrop: load a file
-    cropRef.current.loadFile(file);
   };
 
   const handleClickSubmit = () => {
