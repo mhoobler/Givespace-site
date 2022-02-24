@@ -43,7 +43,6 @@ const CalendarInput: React.FC<Props> = ({
   ].join("/");
 
   const handleOnBlur = (e: any) => {
-    console.log(e.target.value);
     const newDate: string = e.target.value
       ? new Date(e.target.value).toISOString()
       : "";

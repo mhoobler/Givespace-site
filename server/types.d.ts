@@ -118,3 +118,16 @@ export type ViewProps = {
   image_url: string;
   color: string;
 };
+
+export enum MetricType {
+  ROUTING = "routing",
+  API = "api",
+  CLICK = "click",
+}
+export type Metric = {
+  type: MetricType;
+  user_id?: string;
+  operationName?: string;
+  operationType?: string;
+  operationVariables?: string;
+};

@@ -59,3 +59,15 @@ type ListingLabel {
   listing_id: ID!
   label: Label!
 }
+
+type Metric {
+  id: ID!
+  type: String!
+  user_id: String
+
+  operation_name: String
+  operation_type: String
+  operation_variables: String
+
+  created: Date!
+}

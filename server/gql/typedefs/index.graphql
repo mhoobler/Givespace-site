@@ -2,6 +2,7 @@ type Query {
   getJwt: String!
   catalogues(id: ID, edit_id: String): [Catalogue!]
   myCatalogues: [Catalogue!]
+  getMetrics(user_id: String, type: String): [Metric!]
 }
 
 type Mutation {

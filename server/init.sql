@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS labels;
 DROP TABLE IF EXISTS links;
 DROP TABLE IF EXISTS listings;
 DROP TABLE IF EXISTS catalogues;
+DROP TABLE IF EXISTS metrics;
 
 CREATE TABLE catalogues (
   id UUID DEFAULT uuid_generate_v4(),
@@ -70,6 +71,17 @@ CREATE TABLE listing_labels (
   PRIMARY KEY (id),
   FOREIGN KEY (label_id) REFERENCES labels (id) ON DELETE CASCADE,
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
+);
+
+CREATE TABLE metrics (
+  id UUID DEFAULT uuid_generate_v4(),
+  type TEXT NOT NULL,
+  user_id TEXT,
+  operation_name TEXT,
+  operation_type TEXT,
+  operation_variables TEXT,
+  created TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (id)
 );
 
 INSERT INTO catalogues (
