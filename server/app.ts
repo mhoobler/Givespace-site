@@ -123,7 +123,9 @@ app.get(
               }
             }
             viewProps = {
-              title: listing.name || "Unamed Listing",
+              title: `${listing.name || "Unamed Listing"} in ${
+                catalogue.title || "Undefined Catalogue"
+              }`,
               description:
                 listing.description ||
                 `Listing created ${
