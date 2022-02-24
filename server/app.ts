@@ -4,7 +4,7 @@ import { createServer } from "http";
 import db from "./db";
 import { fullCatalogueQuery } from "./utils/sqlQueries";
 import { QueryResult } from "pg";
-import { Catalogue } from "./types";
+import { Catalogue, ViewProps } from "./types";
 
 const app = express();
 
@@ -48,6 +48,7 @@ app.get(
     const params = req.params;
     // get the query strings from the url
     const queryStrings = req.query;
+    let viewProps: ViewProps;
     try {
       const query: QueryResult<Catalogue> = await db.query(
         fullCatalogueQuery(
@@ -57,33 +58,81 @@ app.get(
         )
       );
       if (!query.rows.length) {
-        res.status(200).render("list", {
+        viewProps = {
           title: "Catalogue not found",
           description: "Catalogue not found",
-        });
+          image_url:
+            "https://storage.googleapis.com/givespace-pictures/Logo.svg",
+          color: "#c9042c",
+        };
+        res.status(200).render("list", viewProps);
       } else {
         const catalogue: Catalogue = query.rows[0];
         if (!params.listing_id) {
-          res.status(200).render("list", {
-            title: catalogue.title || "Untitled Catalogue",
-            description: `Catalogue "${catalogue.title}" contains ${
-              catalogue.listings ? catalogue.listings.length : "no"
-            } listings`,
-          });
+          let imageToPass: string;
+          if (catalogue.header_image_url) {
+            imageToPass = catalogue.header_image_url;
+          } else {
+            if (catalogue.listings && catalogue.listings.length) {
+              const listingImage = catalogue.listings.find(
+                (listing) => listing.image_url
+              );
+              if (listingImage) {
+                imageToPass = listingImage.image_url;
+              } else {
+                imageToPass =
+                  "https://storage.googleapis.com/givespace-pictures/Logo.svg";
+              }
+            }
+          }
+
+          viewProps = {
+            title: catalogue.title || "Undefined Catalogue",
+            description:
+              catalogue.description ||
+              `Catalogue created ${
+                new Date(catalogue.created).toISOString().split("T")[0]
+              }`,
+            image_url: imageToPass,
+            color: catalogue.header_color || "#c9042c",
+          };
+          res.status(200).render("list", viewProps);
         } else {
           const listing = catalogue.listings.find(
             (listing) => listing.id === params.listing_id
           );
           if (!listing) {
-            res.status(200).render("list", {
+            viewProps = {
               title: "Listing not found",
-              description: "Listing no longer exists",
-            });
+              description: "Listing not found or no longer exists",
+              image_url:
+                "https://storage.googleapis.com/givespace-pictures/Logo.svg",
+              color: "#c9042c",
+            };
+            res.status(200).render("list", viewProps);
           } else {
-            res.status(200).render("list", {
-              title: listing.name,
-              description: `Listing "${listing.name}" in catalogue "${catalogue.title}"`,
-            });
+            let imageToPass: string;
+            if (listing.image_url) {
+              imageToPass = listing.image_url;
+            } else {
+              if (catalogue.header_image_url) {
+                imageToPass = catalogue.header_image_url;
+              } else {
+                imageToPass =
+                  "https://storage.googleapis.com/givespace-pictures/Logo.svg";
+              }
+            }
+            viewProps = {
+              title: listing.name || "Unamed Listing",
+              description:
+                listing.description ||
+                `Listing created ${
+                  new Date(listing.created).toISOString().split("T")[0]
+                }`,
+              image_url: imageToPass,
+              color: catalogue.header_color || "#c9042c",
+            };
+            res.status(200).render("list", viewProps);
           }
         }
       }

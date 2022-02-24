@@ -111,3 +111,10 @@ export type ScrapedFeatures = {
   name: string;
   price: number;
 };
+
+export type ViewProps = {
+  title: string;
+  description: string;
+  image_url: string;
+  color: string;
+};
