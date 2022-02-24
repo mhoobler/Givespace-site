@@ -89,14 +89,18 @@ INSERT INTO catalogues (
 );
 
 INSERT INTO catalogues (
-  title
+  title,
+  user_id
 ) VALUES (
-  'title1'
+  'title1',
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2'
 ), (
-  'title2'
+  'title2',
+  '6a3a2967-0258-4caf-8fef-f844c060b2f2'
 ); 
 
 INSERT INTO labels (
+  catalogue_id,
   name,
   ordering
 ) VALUES (
