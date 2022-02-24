@@ -218,7 +218,7 @@ class DragHelper {
     const targetHeight = this.refs[data.id].boundingBox.height;
     const targetWidth = this.refs[data.id].boundingBox.width;
     this.dragElm.style.top = pageY - targetHeight / 2 - window.scrollY + "px";
-    this.dragElm.style.left = pageX - targetWidth / 2 - window.scrollY + "px";
+    this.dragElm.style.left = pageX - targetWidth / 2 - window.scrollX + "px";
 
     for (let ref of this.refsArr) {
       const { top, left, right, bottom, width } = ref.boundingBox;
