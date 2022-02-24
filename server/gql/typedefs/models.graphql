@@ -3,8 +3,8 @@ type Catalogue {
   edit_id: String!
   user_id: String!
   status: String!
-  title: String!
-  description: String!
+  title: String
+  description: String
   views: Int!
   header_image_url: String
   header_color: String!
