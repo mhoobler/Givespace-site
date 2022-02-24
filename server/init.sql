@@ -5,8 +5,8 @@ DROP TABLE IF EXISTS listings;
 DROP TABLE IF EXISTS catalogues;
 
 CREATE TABLE catalogues (
-  id UUID DEFAULT uuid_generate_v4(),
-  edit_id UUID DEFAULT uuid_generate_v4(),
+  id TEXT NOT NULL,
+  edit_id TEXT UNIQUE NOT NULL,
   user_id TEXT NOT NULL,
   status TEXT DEFAULT 'public',
   title TEXT DEFAULT 'Untitled Catalogue',
@@ -23,9 +23,11 @@ CREATE TABLE catalogues (
   PRIMARY KEY (id)
 );
 
+CREATE TRIGGER trigger_test_genid BEFORE INSERT ON catalogues FOR EACH ROW EXECUTE PROCEDURE unique_short_id2();
+
 CREATE TABLE listings (
-  id UUID DEFAULT uuid_generate_v4(),
-  catalogue_id UUID NOT NULL,
+  id TEXT NOT NULL,
+  catalogue_id TEXT NOT NULL,
   name TEXT,
   link_url TEXT,
   image_url TEXT,
@@ -39,9 +41,11 @@ CREATE TABLE listings (
   FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE
 );
 
+CREATE TRIGGER trigger_test_genid BEFORE INSERT ON listings FOR EACH ROW EXECUTE PROCEDURE unique_short_id();
+
 CREATE TABLE links (
-  id UUID DEFAULT uuid_generate_v4(),
-  listing_id UUID NOT NULL,
+  id TEXT NOT NULL,
+  listing_id TEXT NOT NULL,
   url TEXT NOT NULL,
   title TEXT,
   created TIMESTAMP DEFAULT NOW(),
@@ -50,9 +54,11 @@ CREATE TABLE links (
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
 );
 
+CREATE TRIGGER trigger_test_genid BEFORE INSERT ON links FOR EACH ROW EXECUTE PROCEDURE unique_short_id();
+
 CREATE TABLE labels (
-  id UUID DEFAULT uuid_generate_v4(),
-  catalogue_id UUID NOT NULL,
+  id TEXT NOT NULL,
+  catalogue_id TEXT NOT NULL,
   name TEXT NOT NULL,
   link_url TEXT,
   ordering FLOAT NOT NULL,
@@ -63,14 +69,18 @@ CREATE TABLE labels (
   FOREIGN KEY (catalogue_id) REFERENCES catalogues (id) ON DELETE CASCADE
 );
 
+CREATE TRIGGER trigger_test_genid BEFORE INSERT ON labels FOR EACH ROW EXECUTE PROCEDURE unique_short_id();
+
 CREATE TABLE listing_labels (
-  id UUID DEFAULT uuid_generate_v4(),
-  label_id UUID NOT NULL,
-  listing_id UUID NOT NULL,
+  id TEXT NOT NULL,
+  label_id TEXT NOT NULL,
+  listing_id TEXT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (label_id) REFERENCES labels (id) ON DELETE CASCADE,
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
 );
+
+CREATE TRIGGER trigger_test_genid BEFORE INSERT ON listing_labels FOR EACH ROW EXECUTE PROCEDURE unique_short_id();
 
 INSERT INTO catalogues (
   user_id
@@ -79,128 +89,83 @@ INSERT INTO catalogues (
 );
 
 INSERT INTO catalogues (
-  id,
-  edit_id,
-  user_id,
   title
 ) VALUES (
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
-  'bfb04418-6c9f-42c7-a97f-2f9ce8cf3e07',
-  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title1'
 ), (
-  'a970498b-71ff-470a-8c61-1fc4101449dd',
-  '38016b4c-2466-44ed-add4-f6ac506c23b5',
-  '6a3a2967-0258-4caf-8fef-f844c060b2f2',
   'title2'
 ); 
 
 INSERT INTO labels (
-  id,
-  catalogue_id,
   name,
   ordering
 ) VALUES (
-  'd5a998be-205c-4a5e-8f41-05f808cdc9e1',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'label0',
   0
 ), (
-  'fbe5c847-5419-487a-a803-e7b2ca9bfa7e',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'label1',
   1
 ), (
-  '51692a78-c744-4f8e-a2c5-d4a422fc657d',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'label2',
   2
 ), (
-  '35b2a996-ab59-4dcd-9885-9a2a54d1608c',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'label3',
   3
 );
 
 INSERT INTO listings (
-  id,
   catalogue_id,
   name,
   ordering
 ) VALUES (
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item0',
   0
 ), (
-  '261a378d-97d7-46fa-a5c2-83c99e4fa7b6',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item1',
   1
 ), (
-  '262a378d-97d7-46fa-a5c2-83c99e4fa7b6',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item2',
   2
 ), (
-  '1f0251d2-0d33-457a-89ef-5a0e6a5c36b1',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item3',
   3
 ), (
-  '2f0251d2-0d33-457a-89ef-5a0e6a5c36b2',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item4',
   4
 ), (
-  '3f0251d2-0d33-457a-89ef-5a0e6a5c36b3',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item5',
   5
 ), (
-  '4f0251d2-0d33-457a-89ef-5a0e6a5c36b4',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item6',
   6
 ), (
-  '5f0251d2-0d33-457a-89ef-5a0e6a5c36b5',
-  'f470498b-71ff-470a-8c61-1fc4101449dd',
+  (SELECT id FROM catalogues LIMIT 1),
   'item7',
   7
 );
 
 INSERT INTO links (
-  id,
   listing_id,
   url,
   title
 ) VALUES (
-  'a1fdae29-9a83-46f0-b0e8-302e05408c83',
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  (SELECT id FROM listings LIMIT 1),
   'https://link0.com',
   'link0'
   
 ), (
-  '59dece83-1a85-4576-8a53-cf9bc17c9acd',
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  (SELECT id FROM listings LIMIT 1),
   'https://link1.com',
   'link1'
 );
-
-INSERT INTO listing_labels (
-  id,
-  label_id,
-  listing_id
-) VALUES (
-  '33ca33d3-8fd6-49ee-8821-de2cc9cc5ba8',
-  'd5a998be-205c-4a5e-8f41-05f808cdc9e1',
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be'
-), (
-  'e70da965-6260-4b72-a736-e5f9b9246ccf',
-  '51692a78-c744-4f8e-a2c5-d4a422fc657d',
-  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be'
-), (
-  '103498aa-7c47-4c7c-ac10-7c01a4dfc3ce',
-  '51692a78-c744-4f8e-a2c5-d4a422fc657d',
-  '261a378d-97d7-46fa-a5c2-83c99e4fa7b6'
-)
