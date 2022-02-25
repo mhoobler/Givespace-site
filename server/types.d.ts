@@ -127,7 +127,9 @@ export enum MetricType {
 export type Metric = {
   type: MetricType;
   user_id?: string;
-  operationName?: string;
-  operationType?: string;
-  operationVariables?: string;
+  operation_name?: string;
+  operation_type?: string;
+  operation_variables?: string;
+  navigate_to?: string;
+  click_on?: string;
 };

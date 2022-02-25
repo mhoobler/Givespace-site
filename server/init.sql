@@ -80,6 +80,8 @@ CREATE TABLE metrics (
   operation_name TEXT,
   operation_type TEXT,
   operation_variables TEXT,
+  navigate_to TEXT,
+  click_on TEXT,
   created TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id)
 );

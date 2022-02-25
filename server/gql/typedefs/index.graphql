@@ -29,6 +29,16 @@ type Mutation {
 
   createListingLabel(listing_id: ID!, label_id: ID!): ListingLabel!
   deleteListingLabel(id: ID!): ListingLabel!
+
+  createMetric(
+    type: String!
+    user_id: String
+    operation_name: String
+    operation_type: String
+    operation_variables: String
+    navigate_to: String
+    click_on: String
+  ): Metric!
 }
 
 type Subscription {

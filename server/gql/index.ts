@@ -14,12 +14,12 @@ enum MetricType {
   API = "api",
   CLICK = "click",
 }
-type Metric = {
+export type Metric = {
   type: MetricType;
   user_id?: string;
-  operationName?: string;
-  operationType?: string;
-  operationVariables?: string;
+  operation_name?: string;
+  operation_type?: string;
+  operation_variables?: string;
 };
 
 type Context = any;
@@ -58,7 +58,7 @@ const apolloServer = new ApolloServer({
       req.body.variables &&
       req.body.operationName
     ) {
-      metric.operationName = req.body.operationName;
+      metric.operation_name = req.body.operationName;
       let processedQuery = req.body.query.split("\n");
       processedQuery = processedQuery.filter((line) => {
         if (
@@ -73,30 +73,28 @@ const apolloServer = new ApolloServer({
         }
       });
       if (processedQuery.length > 0) {
-        metric.operationType = processedQuery[0];
+        metric.operation_type = processedQuery[0];
       } else {
-        metric.operationType = req.body.query
+        metric.operation_type = req.body.query
           .split("\n")
           .slice(0, 20)
           .join("\n");
       }
-      metric.operationVariables = JSON.stringify(req.body.variables);
+      metric.operation_variables = JSON.stringify(req.body.variables);
     }
 
-    if (!["GetMetrics", "IntrospectionQuery"].includes(metric.operationName)) {
+    if (!["GetMetrics", "IntrospectionQuery"].includes(metric.operation_name)) {
       console.log("!metrics", metric);
       db.query(
         "INSERT INTO metrics (type, user_id, operation_name, operation_type, operation_variables) VALUES ($1, $2, $3, $4, $5) RETURNING *",
         [
           metric.type,
           metric.user_id,
-          metric.operationName,
-          metric.operationType,
-          metric.operationVariables,
+          metric.operation_name,
+          metric.operation_type,
+          metric.operation_variables,
         ]
-      ).then((res) => {
-        console.log("!res", res.rows);
-      });
+      );
     }
 
     return {
