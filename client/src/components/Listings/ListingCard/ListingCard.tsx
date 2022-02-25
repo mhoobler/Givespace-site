@@ -38,6 +38,8 @@ const ListingCard: React.FC<Props> = ({
     selectListing(listing.id);
   };
 
+  console.log(listing.links);
+
   return (
     <div
       onClick={handleSelect}
@@ -79,6 +81,15 @@ const ListingCard: React.FC<Props> = ({
           {listing.show_price && listing.price && (
             <span className="price">${listing.price}</span>
           )}
+        </div>
+
+        <div className="listing-links-container">
+          {listing.links &&
+            listing.links.map((e: Link) => (
+              <div className="link">
+                <span key={e.id}> {e.title}</span>
+              </div>
+            ))}
         </div>
       </div>
     </div>

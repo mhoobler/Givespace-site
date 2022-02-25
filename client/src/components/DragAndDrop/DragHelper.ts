@@ -1,5 +1,3 @@
-const separator = document.createElement("div");
-
 namespace DragHelper {
   export type handleReorder = (id: string, ordering: number) => void;
   export type refs = {
@@ -52,9 +50,6 @@ class DragHelper {
   private dragStart: boolean;
   private orderingPrev: number;
   private orderingNext: number;
-
-  private testMove?: any;
-  private testUp?: any;
 
   constructor(handleReorder: DragHelper.handleReorder) {
     this.handleReorder = handleReorder;
@@ -147,7 +142,6 @@ class DragHelper {
   }
 
   captureRef(elm: HTMLDivElement, data: any) {
-    console.log(this.refsArr.sort((a, b) => a.data.ordering - b.data.ordering));
     if (elm) {
       elm.onmousedown = (evt) => this.handleMouseDown.call(this, evt, data);
       if (!this.keys.has(data.id)) {
