@@ -112,50 +112,9 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const reorderListing =
     (catalogue_id: string) => (id: string, ordering: number) => {
-      const cacheCatalogue = getCatalogueFromCache(catalogue_id);
-
-      if (cacheCatalogue) {
-        const cacheListings = cacheCatalogue.listings;
-        const sortedListings =
-          cacheListings && cacheListings[0]
-            ? [...cacheListings].sort((a, b) => a.ordering - b.ordering)
-            : [];
-
-        // Helper variables to assist with array edges (explained below)
-        const len = sortedListings.length;
-        const targetIndex = sortedListings.findIndex((e: any) => e.id === id);
-        const targetListing = sortedListings[targetIndex];
-
-        if (!targetListing) {
-          throw new Error("Could not find listing with index: " + targetIndex);
-        }
-
-        const orderingListing = sortedListings[ordering]; // possible undefined
-
-        let newOrdering: number;
-
-        // If TRUE, this means user did not move Listing into new spot
-        if (orderingListing === targetListing) {
-          return;
-          // User moved Listing to end of ListingContainer
-        } else if (ordering === len) {
-          newOrdering = sortedListings[len - 1].ordering + 1;
-          // User moved Listing to start of ListingContainer
-        } else if (ordering === 0) {
-          newOrdering = sortedListings[0].ordering - 1;
-          // User moved Listing in between two other Listings
-        } else {
-          const nextOrdering = sortedListings[ordering].ordering;
-          const prevOrdering = sortedListings[ordering - 1].ordering;
-          newOrdering = (nextOrdering + prevOrdering) / 2;
-        }
-
-        // Update cache and fire Mutation
-        updateCatalogueCache(`Listing:${id}`, "ordering", newOrdering);
-        reorderListingMutation({
-          variables: { id, ordering: newOrdering },
-        });
-      }
+      reorderListingMutation({
+        variables: { id, ordering },
+      });
     };
 
   // DELETE
