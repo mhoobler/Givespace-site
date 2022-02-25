@@ -48,7 +48,7 @@ const CatalogueItems: React.FC<Props> = ({
       {/* labels */}
       <div className="labels-container-wrapper">
         <LabelContainer createLabel={createLabel} isEditing={isEditing}>
-          <DragAndDrop handleReorder={reorderLabel}>
+          <DragAndDrop disabled={!isEditing} handleReorder={reorderLabel}>
             {labels.map((e: Label) => (
               <Draggable key={e.id} refData={e}>
                 <Label
@@ -65,7 +65,10 @@ const CatalogueItems: React.FC<Props> = ({
       </div>
       <div className="listing-cards-container-wrapper">
         <ListingCardsContainer>
-          <DragAndDrop handleReorder={reorderListing(catalogue.id)}>
+          <DragAndDrop
+            disabled={!isEditing}
+            handleReorder={reorderListing(catalogue.id)}
+          >
             {listings.map((e: Listing) => (
               <Draggable key={e.id} refData={e}>
                 <ListingCard

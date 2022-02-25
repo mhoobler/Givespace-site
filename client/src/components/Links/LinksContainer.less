@@ -8,7 +8,8 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin: 1rem;
+  padding: 1rem;
+  width: 100%;
   gap: 4px;
 
   .link-wrapper {
@@ -32,6 +33,17 @@
       font-size: 1.125rem;
       justify-content: space-around;
       align-items: center;
+      max-width: 100%;
+
+      a {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 2 0 50%;
+      }
+
+      button {
+        flex: 1 0 25%;
+      }
 
       &.editing {
         >button {

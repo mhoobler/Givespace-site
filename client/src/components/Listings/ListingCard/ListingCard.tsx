@@ -38,8 +38,6 @@ const ListingCard: React.FC<Props> = ({
     selectListing(listing.id);
   };
 
-  console.log(listing.links);
-
   return (
     <div
       onClick={handleSelect}

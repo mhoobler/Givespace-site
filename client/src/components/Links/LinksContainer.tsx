@@ -34,8 +34,7 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
   };
   const inputKeyDown = (evt: KeyboardEvent) => {
     if (evt.key === "Enter" && linkInputRef.current) {
-      addLink(listing.id, linkInputRef.current.value);
-      linkInputRef.current.value = "";
+      handleSubmit();
     }
   };
 

@@ -50,6 +50,7 @@ class DragHelper {
   private dragStart: boolean;
   private orderingPrev: number;
   private orderingNext: number;
+  disabled: boolean;
 
   constructor(handleReorder: DragHelper.handleReorder) {
     this.handleReorder = handleReorder;
@@ -62,6 +63,7 @@ class DragHelper {
     this.dragStart = false;
     this.orderingPrev = 0;
     this.orderingNext = 0;
+    this.disabled = false;
   }
 
   get root() {
@@ -142,8 +144,11 @@ class DragHelper {
   }
 
   captureRef(elm: HTMLDivElement, data: any) {
+    console.log(this.disabled);
     if (elm) {
-      elm.onmousedown = (evt) => this.handleMouseDown.call(this, evt, data);
+      elm.onmousedown = this.disabled
+        ? null
+        : (evt) => this.handleMouseDown.call(this, evt, data);
       if (!this.keys.has(data.id)) {
         const ref = new DragRef(elm, data, this);
 

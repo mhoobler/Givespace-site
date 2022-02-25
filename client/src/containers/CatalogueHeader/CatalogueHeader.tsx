@@ -83,9 +83,9 @@ const CatalogueHeader: React.FC<Props> = ({
           </div>
 
           {/* event_date, views, location */}
-          <div className="row event-date-views-location">
-            <div className="col-4 views-wrapper">views: {catalogue.views}</div>
-            <div className="col-4 event-date-wrapper">
+          <div className="f-row event-date-views-location">
+            <div className="views-wrapper">views: {catalogue.views}</div>
+            <div className="event-date-wrapper">
               <CalendarInput
                 isEditing={isEditing}
                 value={catalogue.event_date}
@@ -146,6 +146,7 @@ const CatalogueHeader: React.FC<Props> = ({
             </div>
           </div>
           <div className="dropdown-wrapper">
+            <span className="fs-1-125">This list is: </span>
             <Dropdown
               value={catalogue.status}
               handleSubmit={editCatalogue}
@@ -154,10 +155,9 @@ const CatalogueHeader: React.FC<Props> = ({
                 key: "status",
                 id: catalogue.id,
               }}
-              className="btn"
             >
               <Dropdown.Toggle
-                className="btn"
+                className="sudo-btn"
                 disable={
                   !isEditing ||
                   catalogue.user_id !== localStorage.getItem("authorization")
@@ -165,16 +165,18 @@ const CatalogueHeader: React.FC<Props> = ({
               />
 
               <Dropdown.Menu>
-                {statusOptions.map((option) => (
-                  <Dropdown.Item
-                    title={statusTitles[option]}
-                    className="btn"
-                    key={option}
-                    value={option}
-                  >
-                    {option}
-                  </Dropdown.Item>
-                ))}
+                {statusOptions
+                  .filter((option) => option !== catalogue.status)
+                  .map((option) => (
+                    <Dropdown.Item
+                      title={statusTitles[option]}
+                      className="btn"
+                      key={option}
+                      value={option}
+                    >
+                      {option}
+                    </Dropdown.Item>
+                  ))}
               </Dropdown.Menu>
             </Dropdown>
           </div>

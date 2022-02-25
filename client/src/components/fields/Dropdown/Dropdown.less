@@ -1,22 +1,37 @@
 .drop {
+  position: relative;
+
   &.show {
-    .dropdown-item {
-      display: block;
+    .dropdown-menu {
+      .dropdown-item {
+        opacity: 100%;
+        height: 1rem;
+      }
     }
   }
 
 
-  .dropdown-item {
-    display: none;
-    transition: background-color @time-3;
+  .dropdown-menu {
+    position: absolute;
+    top: 2rem;
+    z-index: 2;
 
-    &:hover {
-      background-color: darken(white, 10%);
+    .dropdown-item {
+      opacity: 0%;
+      height: 0px;
+      border-radius: 0;
+      transition: background-color @time-1, opacity @time-1;
+      justify-content: flex-start;
+
+      &:hover {
+        background-color: darken(white, 10%);
+      }
     }
   }
 
   .dropdown-toggle {
     display: flex;
+    justify-content: flex-start;
 
     .icon-button {
       background-color: transparent;

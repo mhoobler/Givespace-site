@@ -8,7 +8,7 @@
     .modal-body {
       display: flex;
       flex-direction: column;
-      width: 100vw !important;
+      max-width: 100vw !important;
 
       .side {
         width: 100%;
@@ -50,7 +50,7 @@
   @media (min-width: 768px) {
     .listing-modal-container {
       .modal-dialog {
-        margin: 2rem auto;
+        margin: 5% auto;
         width: 85%;
         border-radius: 15px;
         .modal-content {
@@ -63,9 +63,17 @@
           width: 100% !important;
 
           .side {
-            flex: 1 0 50%;
             height: 100%;
             align-items: center;
+          }
+
+          .left-side {
+            width: 33.333%
+
+          }
+
+          .right-side {
+            width: 66.6666%;
           }
 
           .listing-separator {
