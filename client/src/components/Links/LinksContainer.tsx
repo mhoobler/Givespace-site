@@ -2,7 +2,6 @@ import React, { KeyboardEvent, useRef, useState } from "react";
 import { IconButton } from "..";
 import { Plus } from "../../assets";
 import useLinkApolloHooks from "../../graphql/hooks/link";
-import { Link } from "../../types";
 import { isUrl } from "../../utils/functions";
 import EditLinkModal from "./EditLinkModal";
 
