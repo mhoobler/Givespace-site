@@ -201,3 +201,27 @@ export const EDIT_LINK = gql`
     }
   }
 `;
+
+export const CREATE_METRIC = gql`
+  mutation CreateMetric(
+    $type: String!
+    $user_id: String
+    $operation_name: String
+    $operation_type: String
+    $operation_variables: String
+    $navigate_to: String
+    $click_on: String
+  ) {
+    createMetric(
+      type: $type
+      user_id: $user_id
+      operation_name: $operation_name
+      operation_type: $operation_type
+      operation_variables: $operation_variables
+      navigate_to: $navigate_to
+      click_on: $click_on
+    ) {
+      type
+    }
+  }
+`;
