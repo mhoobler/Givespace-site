@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS links;
 DROP TABLE IF EXISTS listings;
 DROP TABLE IF EXISTS catalogues;
 DROP TABLE IF EXISTS metrics;
+DROP TABLE IF EXISTS feedback;
 
 CREATE TABLE catalogues (
   id UUID DEFAULT uuid_generate_v4(),
@@ -82,6 +83,15 @@ CREATE TABLE metrics (
   operation_variables TEXT,
   navigate_to TEXT,
   click_on TEXT,
+  created TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE feedback (
+  id UUID DEFAULT uuid_generate_v4(),
+  user_id TEXT NOT NULL,
+  message TEXT NOT NULL,
+  email TEXT,
   created TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (id)
 );

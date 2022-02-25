@@ -3,6 +3,7 @@ type Query {
   catalogues(id: ID, edit_id: String): [Catalogue!]
   myCatalogues: [Catalogue!]
   getMetrics(user_id: String, type: String): [Metric!]
+  getFeedback: [Feedback!]
 }
 
 type Mutation {
@@ -39,6 +40,7 @@ type Mutation {
     navigate_to: String
     click_on: String
   ): Metric!
+  createFeedback(message: String!, email: String): Feedback!
 }
 
 type Subscription {

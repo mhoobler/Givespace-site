@@ -71,3 +71,11 @@ type Metric {
   click_on: String
   created: Date!
 }
+
+type Feedback {
+  id: ID!
+  user_id: String!
+  message: String!
+  email: String
+  created: Date!
+}

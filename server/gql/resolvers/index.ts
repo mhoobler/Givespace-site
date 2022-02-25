@@ -6,6 +6,7 @@ import { GraphQLUpload } from "graphql-upload";
 import linkResolvers from "./link";
 import listingLabelResolvers from "./listingLabel";
 import metricResolvers from "./metric";
+import feedbackResolvers from "./feedback";
 
 const resolversAggregate = [
   catalogueResolvers,
@@ -14,6 +15,7 @@ const resolversAggregate = [
   linkResolvers,
   listingLabelResolvers,
   metricResolvers,
+  feedbackResolvers,
   utilResolvers,
 ];
 let resolvers = {
