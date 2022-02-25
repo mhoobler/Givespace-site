@@ -89,10 +89,13 @@ const Catalogue: React.FC = () => {
   switch (catalogue.status) {
     case "private":
       if (current_user_id !== catalogue.user_id) {
+        if (isEditing) setIsEditing(false);
         return <div>Private catalogue, only visible to owner.</div>;
       }
       break;
     case "public":
+      if (current_user_id !== catalogue.user_id && isEditing)
+        setIsEditing(false);
       break;
     case "collaborative":
       if (isEditId) editable = true;

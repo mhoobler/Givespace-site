@@ -111,3 +111,25 @@ export type ScrapedFeatures = {
   name: string;
   price: number;
 };
+
+export type ViewProps = {
+  title: string;
+  description: string;
+  image_url: string;
+  color: string;
+};
+
+export enum MetricType {
+  ROUTING = "routing",
+  API = "api",
+  CLICK = "click",
+}
+export type Metric = {
+  type: MetricType;
+  user_id?: string;
+  operation_name?: string;
+  operation_type?: string;
+  operation_variables?: string;
+  navigate_to?: string;
+  click_on?: string;
+};

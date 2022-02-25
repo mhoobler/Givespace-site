@@ -50,7 +50,6 @@ const catalogueResolvers = {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
         myCataloguesQuery(`WHERE c.user_id = '${authorization}' GROUP BY c.id`)
       );
-      console.log("myCatalogues", catalogues.rows);
       return catalogues.rows;
     },
   },

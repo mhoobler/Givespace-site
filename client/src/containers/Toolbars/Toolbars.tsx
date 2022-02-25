@@ -1,5 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Feedback } from "../../components";
+import useUtilsHooks from "../../graphql/hooks/utils";
 
 import "./Toolbars.less";
 
@@ -12,11 +14,18 @@ const Toolbar: React.FC<ToolbarProps> = ({ children }) => {
 };
 
 const CatalogueToolbar: React.FC<CatalogueToolbarProps> = ({}) => {
+  const location = useLocation();
   const navigate = useNavigate();
   const goBack = () => navigate(-1);
+  const { addNavigationMetric } = useUtilsHooks();
+
+  useEffect(() => {
+    addNavigationMetric(location.pathname + location.search);
+  }, [location]);
 
   return (
     <Toolbar>
+      <Feedback />
       <div className="">
         <a className="btn btn-primary" onClick={goBack}>
           Go Back

@@ -3,8 +3,8 @@ type Catalogue {
   edit_id: String!
   user_id: String!
   status: String!
-  title: String!
-  description: String!
+  title: String
+  description: String
   views: Int!
   header_image_url: String
   header_color: String!
@@ -58,4 +58,24 @@ type ListingLabel {
   id: ID!
   listing_id: ID!
   label: Label!
+}
+
+type Metric {
+  id: ID!
+  type: String!
+  user_id: String
+  operation_name: String
+  operation_type: String
+  operation_variables: String
+  navigate_to: String
+  click_on: String
+  created: Date!
+}
+
+type Feedback {
+  id: ID!
+  user_id: String!
+  message: String!
+  email: String
+  created: Date!
 }

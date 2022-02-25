@@ -116,3 +116,27 @@ export const ALL_CATALOGUE_FIELDS = gql`
     }
   }
 `;
+
+export const ALL_METRIC_FIELDS = gql`
+  fragment AllMetricFields on Metric {
+    id
+    type
+    user_id
+    operation_name
+    operation_type
+    operation_variables
+    navigate_to
+    click_on
+    created
+  }
+`;
+
+export const ALL_FEEDBACK_FIELDS = gql`
+  fragment AllFeedbackFields on Feedback {
+    id
+    user_id
+    message
+    email
+    created
+  }
+`;
