@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Feedback } from "../../components";
 import useUtilsHooks from "../../graphql/hooks/utils";
 
 import "./Toolbars.less";
@@ -24,6 +25,7 @@ const CatalogueToolbar: React.FC<CatalogueToolbarProps> = ({}) => {
 
   return (
     <Toolbar>
+      <Feedback />
       <div className="">
         <a className="btn btn-primary" onClick={goBack}>
           Go Back

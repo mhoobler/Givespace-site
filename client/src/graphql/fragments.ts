@@ -130,3 +130,13 @@ export const ALL_METRIC_FIELDS = gql`
     created
   }
 `;
+
+export const ALL_FEEDBACK_FIELDS = gql`
+  fragment AllFeedbackFields on Feedback {
+    id
+    user_id
+    message
+    email
+    created
+  }
+`;

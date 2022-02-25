@@ -225,3 +225,11 @@ export const CREATE_METRIC = gql`
     }
   }
 `;
+
+export const CREATE_FEEDBACK = gql`
+  mutation CreateFeedback($message: String!, $email: String) {
+    createFeedback(message: $message, email: $email) {
+      message
+    }
+  }
+`;

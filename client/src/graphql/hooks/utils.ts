@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { CREATE_METRIC } from "../../graphql/schemas";
+import { CREATE_FEEDBACK, CREATE_METRIC } from "../../graphql/schemas";
 import { apolloHookErrorHandler } from "../../utils/functions";
 
 const UtilsHooks: UtilsHook.FC = () => {
@@ -25,9 +25,23 @@ const UtilsHooks: UtilsHook.FC = () => {
     });
   };
 
+  const [createFeedbackMutation, { error: creteFeedbackError }] =
+    useMutation(CREATE_FEEDBACK);
+  apolloHookErrorHandler("creteFeedbackError", creteFeedbackError);
+  const addFeedback = (message: string, email: string | null) => {
+    createFeedbackMutation({
+      fetchPolicy: "no-cache",
+      variables: {
+        message,
+        email,
+      },
+    });
+  };
+
   return {
     addNavigationMetric,
     addClickMetric,
+    addFeedback,
   };
 };
 
