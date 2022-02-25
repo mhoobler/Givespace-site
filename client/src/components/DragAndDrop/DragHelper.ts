@@ -217,7 +217,7 @@ class DragHelper {
     const targetHeight = this.refs[data.id].boundingBox.height;
     const targetWidth = this.refs[data.id].boundingBox.width;
     this.dragElm.style.top = pageY - targetHeight / 2 - window.scrollY + "px";
-    this.dragElm.style.left = pageX - targetWidth / 2 - window.scrollY + "px";
+    this.dragElm.style.left = pageX - targetWidth / 2 - window.scrollX + "px";
 
     for (let i = 0; i < this.refsArr.length; i++) {
       const ref = this.refsArr[i];
@@ -273,15 +273,19 @@ class DragHelper {
     if (this.dragStart) {
       this.clearTarget();
       this.dragStart = false;
-    }
-    if (this.orderingPrev !== undefined && this.orderingNext !== undefined) {
-      this.handleReorder(data.id, (this.orderingPrev + this.orderingNext) / 2);
-    } else if (this.orderingNext === undefined) {
-      this.handleReorder(data.id, this.orderingPrev + 1);
-    } else if (this.orderingPrev === undefined) {
-      this.handleReorder(data.id, this.orderingNext - 1);
-    } else {
-      console.warn("fallthrough case in DragHelper.handleMouseUp");
+
+      if (this.orderingPrev !== undefined && this.orderingNext !== undefined) {
+        this.handleReorder(
+          data.id,
+          (this.orderingPrev + this.orderingNext) / 2,
+        );
+      } else if (this.orderingNext === undefined) {
+        this.handleReorder(data.id, this.orderingPrev + 1);
+      } else if (this.orderingPrev === undefined) {
+        this.handleReorder(data.id, this.orderingNext - 1);
+      } else {
+        console.warn("fallthrough case in DragHelper.handleMouseUp");
+      }
     }
     window.onmousemove = null;
     window.onmouseup = null;

@@ -112,6 +112,7 @@ const ListingApolloHooks: ListingHook.FC = () => {
 
   const reorderListing =
     (catalogue_id: string) => (id: string, ordering: number) => {
+      updateCatalogueCache(`Listing:${id}`, "ordering", ordering);
       reorderListingMutation({
         variables: { id, ordering },
       });

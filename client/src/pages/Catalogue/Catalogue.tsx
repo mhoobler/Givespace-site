@@ -23,7 +23,7 @@ const Catalogue: React.FC = () => {
   const useQueryStrings = () => {
     return useMemo(
       () => new URLSearchParams(location.search),
-      [location.search]
+      [location.search],
     );
   };
   const queryStrings = useQueryStrings();
@@ -36,7 +36,7 @@ const Catalogue: React.FC = () => {
     initialSelectedListingId = splitPath[3];
   }
   const [selectedListingId, setSelectedListingId] = useState<string | null>(
-    initialSelectedListingId
+    initialSelectedListingId,
   );
 
   const current_user_id = localStorage.getItem("authorization");
@@ -74,6 +74,7 @@ const Catalogue: React.FC = () => {
     // will always be the cached catalogue as fetched
     // by CATALOGUE_FRAGMENT
     catalogue = getCatalogueFromCache(catalogueQuery.data.catalogues[0].id);
+    console.log(catalogue);
     if (catalogue) {
       removeFromCacheIfMFD(catalogue, markedForDeletion);
     }
@@ -122,9 +123,11 @@ const Catalogue: React.FC = () => {
     setSelectedListingId(listingId);
   };
 
-  const selectedListing = selectedListingId
-    ? catalogue.listings!.find((li: Listing) => li.id === selectedListingId)!
-    : null;
+  const selectedListing =
+    selectedListingId && catalogue.listings
+      ? catalogue.listings.find((li: Listing) => li.id === selectedListingId)!
+      : null;
+  console.log(selectedListing);
 
   return (
     <div className="page-wrapper">

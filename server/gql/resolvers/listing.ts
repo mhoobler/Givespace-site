@@ -20,7 +20,7 @@ const listingResolvers = {
   Mutation: {
     createListing: async (
       _: null,
-      { catalogue_id, name }: { catalogue_id: string; name: string }
+      { catalogue_id, name }: { catalogue_id: string; name: string },
     ): Promise<Listing> => {
       const fullCatalogue: Catalogue = (
         await getFullCatalogues(catalogue_id)
@@ -34,12 +34,12 @@ const listingResolvers = {
       if (isUrl) {
         newListingRes = await db.query(
           "INSERT INTO listings (catalogue_id, ordering) VALUES ($1, $2) RETURNING *",
-          [catalogue_id, endOrdering(fullCatalogue.listings, "min") - 1]
+          [catalogue_id, endOrdering(fullCatalogue.listings, "min") - 1],
         );
       } else {
         newListingRes = await db.query(
           "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-          [catalogue_id, name, endOrdering(fullCatalogue.listings, "min") - 1]
+          [catalogue_id, name, endOrdering(fullCatalogue.listings, "min") - 1],
         );
       }
 
@@ -49,7 +49,7 @@ const listingResolvers = {
         const title = extractDomain(name);
         const newLisnkRes: QueryResult<Link> = await db.query(
           "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
-          [newListing.id, name, title]
+          [newListing.id, name, title],
         );
         newListing = { ...newListing, links: [newLisnkRes.rows[0]] };
       }
@@ -61,7 +61,7 @@ const listingResolvers = {
 
         const currentListingRes: QueryResult<Listing> = await db.query(
           "SELECT * FROM listings WHERE id = $1",
-          [newListing.id]
+          [newListing.id],
         );
         const currentListing: Listing = currentListingRes.rows[0];
 
@@ -74,7 +74,7 @@ const listingResolvers = {
             currentListing.name || features.name,
             currentListing.description || features.description,
             newListing.id,
-          ]
+          ],
         );
         let updatedListing: Listing = updateListingRes.rows[0];
         notExist("Listing", updatedListing);
@@ -83,7 +83,7 @@ const listingResolvers = {
           const title = extractDomain(features.item_url);
           const newLisnkRes: QueryResult<Link> = await db.query(
             "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
-            [updatedListing.id, features.item_url, title]
+            [updatedListing.id, features.item_url, title],
           );
           updatedListing = {
             ...updatedListing,
@@ -101,11 +101,11 @@ const listingResolvers = {
     },
     deleteListing: async (
       _: null,
-      { id }: { id: string }
+      { id }: { id: string },
     ): Promise<Listing> => {
       const deletedListingRes: QueryResult<Listing> = await db.query(
         "DELETE FROM listings WHERE id = $1 RETURNING *",
-        [id]
+        [id],
       );
       const deletedListing: Listing = deletedListingRes.rows[0];
       notExist("Listing", deletedListing);
@@ -116,12 +116,12 @@ const listingResolvers = {
     },
     editListing: async (
       _,
-      { key, value, id }: { key: string; value: string; id: string }
+      { key, value, id }: { key: string; value: string; id: string },
     ): Promise<Listing> => {
       if (!value) value = null;
       const editedListingRaw: QueryResult<Listing> = await db.query(
         `UPDATE listings SET ${key} = $1 WHERE id = $2 RETURNING *`,
-        [value, id]
+        [value, id],
       );
 
       notExist("Listing", editedListingRaw.rows[0]);
@@ -129,7 +129,7 @@ const listingResolvers = {
       publishCatalogue(editedListingRaw.rows[0].catalogue_id);
 
       const fullEditiedListing = await db.query(
-        fullListingQuery(`WHERE li.id = '${id}'`)
+        fullListingQuery(`WHERE li.id = '${id}'`),
       );
       notExist("Listing", fullEditiedListing.rows[0]);
       return fullEditiedListing.rows[0];
@@ -137,7 +137,7 @@ const listingResolvers = {
     editListingFile: async (_, { id, file }: { id: string; file: any }) => {
       let preResult: QueryResult<Listing> = await db.query(
         "SELECT * FROM listings WHERE id = $1",
-        [id]
+        [id],
       );
 
       notExist("Listing", preResult.rows[0]);
@@ -152,7 +152,7 @@ const listingResolvers = {
 
       const updatedListingRes: QueryResult<Listing> = await db.query(
         `UPDATE listings SET image_url = $1 WHERE id = $2 RETURNING *`,
-        [url, id]
+        [url, id],
       );
 
       publishCatalogue(updatedListingRes.rows[0].catalogue_id);
@@ -161,13 +161,16 @@ const listingResolvers = {
     },
     reorderListing: async (
       _: null,
-      { id, ordering }: { id: string; ordering: number }
+      { id, ordering }: { id: string; ordering: number },
     ): Promise<Listing> => {
       const updatedListingRes: QueryResult<Listing> = await db.query(
         "UPDATE listings SET ordering = $1 WHERE id = $2 RETURNING *",
-        [ordering, id]
+        [ordering, id],
       );
-      const updatedListing: Listing = updatedListingRes.rows[0];
+      const updateQuery: QueryResult<Listing> = await db.query(
+        fullListingQuery(`WHERE li.id = '${id}'`),
+      );
+      const updatedListing = updateQuery.rows[0];
       notExist("Listing", updatedListing);
 
       publishCatalogue(updatedListing.catalogue_id);

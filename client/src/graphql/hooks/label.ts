@@ -73,6 +73,7 @@ const useLabelApolloHooks: LabelHook.FC = ({ catalogue_id }) => {
     useMutation(UPDATE_LABEL_ORDER);
   apolloHookErrorHandler("reoderLabelError", reorderLabelError);
   const reorderLabel = (id: string, ordering: number) => {
+    updateCatalogueCache(`Label:${id}`, "ordering", ordering);
     reorderLabelMutation({
       variables: { id, ordering },
     });
