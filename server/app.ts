@@ -48,7 +48,15 @@ app.get(
     const params = req.params;
     // get the query strings from the url
     const queryStrings = req.query;
-    let viewProps: ViewProps;
+    let viewProps: ViewProps = {
+      title: null,
+      description: null,
+      image_url: null,
+      color: null,
+      price: null,
+      items_count: null,
+      date: null,
+    };
     try {
       const query: QueryResult<Catalogue> = await db.query(
         fullCatalogueQuery(
@@ -59,16 +67,18 @@ app.get(
       );
       if (!query.rows.length) {
         viewProps = {
+          ...viewProps,
           title: "Catalogue not found",
-          description: "Catalogue not found",
+          description: "Catalogue not found or no longer exists",
           image_url:
             "https://storage.googleapis.com/givespace-pictures/Logo.svg",
           color: "#c9042c",
         };
-        res.status(200).render("list", viewProps);
+        res.status(200).render("catalogue", viewProps);
       } else {
         const catalogue: Catalogue = query.rows[0];
         if (!params.listing_id) {
+          // if it is a catalogue route
           let imageToPass: string;
           if (catalogue.header_image_url) {
             imageToPass = catalogue.header_image_url;
@@ -85,56 +95,105 @@ app.get(
               }
             }
           }
+          let cleanedDescription =
+            catalogue.description ||
+            `Created ${
+              new Date(catalogue.created).toISOString().split("T")[0]
+            }`;
+          cleanedDescription =
+            cleanedDescription.length > 120
+              ? cleanedDescription.slice(0, 120) + "..."
+              : cleanedDescription;
+          if (catalogue.listings) {
+            viewProps.items_count = catalogue.listings.length.toString();
+            cleanedDescription =
+              cleanedDescription +
+              ` | Includes ${viewProps.items_count} listings`;
+          }
+          if (catalogue.event_date) {
+            viewProps.date = new Date(catalogue.event_date)
+              .toISOString()
+              .split("T")[0];
+            cleanedDescription = cleanedDescription + ` | ${viewProps.date}`;
+          }
 
           viewProps = {
-            title: catalogue.title || "Undefined Catalogue",
-            description:
-              catalogue.description ||
-              `Catalogue created ${
-                new Date(catalogue.created).toISOString().split("T")[0]
-              }`,
+            ...viewProps,
+            title: `${catalogue.title || "Undefined Catalogue"}${
+              catalogue.author ? " by " + catalogue.author : ""
+            }`,
+            description: cleanedDescription,
             image_url: imageToPass,
             color: catalogue.header_color || "#c9042c",
           };
-          res.status(200).render("list", viewProps);
+
+          res.status(200).render("catalogue", viewProps);
         } else {
+          // if it is a listing route
           const listing = catalogue.listings.find(
             (listing) => listing.id === params.listing_id
           );
+
           if (!listing) {
             viewProps = {
+              ...viewProps,
               title: "Listing not found",
               description: "Listing not found or no longer exists",
               image_url:
                 "https://storage.googleapis.com/givespace-pictures/Logo.svg",
               color: "#c9042c",
             };
-            res.status(200).render("list", viewProps);
+
+            res.status(200).render("listing", viewProps);
           } else {
             let imageToPass: string;
             if (listing.image_url) {
               imageToPass = listing.image_url;
             } else {
-              if (catalogue.header_image_url) {
-                imageToPass = catalogue.header_image_url;
-              } else {
-                imageToPass =
-                  "https://storage.googleapis.com/givespace-pictures/Logo.svg";
-              }
+              // if (catalogue.header_image_url) {
+              //   imageToPass = catalogue.header_image_url;
+              // } else {
+              imageToPass =
+                "https://storage.googleapis.com/givespace-pictures/Logo.svg";
+              // }
+            }
+
+            let cleanedDescription: string =
+              listing.description ||
+              `Created ${
+                new Date(listing.created).toISOString().split("T")[0]
+              }`;
+            if (cleanedDescription) {
+              cleanedDescription =
+                cleanedDescription.length > 140
+                  ? cleanedDescription.slice(0, 120) + "..."
+                  : cleanedDescription;
+            }
+            if (listing.price && listing.show_price) {
+              viewProps.price = listing.price.toString();
+              cleanedDescription =
+                cleanedDescription + ` | $${viewProps.price}`;
             }
             viewProps = {
-              title: `${listing.name || "Unamed Listing"} in ${
-                catalogue.title || "Undefined Catalogue"
+              ...viewProps,
+              title: `${catalogue.title || "Undefined Catalogue"}${
+                catalogue.author ? " by " + catalogue.author : ""
               }`,
-              description:
-                listing.description ||
-                `Listing created ${
-                  new Date(listing.created).toISOString().split("T")[0]
-                }`,
+              description: cleanedDescription,
               image_url: imageToPass,
               color: catalogue.header_color || "#c9042c",
             };
-            res.status(200).render("list", viewProps);
+
+            viewProps = {
+              ...viewProps,
+              title: `${listing.name || "Unamed Listing"} in ${
+                catalogue.title || "Undefined Catalogue"
+              }`,
+              description: cleanedDescription,
+              image_url: imageToPass,
+              color: catalogue.header_color || "#c9042c",
+            };
+            res.status(200).render("catalogue", viewProps);
           }
         }
       }

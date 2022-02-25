@@ -117,6 +117,9 @@ export type ViewProps = {
   description: string;
   image_url: string;
   color: string;
+  price?: string;
+  items_count?: string;
+  date?: string;
 };
 
 export enum MetricType {
