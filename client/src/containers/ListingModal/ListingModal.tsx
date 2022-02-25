@@ -103,8 +103,9 @@ const ListingModal: React.FC<Props> = ({
                   id: listing.id,
                 }}
                 validator={(value) => {
-                  // if value contains letters return false
-                  return !/[a-z]/i.test(value);
+                  // the value may only contain numbers and a decimal point
+                  if (value.match(/^[0-9]+(\.[0-9]{1,2})?$/)) return true;
+                  return false;
                 }}
                 placeholder="Price"
               />

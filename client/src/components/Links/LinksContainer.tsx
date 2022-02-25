@@ -2,6 +2,7 @@ import React, { KeyboardEvent, useRef, useState } from "react";
 import { IconButton } from "..";
 import { Plus } from "../../assets";
 import useLinkApolloHooks from "../../graphql/hooks/link";
+import { Link } from "../../types";
 import { isUrl } from "../../utils/functions";
 import EditLinkModal from "./EditLinkModal";
 
@@ -47,11 +48,17 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
     linkEditingId && listing.links
       ? listing.links.find((lk: Link) => lk.id === linkEditingId)!
       : null;
+  const orderedLinks: Link[] | null =
+    listing.links &&
+    [...listing.links].sort((a: Link, b: Link) => {
+      // transform date to number
+      return new Date(a.created).getTime() - new Date(b.created).getTime();
+    });
 
   return (
     <div className="links-container">
-      {listing.links &&
-        listing.links.map((link: Link) => (
+      {orderedLinks &&
+        orderedLinks.map((link: Link) => (
           <div className="link-wrapper" key={link.id}>
             <div className={`link ${isEditing ? "" : "editing"}`}>
               <button onClick={() => removeLink(link.id)}>X</button>
