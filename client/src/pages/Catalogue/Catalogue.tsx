@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useNavigationType,
+} from "react-router-dom";
 
 import {
   CatalogueHeader,
@@ -19,11 +24,12 @@ import { useMarkedForDeletion } from "../../state/store";
 const Catalogue: React.FC = () => {
   // get navigation params
   const navigate = useNavigate();
+  const navigationType = useNavigationType();
   const location = useLocation();
   const useQueryStrings = () => {
     return useMemo(
       () => new URLSearchParams(location.search),
-      [location.search]
+      [location.search],
     );
   };
   const queryStrings = useQueryStrings();
@@ -36,7 +42,7 @@ const Catalogue: React.FC = () => {
     initialSelectedListingId = splitPath[3];
   }
   const [selectedListingId, setSelectedListingId] = useState<string | null>(
-    initialSelectedListingId
+    initialSelectedListingId,
   );
 
   const current_user_id = localStorage.getItem("authorization");
@@ -89,10 +95,13 @@ const Catalogue: React.FC = () => {
   switch (catalogue.status) {
     case "private":
       if (current_user_id !== catalogue.user_id) {
+        if (isEditing) setIsEditing(false);
         return <div>Private catalogue, only visible to owner.</div>;
       }
       break;
     case "public":
+      if (current_user_id !== catalogue.user_id && isEditing)
+        setIsEditing(false);
       break;
     case "collaborative":
       if (isEditId) editable = true;
@@ -114,7 +123,11 @@ const Catalogue: React.FC = () => {
       : [];
 
   const handleListingModalClose = () => {
-    navigate(-1);
+    if (navigationType === "PUSH") {
+      navigate(-1);
+    } else {
+      navigate(`/ctg/${corresponding_id}${location.search}`);
+    }
     setSelectedListingId(null);
   };
 
@@ -122,33 +135,49 @@ const Catalogue: React.FC = () => {
     setSelectedListingId(listingId);
   };
 
-  const selectedListing = selectedListingId
-    ? catalogue.listings!.find((li: Listing) => li.id === selectedListingId)!
-    : null;
+  const selectedListing =
+    selectedListingId && catalogue.listings
+      ? catalogue.listings.find((li: Listing) => li.id === selectedListingId)!
+      : null;
+
+  const R = catalogue.header_color.slice(1, 3);
+  const G = catalogue.header_color.slice(3, 5);
+  const B = catalogue.header_color.slice(5, 7);
 
   return (
-    <div className="page-wrapper">
-      <CatalogueHeader
-        isEditing={isEditing}
-        editable={editable}
-        catalogue={catalogue}
-        toggleEdit={() => setIsEditing((prev) => !prev)}
-      />
-      <UndoNotification />
-      <CatalogueItems
-        catalogue={catalogue}
-        isEditing={isEditing}
-        labels={sortedLabels}
-        listings={sortedListings}
-        handleSelectListing={handleSelectListing}
-      />
-      <ListingModal
-        isEditing={isEditing}
-        labels={sortedLabels}
-        listingId={selectedListingId}
-        listing={selectedListing}
-        handleClose={handleListingModalClose}
-      />
+    <div
+      style={{
+        flex: "1 0 auto",
+        backgroundColor: `rgba(
+          ${parseInt(R, 16)},
+          ${parseInt(G, 16)},
+          ${parseInt(B, 16)},
+          0.35)`,
+      }}
+    >
+      <div className="page-wrapper">
+        <CatalogueHeader
+          isEditing={isEditing}
+          editable={editable}
+          catalogue={catalogue}
+          toggleEdit={() => setIsEditing((prev) => !prev)}
+        />
+        <UndoNotification />
+        <CatalogueItems
+          catalogue={catalogue}
+          isEditing={isEditing}
+          labels={sortedLabels}
+          listings={sortedListings}
+          handleSelectListing={handleSelectListing}
+        />
+        <ListingModal
+          isEditing={isEditing}
+          labels={sortedLabels}
+          listingId={selectedListingId}
+          listing={selectedListing}
+          handleClose={handleListingModalClose}
+        />
+      </div>
     </div>
   );
 };

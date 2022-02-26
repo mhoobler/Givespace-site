@@ -11,11 +11,15 @@ const CatalogueRow: React.FC<CatalogueStub> = ({
   id,
   //user_id,
   title,
+  listings,
   //created,
   //updated,
 }) => {
   //@ts-ignore
   //TODO: Do something with this data
+
+  // proof of listings
+  console.log(`Proof of listings for id "${id}" `, listings);
 
   return (
     <div className="row">

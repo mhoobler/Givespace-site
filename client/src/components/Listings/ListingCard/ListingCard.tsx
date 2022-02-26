@@ -69,8 +69,8 @@ const ListingCard: React.FC<Props> = ({
         <div className="listing-labels">
           <LabelContainer>
             {listing.labels &&
-              listing.labels.map((e: any) => {
-                return <Label label={e.label} />;
+              listing.labels.map((e: ListingLabel) => {
+                return <Label key={e.id} label={e.label} />;
               })}
           </LabelContainer>
         </div>
@@ -79,6 +79,20 @@ const ListingCard: React.FC<Props> = ({
           {listing.show_price && listing.price && (
             <span className="price">${listing.price}</span>
           )}
+        </div>
+
+        <div className="listing-links-container">
+          {listing.links &&
+            listing.links.map((e: Link) => (
+              <div
+                key={e.id}
+                className={`link-wrapper length-${listing.links!.length - 1}`}
+              >
+                <div className="link">
+                  <span key={e.id}> {e.title}</span>
+                </div>
+              </div>
+            ))}
         </div>
       </div>
     </div>

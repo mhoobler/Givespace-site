@@ -1,5 +1,18 @@
 import { gql } from "@apollo/client";
 
+export const CATALOGUE_TRUNCATED = gql`
+  fragment CatalogueTruncatedFields on Catalogue {
+    id
+    edit_id
+    user_id
+    status
+    title
+    description
+    created
+    updated
+  }
+`;
+
 export const CATALOGUE_LIST_ITEM_FIELDS = gql`
   fragment CatalogueListItemFields on Catalogue {
     id
@@ -10,6 +23,11 @@ export const CATALOGUE_LIST_ITEM_FIELDS = gql`
     description
     created
     updated
+    header_image_url
+    listings {
+      id
+      image_url
+    }
   }
 `;
 
@@ -97,5 +115,29 @@ export const ALL_CATALOGUE_FIELDS = gql`
     listings {
       ...AllListingFields
     }
+  }
+`;
+
+export const ALL_METRIC_FIELDS = gql`
+  fragment AllMetricFields on Metric {
+    id
+    type
+    user_id
+    operation_name
+    operation_type
+    operation_variables
+    navigate_to
+    click_on
+    created
+  }
+`;
+
+export const ALL_FEEDBACK_FIELDS = gql`
+  fragment AllFeedbackFields on Feedback {
+    id
+    user_id
+    message
+    email
+    created
   }
 `;

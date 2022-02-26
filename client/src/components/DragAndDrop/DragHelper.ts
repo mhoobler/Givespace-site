@@ -1,5 +1,3 @@
-const separator = document.createElement("div");
-
 namespace DragHelper {
   export type handleReorder = (id: string, ordering: number) => void;
   export type refs = {
@@ -50,9 +48,9 @@ class DragHelper {
   private validX: boolean;
   private validY: boolean;
   private dragStart: boolean;
-
-  private testMove?: any;
-  private testUp?: any;
+  private orderingPrev: number;
+  private orderingNext: number;
+  disabled: boolean;
 
   constructor(handleReorder: DragHelper.handleReorder) {
     this.handleReorder = handleReorder;
@@ -63,6 +61,9 @@ class DragHelper {
     this.validX = false;
     this.validY = false;
     this.dragStart = false;
+    this.orderingPrev = 0;
+    this.orderingNext = 0;
+    this.disabled = false;
   }
 
   get root() {
@@ -144,7 +145,9 @@ class DragHelper {
 
   captureRef(elm: HTMLDivElement, data: any) {
     if (elm) {
-      elm.onmousedown = (evt) => this.handleMouseDown.call(this, evt, data);
+      elm.onmousedown = this.disabled
+        ? null
+        : (evt) => this.handleMouseDown.call(this, evt, data);
       if (!this.keys.has(data.id)) {
         const ref = new DragRef(elm, data, this);
 
@@ -218,9 +221,10 @@ class DragHelper {
     const targetHeight = this.refs[data.id].boundingBox.height;
     const targetWidth = this.refs[data.id].boundingBox.width;
     this.dragElm.style.top = pageY - targetHeight / 2 - window.scrollY + "px";
-    this.dragElm.style.left = pageX - targetWidth / 2 - window.scrollY + "px";
+    this.dragElm.style.left = pageX - targetWidth / 2 - window.scrollX + "px";
 
-    for (let ref of this.refsArr) {
+    for (let i = 0; i < this.refsArr.length; i++) {
+      const ref = this.refsArr[i];
       const { top, left, right, bottom, width } = ref.boundingBox;
       const x2 = width / 2;
       const [mx, my] = [pageX - window.scrollX, pageY - window.scrollY];
@@ -235,9 +239,15 @@ class DragHelper {
 
       if (this.validDrop) {
         if (isLeft) {
+          this.orderingPrev =
+            this.refsArr[i - 1] && this.refsArr[i - 1].data.ordering;
+          this.orderingNext = ref.data.ordering;
           this.parent.insertBefore(this.target, ref.elm);
           break;
         } else {
+          this.orderingPrev = ref.data.ordering;
+          this.orderingNext =
+            this.refsArr[i + 1] && this.refsArr[i + 1].data.ordering;
           this.parent.insertBefore(this.target, ref.elm.nextSibling);
           break;
         }
@@ -267,6 +277,19 @@ class DragHelper {
     if (this.dragStart) {
       this.clearTarget();
       this.dragStart = false;
+
+      if (this.orderingPrev !== undefined && this.orderingNext !== undefined) {
+        this.handleReorder(
+          data.id,
+          (this.orderingPrev + this.orderingNext) / 2,
+        );
+      } else if (this.orderingNext === undefined) {
+        this.handleReorder(data.id, this.orderingPrev + 1);
+      } else if (this.orderingPrev === undefined) {
+        this.handleReorder(data.id, this.orderingNext - 1);
+      } else {
+        console.warn("fallthrough case in DragHelper.handleMouseUp");
+      }
     }
     window.onmousemove = null;
     window.onmouseup = null;

@@ -25,7 +25,6 @@
   .header-content {
     display: flex;
     flex-direction: column-reverse;
-    padding: 0 3rem;
 
     .left-half {
       display: flex;
@@ -48,6 +47,7 @@
       }
 
       .event-date-views-location {
+        padding: 0 0.625rem;
         .views-wrapper {
         }
 
@@ -59,6 +59,7 @@
     .right-half {
       display: flex;
       flex: 1 0 50%;
+      justify-content: center;
 
       .edit-copy-share {
         display: flex;
@@ -80,6 +81,7 @@
       .dropdown-wrapper {
         display: flex;
         justify-content: flex-end;
+        align-items: center;
       }
     }
   }
@@ -93,16 +95,19 @@
 
   // md
   @media (min-width: 768px) {
+    .catalogue-header-container {
+      .header-content {
+        padding: 0 3rem;
+        flex-direction: row;
+      }
+      .right-half {
+        flex-direction: column;
+      }
+    }
   }
 
   // lg
   @media (min-width: 992px) {
-    .header-content {
-      flex-direction: row !important;
-    }
-    .right-half {
-      flex-direction: column;
-    }
   }
 
   // xl

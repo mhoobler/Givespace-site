@@ -28,5 +28,6 @@ export { default as Checkbox } from "./fields/Checkbox/Checkbox";
 export { default as TextareaInput } from "./fields/TextreaInput/TextareaInput";
 export { default as ListingLabelContainer } from "./Labels/ListingLabelContainer";
 export { default as LinksContainer } from "./Links/LinksContainer";
+export { default as Feedback } from "./Feedback/Feedback";
 
 export { default as IconButton } from "./IconButton/IconButton";
