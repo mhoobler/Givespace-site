@@ -6,7 +6,7 @@ type Context = {
   authToken?: string | null;
 };
 
-enum Status {
+declare enum Status {
   private = "private",
   public = "public",
   collaborative = "collaborative",
@@ -119,7 +119,7 @@ interface FieldEditing {
   key: string;
 }
 
-export enum MetricType {
+declare enum MetricType {
   ROUTING = "routing",
   API = "api",
   CLICK = "click",
