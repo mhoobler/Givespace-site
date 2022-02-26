@@ -144,7 +144,6 @@ class DragHelper {
   }
 
   captureRef(elm: HTMLDivElement, data: any) {
-    console.log(this.disabled);
     if (elm) {
       elm.onmousedown = this.disabled
         ? null

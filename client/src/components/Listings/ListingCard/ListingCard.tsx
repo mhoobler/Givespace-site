@@ -84,8 +84,13 @@ const ListingCard: React.FC<Props> = ({
         <div className="listing-links-container">
           {listing.links &&
             listing.links.map((e: Link) => (
-              <div className="link">
-                <span key={e.id}> {e.title}</span>
+              <div
+                key={e.id}
+                className={`link-wrapper length-${listing.links!.length - 1}`}
+              >
+                <div className="link">
+                  <span key={e.id}> {e.title}</span>
+                </div>
               </div>
             ))}
         </div>

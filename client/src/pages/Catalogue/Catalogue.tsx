@@ -74,7 +74,6 @@ const Catalogue: React.FC = () => {
     // will always be the cached catalogue as fetched
     // by CATALOGUE_FRAGMENT
     catalogue = getCatalogueFromCache(catalogueQuery.data.catalogues[0].id);
-    console.log(catalogue);
     if (catalogue) {
       removeFromCacheIfMFD(catalogue, markedForDeletion);
     }
@@ -127,7 +126,6 @@ const Catalogue: React.FC = () => {
     selectedListingId && catalogue.listings
       ? catalogue.listings.find((li: Listing) => li.id === selectedListingId)!
       : null;
-  console.log(selectedListing);
 
   const R = catalogue.header_color.slice(1, 3);
   const G = catalogue.header_color.slice(3, 5);

@@ -11,7 +11,6 @@ import {
 export const getCatalogueFromCache = (
   catalogueId: string,
 ): CatalogueType | null => {
-  console.log(cache);
   return cache.readFragment({
     id: `Catalogue:${catalogueId}`,
     fragment: ALL_CATALOGUE_FIELDS,
