@@ -9,6 +9,7 @@ import "./App.less";
 import { useMarkedForDeletion, useRemoveMFD } from "./state/store";
 import { cache } from "./graphql/clientConfig";
 import { CatalogueToolbar } from "./containers";
+import { DependentCacheItems, MarkedForDeletion } from "./types";
 
 const App = () => {
   const { removeMFD, setRemoveMFD } = useRemoveMFD();
@@ -18,9 +19,14 @@ const App = () => {
 
   useEffect(() => {
     // handling undo and clearing of undo list
-    if (removeMFD && markedForDeletion.find((mfd) => mfd.id === removeMFD.id)) {
+    if (
+      removeMFD &&
+      markedForDeletion.find(
+        (mfd: MarkedForDeletion) => mfd.id === removeMFD.id
+      )
+    ) {
       const currentMFD = markedForDeletion.find(
-        (mfd) => mfd.id === removeMFD.id
+        (mfd: MarkedForDeletion) => mfd.id === removeMFD.id
       )!;
 
       if (removeMFD.isUndo) {
@@ -31,7 +37,9 @@ const App = () => {
       }
 
       setMarkedForDeletion(
-        markedForDeletion.filter((mfd) => mfd.id !== removeMFD.id)
+        markedForDeletion.filter(
+          (mfd: MarkedForDeletion) => mfd.id !== removeMFD.id
+        )
       );
 
       setRemoveMFD(null);

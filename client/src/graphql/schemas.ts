@@ -2,10 +2,11 @@ import { gql } from "@apollo/client";
 import {
   LABEL_FIELDS,
   ALL_CATALOGUE_FIELDS,
-  CATALOGUE_LIST_ITEM_FIELDS,
+  CATALOGUE_TRUNCATED,
   LISTING_FIELDS,
   LISTING_LABEL_FIELDS,
   LINK_FIELDS,
+  CATALOGUE_LIST_ITEM_FIELDS,
 } from "./fragments";
 
 export const GET_JWT = gql`
@@ -33,19 +34,19 @@ export const MY_CATALOGUES = gql`
 `;
 
 export const CREATE_CATALOGUE = gql`
-  ${CATALOGUE_LIST_ITEM_FIELDS}
+  ${CATALOGUE_TRUNCATED}
   mutation CreateCatalogue {
     createCatalogue {
-      ...CatalogueListItemFields
+      ...CatalogueTruncatedFields
     }
   }
 `;
 
 export const DELTETE_CATALOGUE = gql`
-  ${CATALOGUE_LIST_ITEM_FIELDS}
+  ${CATALOGUE_TRUNCATED}
   mutation DeleteCatalogue($id: ID!) {
     deleteCatalogue(id: $id) {
-      ...CatalogueListItemFields
+      ...CatalogueTruncatedFields
     }
   }
 `;
@@ -197,6 +198,38 @@ export const EDIT_LINK = gql`
   mutation EditLink($key: String!, $value: String!, $id: ID!) {
     editLink(key: $key, value: $value, id: $id) {
       ...AllLinkFields
+    }
+  }
+`;
+
+export const CREATE_METRIC = gql`
+  mutation CreateMetric(
+    $type: String!
+    $user_id: String
+    $operation_name: String
+    $operation_type: String
+    $operation_variables: String
+    $navigate_to: String
+    $click_on: String
+  ) {
+    createMetric(
+      type: $type
+      user_id: $user_id
+      operation_name: $operation_name
+      operation_type: $operation_type
+      operation_variables: $operation_variables
+      navigate_to: $navigate_to
+      click_on: $click_on
+    ) {
+      type
+    }
+  }
+`;
+
+export const CREATE_FEEDBACK = gql`
+  mutation CreateFeedback($message: String!, $email: String) {
+    createFeedback(message: $message, email: $email) {
+      message
     }
   }
 `;

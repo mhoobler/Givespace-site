@@ -21,7 +21,6 @@ const CalendarInput: React.FC<Props> = ({
     if (value) {
       newValue = new Date(value).toISOString();
       newValue = newValue.split("T")[0];
-      console.log("newValue: ", newValue);
     }
     if (date.current && typeof newValue === "string") {
       date.current.value = newValue ? newValue : "";
@@ -30,7 +29,6 @@ const CalendarInput: React.FC<Props> = ({
   const handleOnKeyPress = (e: any) => {
     if (date.current && e.key === "Enter") {
       date.current.blur();
-      handleOnSubmit(new Date(date.current.value).toISOString());
     }
   };
   // transform value to format MM/DD/YYYY
@@ -44,6 +42,13 @@ const CalendarInput: React.FC<Props> = ({
     valueToDisplay[0],
   ].join("/");
 
+  const handleOnBlur = (e: any) => {
+    const newDate: string = e.target.value
+      ? new Date(e.target.value).toISOString()
+      : "";
+    handleOnSubmit(newDate);
+  };
+
   return (
     <div className="calendar-input">
       <input
@@ -51,7 +56,7 @@ const CalendarInput: React.FC<Props> = ({
         className={`${isEditing ? "" : "hidden"}`}
         type="date"
         onKeyPress={handleOnKeyPress}
-        onBlur={(e) => handleOnSubmit(new Date(e.target.value).toISOString())}
+        onBlur={handleOnBlur}
       />
       <div className={`${isEditing || (!isEditing && !value) ? "hidden" : ""}`}>
         {value ? valueToDisplay : "No date selected"}

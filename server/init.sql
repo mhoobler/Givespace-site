@@ -3,14 +3,16 @@ DROP TABLE IF EXISTS labels;
 DROP TABLE IF EXISTS links;
 DROP TABLE IF EXISTS listings;
 DROP TABLE IF EXISTS catalogues;
+DROP TABLE IF EXISTS metrics;
+DROP TABLE IF EXISTS feedback;
 
 CREATE TABLE catalogues (
   id UUID DEFAULT uuid_generate_v4(),
   edit_id UUID DEFAULT uuid_generate_v4(),
   user_id TEXT NOT NULL,
-  status TEXT DEFAULT 'public',
+  status TEXT DEFAULT 'public' NOT NULL,
   title TEXT DEFAULT 'Untitled Catalogue',
-  description TEXT DEFAULT '',
+  description TEXT,
   views INT DEFAULT 0 NOT NULL,
   header_image_url TEXT,
   header_color TEXT DEFAULT '#000000',
@@ -70,6 +72,28 @@ CREATE TABLE listing_labels (
   PRIMARY KEY (id),
   FOREIGN KEY (label_id) REFERENCES labels (id) ON DELETE CASCADE,
   FOREIGN KEY (listing_id) REFERENCES listings (id) ON DELETE CASCADE
+);
+
+CREATE TABLE metrics (
+  id UUID DEFAULT uuid_generate_v4(),
+  type TEXT NOT NULL,
+  user_id TEXT,
+  operation_name TEXT,
+  operation_type TEXT,
+  operation_variables TEXT,
+  navigate_to TEXT,
+  click_on TEXT,
+  created TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE feedback (
+  id UUID DEFAULT uuid_generate_v4(),
+  user_id TEXT NOT NULL,
+  message TEXT NOT NULL,
+  email TEXT,
+  created TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (id)
 );
 
 INSERT INTO catalogues (

@@ -46,13 +46,19 @@ const LinksContainer: React.FC<Props> = ({ listing, isEditing }) => {
     linkEditingId && listing.links
       ? listing.links.find((lk: Link) => lk.id === linkEditingId)!
       : null;
+  const orderedLinks: Link[] | null =
+    listing.links &&
+    [...listing.links].sort((a: Link, b: Link) => {
+      // transform date to number
+      return new Date(a.created).getTime() - new Date(b.created).getTime();
+    });
 
   return (
     <div className="links-container">
-      {listing.links &&
-        listing.links.map((link: Link) => (
+      {orderedLinks &&
+        orderedLinks.map((link: Link) => (
           <div
-            className={`link-wrapper length-${listing.links!.length}`}
+            className={`link-wrapper length-${orderedLinks.length}`}
             key={link.id}
           >
             <div className={`link ${isEditing ? "" : "editing"}`}>

@@ -21,6 +21,7 @@ interface CatalogueStub {
   description: string | null;
   created: string;
   updated: string;
+  listings: ListingStub[] | null;
 }
 
 interface CatalogueType extends CatalogueStub {
@@ -116,4 +117,19 @@ interface FieldEditing {
   typename: string;
   id: string;
   key: string;
+}
+
+export enum MetricType {
+  ROUTING = "routing",
+  API = "api",
+  CLICK = "click",
+}
+interface Metric {
+  type: MetricType;
+  user_id?: string;
+  operation_name?: string;
+  operation_type?: string;
+  operation_variables?: string;
+  navigate_to?: string;
+  click_on?: string;
 }

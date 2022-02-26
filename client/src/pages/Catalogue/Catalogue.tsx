@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useNavigationType,
+} from "react-router-dom";
 
 import {
   CatalogueHeader,
@@ -19,6 +24,7 @@ import { useMarkedForDeletion } from "../../state/store";
 const Catalogue: React.FC = () => {
   // get navigation params
   const navigate = useNavigate();
+  const navigationType = useNavigationType();
   const location = useLocation();
   const useQueryStrings = () => {
     return useMemo(
@@ -89,10 +95,13 @@ const Catalogue: React.FC = () => {
   switch (catalogue.status) {
     case "private":
       if (current_user_id !== catalogue.user_id) {
+        if (isEditing) setIsEditing(false);
         return <div>Private catalogue, only visible to owner.</div>;
       }
       break;
     case "public":
+      if (current_user_id !== catalogue.user_id && isEditing)
+        setIsEditing(false);
       break;
     case "collaborative":
       if (isEditId) editable = true;
@@ -114,7 +123,11 @@ const Catalogue: React.FC = () => {
       : [];
 
   const handleListingModalClose = () => {
-    navigate(-1);
+    if (navigationType === "PUSH") {
+      navigate(-1);
+    } else {
+      navigate(`/ctg/${corresponding_id}${location.search}`);
+    }
     setSelectedListingId(null);
   };
 

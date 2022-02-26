@@ -8,12 +8,17 @@ import {
   publishCatalogue,
   verifyToken,
 } from "../../utils/functions";
-import { CatalogueListItem, Catalogue, Context } from "../../types";
+import {
+  CatalogueListItem,
+  Catalogue,
+  Context,
+  CatalogueTruncated,
+} from "../../types";
 import db from "../../db";
 import { QueryResult } from "pg";
 import { deleteFromGC, uploadToGC } from "../../utils/googleCloud";
 import { UserInputError } from "apollo-server-express";
-import { fullCatalogueQuery } from "../../utils/sqlQueries";
+import { fullCatalogueQuery, myCataloguesQuery } from "../../utils/sqlQueries";
 import ColorThief from "color-thief-jimp";
 import Jimp from "jimp";
 
@@ -43,11 +48,7 @@ const catalogueResolvers = {
       { authorization }: Context
     ): Promise<CatalogueListItem[]> => {
       const catalogues: QueryResult<CatalogueListItem> = await db.query(
-        `SELECT 
-          c.*,
-          json_agg(l ORDER BY ordering) as labels
-        from catalogues c LEFT JOIN labels l on c.id = l.catalogue_id WHERE c.user_id = $1 GROUP BY c.id;`,
-        [authorization]
+        myCataloguesQuery(`WHERE c.user_id = '${authorization}' GROUP BY c.id`)
       );
       return catalogues.rows;
     },
@@ -58,13 +59,13 @@ const catalogueResolvers = {
       _: null,
       __: null,
       context: Context
-    ): Promise<CatalogueListItem> => {
+    ): Promise<CatalogueTruncated> => {
       // lazy solution to get the joined catalogue
-      const newCataloguesRes: QueryResult<CatalogueListItem> = await db.query(
+      const newCataloguesRes: QueryResult<CatalogueTruncated> = await db.query(
         "INSERT INTO catalogues (user_id) VALUES ($1) RETURNING *",
         [context.authorization]
       );
-      const newCatalogue: CatalogueListItem = newCataloguesRes.rows[0];
+      const newCatalogue: CatalogueTruncated = newCataloguesRes.rows[0];
 
       notExist("Catalogue", newCatalogue);
 
@@ -74,13 +75,13 @@ const catalogueResolvers = {
       _,
       { id }: { id: string },
       context: Context
-    ): Promise<CatalogueListItem> => {
+    ): Promise<CatalogueTruncated> => {
       // wheree id = $1 AND user_id = $2
-      const deletedCatalogues: QueryResult<CatalogueListItem> = await db.query(
+      const deletedCatalogues: QueryResult<CatalogueTruncated> = await db.query(
         "DELETE FROM catalogues WHERE id = $1 AND user_id = $2 RETURNING id, edit_id, user_id, status, title, description, created, updated",
         [id, context.authorization]
       );
-      const deletedCatalogue: CatalogueListItem = deletedCatalogues.rows[0];
+      const deletedCatalogue: CatalogueTruncated = deletedCatalogues.rows[0];
 
       notExist("Catalogue", deletedCatalogue);
 

@@ -2,52 +2,42 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GiveSpace</title>
+
+    <title><%= title %></title>
     <link
       rel="icon"
       type="text/png"
       href="https://storage.googleapis.com/givespace-pictures/Logo.svg"
     />
-    <meta
-      name="description"
-      content="Your ultimate tool for creating sharable product lists and catalogues. Get started in seconds, no sign-up required."
-    />
+    <meta name="description" content="<%= description %>" />
     <meta name="robots" content="index,follow" />
     <!-- <link rel="canonical" href="URL for this page"> -->
+    <!-- create a meta tag with many images -->
 
-    <meta property="og:title" content="GiveSpace" />
+    <meta name="twitter:label1" value="Items" />
+    <meta name="twitter:data1" value="<%= items_count %>" />
+    <meta name="twitter:label1" value="Date" />
+    <meta name="twitter:data1" value="<%= date %>" />
+
+    <meta property="og:title" content="<%= title %>" />
     <meta property="og:locale" content="en_US" />
-    <meta
-      property="og:description"
-      content="Your ultimate tool for creating sharable product lists and catalogues. Get started in seconds, no sign-up required."
-    />
-    <meta
-      property="og:image"
-      content="https://storage.googleapis.com/givespace-pictures/Logo.svg"
-    />
+    <meta property="og:description" content="<%= description %>" />
+    <meta property="og:image" content="<%= image_url %>" />
     <!-- <meta property="og:image:width" content="Image Width" />
     <meta property="og:image:height" content="Image Height" /> -->
-    <meta property="og:image:alt" content="GiveSpace Gibby" />
+    <meta property="og:image:alt" content="GiveSpace image" />
     <meta property="og:image:type" content="image/jpeg" />
     <!-- <meta property="og:url" content="URL for this page" /> -->
     <meta property="og:site_name" content="GiveSpace" />
-    <meta name="theme-color" content="#c9042c" />
+    <!-- add a color meta -->
+    <meta name="theme-color" content="<%= color %>" />
 
-    <meta
-      name="twitter:card"
-      content="https://storage.googleapis.com/givespace-pictures/Logo.svg"
-    />
+    <meta name="twitter:card" content="<%= image_url %>" />
     <!-- <meta name="twitter:site" content="https://fjolt.com"> -->
     <meta name="twitter:title" content="GiveSpace" />
     <!-- <meta name="twitter:creator" content="{{twitterHandle}}"> -->
-    <meta
-      name="twitter:description"
-      content="Your ultimate tool for creating sharable product lists and catalogues. Get started in seconds, no sign-up required."
-    />
-    <meta
-      name="twitter:image"
-      content="https://storage.googleapis.com/givespace-pictures/Logo.svg"
-    />
+    <meta name="twitter:description" content="<%= description %>" />
+    <meta name="twitter:image" content="<%= image_url %>" />
   </head>
   <body>
     <div id="root"></div>

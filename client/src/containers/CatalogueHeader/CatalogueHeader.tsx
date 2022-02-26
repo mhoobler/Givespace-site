@@ -67,6 +67,7 @@ const CatalogueHeader: React.FC<Props> = ({
                   id: catalogue.id,
                 }}
                 value={catalogue.author || ""}
+                placeholder="Author"
               />
               <TextInput
                 isEditing={isEditing}
