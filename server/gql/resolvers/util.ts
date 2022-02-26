@@ -52,6 +52,13 @@ const userResolvers = {
 
       return { filename, mimetype, encoding };
     },
+    catalogueMacro: async (
+      _: null,
+      { catalogue }: { catalogue: any }
+    ): Promise<String> => {
+      console.log("catalogue", catalogue);
+      return "https://www.google.com";
+    },
   },
   Subscription: {},
 };

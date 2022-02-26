@@ -1,0 +1,51 @@
+input ListingInput {
+  name: String
+  link_url: String
+  image_url: String
+  description: String
+  ordering: Float
+  show_price: Boolean
+  price: Float
+}
+
+input LabelInput {
+  name: String
+  link_url: String
+  ordering: Float
+  is_private: Boolean
+}
+
+input LinkInput {
+  url: String!
+  title: String
+}
+
+input ListingLabelInput {
+  label_name: String
+}
+
+input ListingInput {
+  name: String
+  link_url: String
+  image_url: String
+  description: String
+  ordering: Float
+  show_price: Boolean
+  price: Float
+  links: [LinkInput!]
+  labels: [ListingLabelInput!]
+}
+
+input CatalogueInput {
+  status: String
+  title: String
+  description: String
+  views: Int
+  header_image_url: String
+  header_color: String
+  author: String
+  profile_picture_url: String
+  event_date: Date
+  labels: [LabelInput!]
+  listings: [ListingInput!]
+}

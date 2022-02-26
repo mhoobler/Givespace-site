@@ -41,6 +41,7 @@ type Mutation {
     click_on: String
   ): Metric!
   createFeedback(message: String!, email: String): Feedback!
+  catalogueMacro(catalogue: CatalogueInput!): String!
 }
 
 type Subscription {
