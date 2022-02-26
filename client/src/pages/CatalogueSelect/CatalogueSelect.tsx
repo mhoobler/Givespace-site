@@ -36,6 +36,7 @@ const CatalogueSelect = () => {
 
   const results = useQuery(MY_CATALOGUES);
   apolloHookErrorHandler("CatalogueSelect.tsx", results.error);
+  console.log(results);
 
   if (results.loading) {
     return <div>Loading...</div>;
