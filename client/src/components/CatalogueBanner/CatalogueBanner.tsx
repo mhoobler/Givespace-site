@@ -116,7 +116,7 @@ const CatalogueBanner: React.FC<Props> = ({
   return (
     <>
       <ToggleEdit
-        className="catalogue-banner-container"
+        className={`catalogue-banner-container`}
         isEditing={isEditing}
         style={{ display: value || isEditing ? "" : "none" }}
       >
@@ -142,11 +142,6 @@ const CatalogueBanner: React.FC<Props> = ({
               }}
             />
           </div>
-          {/* color border */}
-          <div
-            className="color-border"
-            style={{ backgroundColor: catalogue.header_color }}
-          ></div>
           {/* background images */}
           <div className={`toggle-input image-wrapper`}>
             <img id="header-image-display" src={value} alt="" />

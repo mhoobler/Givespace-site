@@ -19,3 +19,5 @@ export { default as Edit2 } from "./svgs/edit-2.svg";
 export { default as Edit3 } from "./svgs/edit-3.svg";
 export { default as Eye } from "./svgs/eye.svg";
 export { default as EyeOff } from "./svgs/eye-off.svg";
+export { default as Trash } from "./svgs/trash.svg";
+export { default as Trash2 } from "./svgs/trash-2.svg";
