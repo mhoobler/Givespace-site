@@ -35,7 +35,8 @@ const CatalogueHeader: React.FC<Props> = ({
   return (
     <div className="catalogue-header-container">
       {/* header image hero*/}
-      <div className="catalogue-banner-wrapper">
+      <div className={`catalogue-banner-wrapper ${isEditing ? "editing" : ""}`}>
+        {/* color border */}
         <CatalogueBanner
           isEditing={isEditing}
           handleSubmit={editCatalogueFile}
@@ -43,6 +44,10 @@ const CatalogueHeader: React.FC<Props> = ({
           value={catalogue.header_image_url || ""}
           catalogue={catalogue}
         />
+        <div
+          className="color-border"
+          style={{ backgroundColor: catalogue.header_color }}
+        ></div>
       </div>
       <div className="header-content">
         {/* left half */}
