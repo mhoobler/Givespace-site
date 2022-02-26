@@ -9,7 +9,7 @@ import {
 } from "../graphql/fragments";
 
 export const getCatalogueFromCache = (
-  catalogueId: string
+  catalogueId: string,
 ): CatalogueType | null => {
   return cache.readFragment({
     id: `Catalogue:${catalogueId}`,
@@ -21,7 +21,7 @@ export const getCatalogueFromCache = (
 export const apolloHookErrorHandler = (
   path: string,
   hookError: ApolloError | undefined,
-  warning?: boolean
+  warning?: boolean,
 ): void => {
   if (hookError) {
     if (hookError.message.includes("Catalogue does not exist")) {
@@ -65,14 +65,14 @@ export const endOrdering = (list: any[] | null, type: string): number => {
       if (type === "max") return Math.max(max, ins.ordering);
       if (type === "min") return Math.min(max, ins.ordering);
     },
-    list[0].ordering
+    list[0].ordering,
   );
 };
 
 const getDependentCacheItem = (
   cacheId: string,
   fragment: DocumentNode,
-  fragmentName: string
+  fragmentName: string,
 ) => {
   return {
     id: cacheId,
@@ -94,7 +94,7 @@ export const handleDeletion = (
   setRemoveMFD?: (value: RemoveMFD) => void,
   markedForDeletion?: MarkedForDeletion[],
   setMarkedForDeletion?: (value: MarkedForDeletion[]) => void,
-  catalogue?: CatalogueType
+  catalogue?: CatalogueType,
 ) => {
   const cacheId = `${type}:${id}`;
 
@@ -102,7 +102,7 @@ export const handleDeletion = (
 
   if (type === "Label") {
     dependentCacheItems.push(
-      getDependentCacheItem(cacheId, LABEL_FIELDS, "AllLabelFields")
+      getDependentCacheItem(cacheId, LABEL_FIELDS, "AllLabelFields"),
     );
     // TODO: standardize undo
     if (catalogue) {
@@ -114,8 +114,8 @@ export const handleDeletion = (
                 getDependentCacheItem(
                   `ListingLabel:${la.id}`,
                   LISTING_LABEL_FIELDS,
-                  "AllListingLabelFields"
-                )
+                  "AllListingLabelFields",
+                ),
               );
             }
           });
@@ -124,11 +124,15 @@ export const handleDeletion = (
     }
   } else if (type === "Listing") {
     dependentCacheItems.push(
-      getDependentCacheItem(cacheId, LISTING_FIELDS, "AllListingFields")
+      getDependentCacheItem(cacheId, LISTING_FIELDS, "AllListingFields"),
     );
   } else {
     dependentCacheItems.push(
-      getDependentCacheItem(cacheId, ALL_CATALOGUE_FIELDS, "AllCatalogueFields")
+      getDependentCacheItem(
+        cacheId,
+        ALL_CATALOGUE_FIELDS,
+        "AllCatalogueFields",
+      ),
     );
   }
 
@@ -184,7 +188,7 @@ export const cleanedPath = (path: string): string => {
 
 export const concurrentEditingBlocker = (
   catalogue: CatalogueType,
-  fieldEditing: FieldEditing
+  fieldEditing: FieldEditing,
 ): CatalogueType => {
   switch (fieldEditing.typename) {
     case "Catalogue":
@@ -197,7 +201,7 @@ export const concurrentEditingBlocker = (
       listingRef =
         catalogue.listings &&
         catalogue.listings!.find(
-          (listing: Listing) => listing.id === fieldEditing.id
+          (listing: Listing) => listing.id === fieldEditing.id,
         );
       // @ts-ignore
       if (listingRef) delete listingRef[fieldEditing.key];
@@ -214,14 +218,14 @@ export const concurrentEditingBlocker = (
         catalogue.listings!.find(
           (listing: Listing) =>
             listing.links &&
-            listing.links.find((link: Link) => link.id === fieldEditing.id)
+            listing.links.find((link: Link) => link.id === fieldEditing.id),
         );
       let linkRef: Link | undefined | null;
       linkRef =
         listingRefForLink &&
         listingRefForLink.links &&
         listingRefForLink.links.find(
-          (link: Link) => link.id === fieldEditing.id
+          (link: Link) => link.id === fieldEditing.id,
         );
       // @ts-ignore
       if (linkRef) delete linkRef[fieldEditing.key];
@@ -235,7 +239,7 @@ export const concurrentEditingBlocker = (
 
 export const catalogueFEParser = (
   catalogue: CatalogueType,
-  fieldEditing: FieldEditing | null
+  fieldEditing: FieldEditing | null,
 ): CatalogueType => {
   // catalogue cleaning
   // if fieldEditing block the relevant update
@@ -248,12 +252,12 @@ export const catalogueFEParser = (
 
 export const removeFromCacheIfMFD = (
   catalogue: CatalogueType,
-  markedForDeletion: MarkedForDeletion[]
+  markedForDeletion: MarkedForDeletion[],
 ) => {
   const labelsMFD: Label[] | null =
     markedForDeletion.length && catalogue.labels
       ? catalogue.labels.filter((label: Label) =>
-          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === label.id)
+          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === label.id),
         )
       : null;
   if (labelsMFD) {
@@ -277,12 +281,12 @@ export const removeFromCacheIfMFD = (
   const listingsMFD: Listing[] | null =
     markedForDeletion.length && catalogue.listings
       ? catalogue.listings.filter((listing: Listing) =>
-          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === listing.id)
+          markedForDeletion.find((mfd) => mfd.id.split(":")[1] === listing.id),
         )
       : null;
   if (listingsMFD) {
     const listingsMFDIds: string[] = listingsMFD.map(
-      (listing: Listing) => listing.id
+      (listing: Listing) => listing.id,
     );
     // for each listingsMFDIds remove from cache
     listingsMFDIds.forEach((labelId: string) => {

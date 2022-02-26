@@ -13,17 +13,19 @@ const AddListing: React.FC<Props> = ({ handleSubmit }) => {
     if (inputRef.current) {
       const target = inputRef.current;
 
-      handleSubmit(target.value);
-      target.value = "";
+      if (target.value !== "") {
+        handleSubmit(target.value);
+        target.value = "";
+      } else {
+        // TODO: There should be some feedback for the user
+        console.log("No empty input");
+      }
     }
   };
 
   const handleKeyDown = (evt: KeyboardEvent) => {
     if (evt.key === "Enter" && inputRef.current) {
-      const target = inputRef.current;
-
-      handleSubmit(target.value);
-      target.value = "";
+      handleClick();
     }
   };
 

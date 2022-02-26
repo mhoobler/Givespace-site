@@ -78,12 +78,12 @@ const useCatalogueApolloHooks: CatalogueHook.FC = ({ id }: Props) => {
     ) {
       console.log(
         "incrementCatalogueViewsMuation",
-        ": Catalogue does not exist"
+        ": Catalogue does not exist",
       );
     } else {
       apolloHookErrorHandler(
         "incrementCatalogueViewsMuation",
-        incrrementCatalogueViewsError
+        incrrementCatalogueViewsError,
       );
     }
   }

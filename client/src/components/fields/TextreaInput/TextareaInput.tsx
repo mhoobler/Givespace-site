@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useFieldEditing } from "../../../state/store";
 import ToggleEdit from "../../ToggleEdit/ToggleEdit";
 
+import "./TextareaInput.less";
+
 type Props = {
   isEditing: boolean;
   handleSubmit: GenericEdit;
@@ -21,7 +23,7 @@ const TextareaInput = ({
   placeholder,
   className,
 }: Props) => {
-  const textarea = useRef();
+  const textarea = useRef<HTMLTextAreaElement>();
   const [isValid, setIsValid] = useState(true);
   const [text, setText] = useState(value);
   const { setFieldEditing } = useFieldEditing();
@@ -29,23 +31,29 @@ const TextareaInput = ({
     setText(value);
   }, [value]);
 
-  const handleBlur = (evt: React.SyntheticEvent<HTMLInputElement>) => {
-    const currentlyIsValid = !validator || validator(evt.currentTarget.value);
+  const handleBlur = (evt: FocusEvent) => {
+    if (!evt.currentTarget) {
+      throw new Error("no current target");
+    }
+    const currentTarget = evt.currentTarget as HTMLTextAreaElement;
+    const currentlyIsValid = !validator || validator(currentTarget.value);
     setIsValid(currentlyIsValid);
-    const { value } = evt.currentTarget;
-    if (currentlyIsValid) {
+    const { value } = currentTarget;
+
+    if (currentlyIsValid && value) {
       setFieldEditing(null);
       handleSubmit(value, fieldEditingProp.key);
     }
   };
   const handleFocus = () => {
+    console.log("handle focus");
     setFieldEditing(fieldEditingProp);
   };
   useEffect(() => {
-    // @ts-ignore
-    textarea.current.addEventListener("focus", handleFocus);
-    // @ts-ignore
-    textarea.current.addEventListener("blur", handleBlur);
+    if (textarea.current) {
+      textarea.current.addEventListener("focus", handleFocus);
+      textarea.current.addEventListener("blur", handleBlur);
+    }
   }, [textarea]);
 
   return (

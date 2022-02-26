@@ -209,6 +209,21 @@ INSERT INTO links (
   '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
   'https://link1.com',
   'link1'
+), (
+  '59dece83-1a85-4576-8a53-cf9bc17c9ac2',
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  'https://link1.com',
+  'link2'
+), (
+  '59dece83-1a85-4576-8a53-cf9bc17c9ac3',
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  'https://link1.com',
+  'link3'
+), (
+  '59dece83-1a85-4576-8a53-cf9bc17c9ac4',
+  '7f0251d2-0d33-457a-89ef-5a0e6a5c36be',
+  'https://link1.com',
+  'link4'
 );
 
 INSERT INTO listing_labels (

@@ -28,10 +28,12 @@ const LabelContainer: React.FC<Props> = ({
     if (createLabel && isAdding) {
       if (inputRef.current.value !== "") {
         createLabel(inputRef.current.value);
+        inputRef.current.value = "";
+        setIsAdding(false);
+      } else {
+        // TODO: There should be some feedback for the user
+        console.log("No empty input");
       }
-
-      inputRef.current.value = "";
-      setIsAdding(false);
     } else {
       setIsAdding(true);
       inputRef.current.focus();
@@ -40,10 +42,7 @@ const LabelContainer: React.FC<Props> = ({
 
   const inputKeyDown = (evt: KeyboardEvent) => {
     if (evt.key === "Enter" && inputRef.current && createLabel) {
-      const target = inputRef.current;
-
-      createLabel(target.value);
-      target.value = "";
+      handleAddLabel();
     }
   };
 
