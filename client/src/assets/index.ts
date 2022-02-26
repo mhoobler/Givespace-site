@@ -21,3 +21,5 @@ export { default as Eye } from "./svgs/eye.svg";
 export { default as EyeOff } from "./svgs/eye-off.svg";
 export { default as Trash } from "./svgs/trash.svg";
 export { default as Trash2 } from "./svgs/trash-2.svg";
+export { default as Share } from "./svgs/share.svg";
+export { default as Share2 } from "./svgs/share-2.svg";

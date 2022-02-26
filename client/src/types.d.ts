@@ -21,15 +21,17 @@ interface CatalogueStub {
   description: string | null;
   created: string;
   updated: string;
+  header_color: string;
   listings: ListingStub[] | null;
+  profile_picture_url: string | null;
+  header_image_url: string | null;
+  author: string | null;
 }
+
+type ListingStub = any;
 
 interface CatalogueType extends CatalogueStub {
   views: number;
-  header_image_url: string | null;
-  header_color: string;
-  author: string | null;
-  profile_picture_url: string | null;
   event_date: string | null;
   location: string | null;
   // TODO: labels and listings can be null
