@@ -23,7 +23,10 @@ export const CATALOGUE_LIST_ITEM_FIELDS = gql`
     description
     created
     updated
+    author
     header_image_url
+    profile_picture_url
+    header_color
     listings {
       id
       image_url

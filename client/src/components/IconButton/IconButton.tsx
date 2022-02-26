@@ -5,7 +5,7 @@ import "./IconButton.less";
 type Props = {
   className?: string;
   label?: string;
-  onClick: (args: any) => void;
+  onClick?: (args: any) => void;
   src: string;
 };
 

@@ -1,38 +1,12 @@
 import React from "react";
 import { useQuery } from "@apollo/client";
-import { Link, useParams } from "react-router-dom";
-import { CreateCatalogueButton, DeleteCatalogueButton } from "../../components";
+import { useParams } from "react-router-dom";
+import { CreateCatalogueButton } from "../../components";
 import { MY_CATALOGUES } from "../../graphql/schemas";
 import { apolloHookErrorHandler } from "../../utils/functions";
 
 import "./CatalogueSelect.less";
-
-const CatalogueRow: React.FC<CatalogueStub> = ({
-  id,
-  //user_id,
-  title,
-  listings,
-  //created,
-  //updated,
-}) => {
-  //@ts-ignore
-  //TODO: Do something with this data
-
-  // proof of listings
-  console.log(`Proof of listings for id "${id}" `, listings);
-
-  return (
-    <div className="row">
-      <div className="col-8">{title}</div>
-      <div className="col-4">
-        <Link className="btn btn-primary" to={`/ctg/${id}`}>
-          Go
-        </Link>
-        <DeleteCatalogueButton id={id} />
-      </div>
-    </div>
-  );
-};
+import { CatalogueCards } from "../../containers";
 
 const CatalogueSelect = () => {
   //@ts-ignore
@@ -45,6 +19,7 @@ const CatalogueSelect = () => {
   if (results.loading) {
     return <div>Loading...</div>;
   }
+
   return (
     <div className="page-wrapper catalogue-select-wrapper">
       <div className="page-container catalogue-select-container">
@@ -52,12 +27,7 @@ const CatalogueSelect = () => {
           <h2>My Lists</h2>
           <p>All lists saved on this device</p>
         </div>
-        <div className="catalogues-container">
-          {results.data &&
-            results.data.myCatalogues.map((e: CatalogueStub) => (
-              <CatalogueRow key={e.id} {...e} />
-            ))}
-        </div>
+        <CatalogueCards catalogues={results.data.myCatalogues} />
         <CreateCatalogueButton />
       </div>
     </div>
