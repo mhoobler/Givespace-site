@@ -181,7 +181,6 @@ const userResolvers = {
       };
       if (listings) {
         for (let listing of listings) {
-          console.log("newLabels", newLabels);
           await listingProcess(listing, newLabels);
         }
       }
