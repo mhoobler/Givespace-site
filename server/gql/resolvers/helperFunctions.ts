@@ -12,7 +12,7 @@ import scrapeItemFeatures from "../../scraping/init";
 export const createListing = async (
   name: string,
   fullCatalogue: Catalogue,
-  ordering?: number
+  ignore_link?: boolean
 ): Promise<Listing> => {
   const catalogue_id = fullCatalogue.id;
   const isUrl = name.slice(0, 8) === "https://";
@@ -21,22 +21,18 @@ export const createListing = async (
   if (isUrl) {
     newListingRes = await db.query(
       "INSERT INTO listings (catalogue_id, ordering) VALUES ($1, $2) RETURNING *",
-      [catalogue_id, ordering || endOrdering(fullCatalogue.listings, "min") - 1]
+      [catalogue_id, endOrdering(fullCatalogue.listings, "min") - 1]
     );
   } else {
     newListingRes = await db.query(
       "INSERT INTO listings (catalogue_id, name, ordering) VALUES ($1, $2, $3) RETURNING *",
-      [
-        catalogue_id,
-        name,
-        ordering || endOrdering(fullCatalogue.listings, "min") - 1,
-      ]
+      [catalogue_id, name, endOrdering(fullCatalogue.listings, "min") - 1]
     );
   }
 
   let newListing: Listing = newListingRes.rows[0];
 
-  if (isUrl) {
+  if (isUrl && !ignore_link) {
     const title = extractDomain(name);
     const newLisnkRes: QueryResult<Link> = await db.query(
       "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
@@ -70,7 +66,7 @@ export const createListing = async (
     let updatedListing: Listing = updateListingRes.rows[0];
     notExist("Listing", updatedListing);
 
-    if (!isUrl) {
+    if (!isUrl && !ignore_link) {
       const title = extractDomain(features.item_url);
       const newLisnkRes: QueryResult<Link> = await db.query(
         "INSERT INTO links (listing_id, url, title) VALUES ($1, $2, $3) RETURNING *",
