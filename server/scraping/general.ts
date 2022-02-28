@@ -27,8 +27,9 @@ export const generalScraper = async (
 
   // clean price string and covert to float
 
-  const parsePrice = (priceRaw) => {
+  const parsePrice = (priceRaw: string) => {
     // get rid of all characers except numbers and . and ,
+    if (!priceRaw) return null;
     return parseFloat(priceRaw.replace(/[^0-9.,]/g, "").replace(",", "."));
   };
 
@@ -141,7 +142,6 @@ export const generalScraper = async (
       let price: string;
       try {
         const newPrice = cheerioObj.text().match(/\$\d+/)[0];
-        console.log("price0", newPrice);
         if (parsePrice(newPrice)) price = newPrice;
       } catch (e) {}
       try {
@@ -151,12 +151,10 @@ export const generalScraper = async (
           .input.split("$");
         prices.shift();
         const newPrice = prices.find((p) => parsePrice(p));
-        console.log("price1", newPrice);
         if (parsePrice(newPrice)) price = newPrice;
       } catch (e) {}
       try {
         const newPrice = cheerioObj.text().match(/\$\d+\.\d+/)[0];
-        console.log("price2", newPrice);
         if (parsePrice(newPrice)) price = newPrice;
       } catch (e) {}
 
@@ -178,9 +176,6 @@ export const generalScraper = async (
   } catch (e) {
     console.log("error", e);
   }
-
-  const domain = url.split("/")[2];
-  console.log(domain, scrapedFeatures);
 
   return scrapedFeatures;
 };

@@ -14,6 +14,7 @@ import { pubsub } from "../index";
 import scrapeItemFeatures from "../../scraping/init";
 import { uploadToGC } from "../../utils/googleCloud";
 import { fullListingQuery } from "../../utils/sqlQueries";
+import { createListing } from "./helperFunctions";
 
 const listingResolvers = {
   Query: {},
@@ -25,11 +26,9 @@ const listingResolvers = {
       const fullCatalogue: Catalogue = (
         await getFullCatalogues(catalogue_id)
       )[0];
-
-      const isUrl = name.slice(0, 8) === "https://";
-
       notExist("Catalogue", fullCatalogue);
 
+<<<<<<< HEAD
       let newListingRes: QueryResult<Listing>;
       if (isUrl) {
         newListingRes = await db.query(
@@ -96,6 +95,9 @@ const listingResolvers = {
         publishCatalogue(catalogue_id);
       };
       scrapeData();
+=======
+      let newListing: Listing = await createListing(name, fullCatalogue);
+>>>>>>> catalogue-macro
 
       return newListing;
     },
