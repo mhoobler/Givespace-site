@@ -1,13 +1,16 @@
 import { useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { Modal } from "..";
+import { Trash2 } from "../../assets";
 import { DELTETE_CATALOGUE } from "../../graphql/schemas";
 import {
   apolloHookErrorHandler,
   handleCacheDeletion,
 } from "../../utils/functions";
 
-const DeleteCatalogueButton: React.FC<{ id: string }> = ({ id }) => {
+const DeleteCatalogueButton: React.FC<{
+  id: string;
+}> = ({ id }) => {
   const [showModal, setShowModal] = useState(false);
   const [deleteCatalogue, { error }] = useMutation(DELTETE_CATALOGUE, {
     variables: { id },
@@ -25,9 +28,17 @@ const DeleteCatalogueButton: React.FC<{ id: string }> = ({ id }) => {
   const handleClose = () => setShowModal(false);
 
   return (
-    <div>
-      <button className="btn btn-danger" onClick={() => setShowModal(true)}>
-        Del
+    <div
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      <button className="btn f-row option" onClick={() => setShowModal(true)}>
+        <div>
+          <img src={Trash2} alt="delete" />
+        </div>
+        <div className="fs-1"> Delete</div>
       </button>
       <Modal show={showModal} close={handleClose}>
         <Modal.Header>

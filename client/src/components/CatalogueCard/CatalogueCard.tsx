@@ -1,27 +1,15 @@
 import React from "react";
-import { Share2, Trash2 } from "../../assets";
+import { DeleteCatalogueButton } from "..";
+import { Share2 } from "../../assets";
 import { handleCopy } from "../../utils/functions";
 
 import "./CatalogueCard.less";
 
 type Props = {
   catalogue: CatalogueStub;
-  deleteCatalogue: any;
-  shareCatalogue: any;
 };
 
-const CatalogueCard: React.FC<Props> = ({
-  catalogue,
-  deleteCatalogue,
-  shareCatalogue,
-}) => {
-  const handleDeleteClick = (evt: React.SyntheticEvent<HTMLButtonElement>) => {
-    // This card will likely be wrapped in a link
-    // preventDefault will stop navigation
-    evt.preventDefault();
-    console.log("delete", evt);
-  };
-
+const CatalogueCard: React.FC<Props> = ({ catalogue }) => {
   const handleShareClick = (evt: React.SyntheticEvent<HTMLButtonElement>) => {
     // This card will likely be wrapped in a link
     // preventDefault will stop navigation
@@ -65,12 +53,7 @@ const CatalogueCard: React.FC<Props> = ({
             ))}
         </div>
         <div className="f-row options-row">
-          <button className="btn f-row option" onClick={handleDeleteClick}>
-            <div>
-              <img src={Trash2} alt="delete" />
-            </div>
-            <div className="fs-1"> Delete</div>
-          </button>
+          <DeleteCatalogueButton id={catalogue.id} />
           <button className="btn f-row option" onClick={handleShareClick}>
             <div>
               <img src={Share2} alt="share" />

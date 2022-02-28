@@ -33,25 +33,11 @@ const CatalogueCards: React.FC<Props> = ({ catalogues }) => {
     }
   }, [loading, data]);
 
-  // TODO: Move to Hook
-  const deleteCatalogue = (id: string) => {
-    console.log("delete", id);
-  };
-
-  // TODO: Move to Hook
-  const shareCatalogue = (id: string) => {
-    console.log("share", id);
-  };
-
   return (
     <div className="f-row catalogue-cards-container">
       {catalogues.map((catalogue: CatalogueStub) => (
         <Link className="catalogue-card-wrapper" to={`/ctg/${catalogue.id}`}>
-          <CatalogueCard
-            catalogue={catalogue}
-            deleteCatalogue={deleteCatalogue}
-            shareCatalogue={shareCatalogue}
-          />
+          <CatalogueCard catalogue={catalogue} />
         </Link>
       ))}
       <div className="catalogue-card-wrapper">
